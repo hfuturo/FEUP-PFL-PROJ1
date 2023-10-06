@@ -23,9 +23,6 @@ Definições:
 - Mover uma peça para um lugar adjacente é designado por **single step**, e mover para um lugar afastado por dois ou mais quadrados é designado por **jump**.
 - Realizar um **jump** mais do que uma vez numa jogada é designado por **continuous jump**.
 
-O jogo acaba quando todas as peças de um jogador não tiverem uma peça da mesma cor adjacentes (verticalmente, horizontalemente e diagonalmente) à mesma.
-Se ambos os jogadores chegarem a este estado ao mesmo tempo, o jogador que fez a última jogada perde.
-
 Regras:
 
 - O jogo começa com o jogador que tiver as peças brancas.
@@ -38,6 +35,9 @@ Regras:
 - Não há um limite de **jumps** que uma peça possa realizar num **continuous jump**.
 - Um quadrado só pode ser utilizado uma vez por jogada.
 - Um **single step** não pode ser incluído num **continuous jump**.
+
+O jogo acaba quando todas as peças de um jogador não tiverem uma peça da mesma cor adjacentes (verticalmente, horizontalemente e diagonalmente) à mesma.
+Se ambos os jogadores chegarem a este estado ao mesmo tempo, o jogador que fez a última jogada perde.
 
 As regras e o funcionamento do jogo foram consultados nos seguintes sites:
 
