@@ -5,7 +5,8 @@ play :-
     read_number(BoardSize),
     write('\n'),
     make_board(BoardSize, Board),
-    print_board(Board, BoardSize)
+    print_board(Board, BoardSize),
+    !   % remove output true ? do terminal quando acaba de correr
 .
 
 read_number(BoardSize) :-
@@ -33,7 +34,7 @@ print_board(Board, BoardSize) :-
     write('\n'),
     print_board_content(Board, BoardSize).
 
-print_board_top_coordinates(BoardSize) :-
+ print_board_top_coordinates(BoardSize) :-
     print_board_top_coordinates_aux(BoardSize, 1).
 
 print_board_top_coordinates_aux(0,_).
@@ -44,7 +45,7 @@ print_board_top_coordinates_aux(BoardSize, CurrentCoordinate) :-
     format('  ~s ', Coordinate),
     BoardSize1 is BoardSize - 1,
     CurrentCoordinate1 is CurrentCoordinate + 1,
-    print_board_top_coordinates_aux(BoardSize1, CurrentCoordinate1).
+    print_board_top_coordinates_aux(BoardSize1, CurrentCoordinate1). 
 
 print_board_content([], BoardSize) :- 
     print_limiter(_,BoardSize),
