@@ -20,7 +20,8 @@ read_number_aux(BoardSize,true,BoardSize).
 */
 
 program :-
-    initial_state(BoardSize,Board).
+    initial_state(BoardSize,Board),
+    display_game(1,BoardSize,Board).
 
 /*
     create board with specific size
@@ -28,15 +29,21 @@ program :-
 initial_state(BoardSize,Board) :-
     write('write the size of the board: '),
     read_number(BoardSize),
-    write('\n'),
-    make_board(BoardSize, Board),
+    make_initial_board(BoardSize, Board),
+    write('\n').
+    
+/*
+    display board
+*/
+display_game(Turn,BoardSize,Board) :-
     print_board(Board, BoardSize),
+    format('It is the turn of the player ~w.\n',Turn),
     !.   % remove output true ? do terminal quando acaba de correr
 
 /*
-    create board with 0
+    create initial board fill with 0
 */
-make_board(BoardSize, Board) :-
+make_initial_board(BoardSize, Board) :-
     length(Board, BoardSize),
     length(Row, BoardSize),
     maplist(=(0), Row),
