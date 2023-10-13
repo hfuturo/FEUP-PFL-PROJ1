@@ -32,7 +32,7 @@ initial_state(BoardSize,Board) :-
     read_size_board(BoardSize),
     make_initial_board(BoardSize, Board),
     write('\n').
-    
+
 /*
     read size board and check if it is valid
 */
@@ -52,13 +52,30 @@ display_game(Turn,BoardSize,Board) :-
     !.   % remove output true ? do terminal quando acaba de correr
 
 /*
-    create initial board fill with 0
+    create initial board
 */
 make_initial_board(BoardSize, Board) :-
-    length(Board, BoardSize),
-    length(Row, BoardSize),
-    maplist(=(0), Row),
-    maplist(=(Row), Board).
+    make_board_filler_initial(BoardFiller,BoardSize),
+    make_board_player_initial(1,PlayerOneBoard,BoardSize),
+    make_board_player_initial(2,PlayerTwoBoard,BoardSize),
+    append(PlayerOneBoard,BoardFiller,TempBoard),
+    append(TempBoard,PlayerTwoBoard,Board).
+
+make_board_filler_initial(BoardFiller,BoardSize):-
+    BoardSizeFiller is BoardSize-4,
+    length(LineFiller,BoardSize),
+    maplist(=(0), LineFiller),
+    length(BoardFiller,BoardSizeFiller),
+    maplist(=(LineFiller), BoardFiller).
+
+make_board_player_initial(Player,PlayerBoard,BoardSize) :-
+    RowSizeRow is BoardSize-2,
+    length(InitialRow, RowSizeRow),
+    maplist(=(Player), InitialRow),
+    append([0],InitialRow,MidleRow),
+    append(MidleRow,[0],EndingRow),
+    append([EndingRow],[EndingRow],PlayerBoard).
+
 
 /*
     print board in the console
