@@ -34,7 +34,7 @@ print_board(Board, BoardSize) :-
     write('\n'),
     print_board_content(Board, BoardSize).
 
- print_board_top_coordinates(BoardSize) :-
+print_board_top_coordinates(BoardSize) :-
     print_board_top_coordinates_aux(BoardSize, 1).
 
 print_board_top_coordinates_aux(0,_).
