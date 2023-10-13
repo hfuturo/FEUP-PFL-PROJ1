@@ -20,18 +20,29 @@ read_number_aux(BoardSize,true,BoardSize).
 */
 
 program :-
+    Turn is 1,
     initial_state(BoardSize,Board),
-    display_game(1,BoardSize,Board).
+    display_game(Turn,BoardSize,Board).
 
 /*
     create board with specific size
 */
 initial_state(BoardSize,Board) :-
-    write('write the size of the board: '),
-    read_number(BoardSize),
+    write('Write the size of the board (between 5 and 15)\n'),
+    read_size_board(BoardSize),
     make_initial_board(BoardSize, Board),
     write('\n').
     
+/*
+    read size board and check if it is valid
+*/
+read_size_board(BoardSize) :-
+    repeat,
+    write('It has to be between 5 and 15: '),
+    read_number(BoardSize),
+    BoardSize>=5,
+    BoardSize=<15,
+    !.
 /*
     display board
 */
