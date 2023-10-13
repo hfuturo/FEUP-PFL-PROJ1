@@ -2,10 +2,8 @@
 
 play :-
     write('write the size of the board: '),
-    %read(BoardSize),
     read_number(BoardSize),
     write('\n'),
-    %char_type(BoardSize, digit), % verifica se input é um digito
     make_board(BoardSize, Board),
     print_board(Board, BoardSize)
 .
@@ -41,8 +39,8 @@ print_board_top_coordinates(BoardSize) :-
 print_board_top_coordinates_aux(0,_).
 print_board_top_coordinates_aux(BoardSize, CurrentCoordinate) :-
     BoardSize > 0,
-    CoordinateAscii is CurrentCoordinate + 96,  % 'a' ASCII é 97
-    atom_codes(Coordinate, [CoordinateAscii]),
+    CoordinateAscii is CurrentCoordinate + 96,  % 'a' ASCII é 97 e coordenada começa em 1
+    atom_codes(Coordinate, [CoordinateAscii]),  % convert codigo ASCII para string
     format('  ~s ', Coordinate),
     BoardSize1 is BoardSize - 1,
     CurrentCoordinate1 is CurrentCoordinate + 1,
@@ -60,8 +58,8 @@ print_board_content([H|T], BoardSize) :-
 print_line([]) :- 
     write('|\n').
 print_line([H|T]) :-
-  format('| ~w ',H),
-  print_line(T).
+    format('| ~w ',H),
+    print_line(T).
 
 
 print_limiter(_, BoardSize) :-
