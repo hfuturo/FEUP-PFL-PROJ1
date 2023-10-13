@@ -4,6 +4,7 @@ play :-
     write('write the size of the board: '),
     %read(BoardSize),
     read_number(BoardSize),
+    write('\n'),
     %char_type(BoardSize, digit), % verifica se input é um digito
     make_board(BoardSize, Board),
     print_board(Board, BoardSize)
@@ -30,16 +31,30 @@ make_board(BoardSize, Board) :-
 .
 
 print_board(Board, BoardSize) :-
-    print_board_aux(Board, BoardSize).
+    print_board_top_coordinates(BoardSize),
+    write('\n'),
+    print_board_content(Board, BoardSize).
 
+print_board_top_coordinates(BoardSize) :-
+    print_board_top_coordinates_aux(BoardSize, 1).
 
-print_board_aux([], BoardSize) :- 
+print_board_top_coordinates_aux(0,_).
+print_board_top_coordinates_aux(BoardSize, CurrentCoordinate) :-
+    BoardSize > 0,
+    CoordinateAscii is CurrentCoordinate + 96,  % 'a' ASCII é 97
+    atom_codes(Coordinate, [CoordinateAscii]),
+    format('  ~s ', Coordinate),
+    BoardSize1 is BoardSize - 1,
+    CurrentCoordinate1 is CurrentCoordinate + 1,
+    print_board_top_coordinates_aux(BoardSize1, CurrentCoordinate1).
+
+print_board_content([], BoardSize) :- 
     print_limiter(_,BoardSize),
     write('\n').
-print_board_aux([H|T], BoardSize) :-
+print_board_content([H|T], BoardSize) :-
     print_limiter(_, BoardSize),
     print_line(H),
-    print_board_aux(T, BoardSize).
+    print_board_content(T, BoardSize).
 
 
 print_line([]) :- 
