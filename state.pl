@@ -4,16 +4,15 @@
 /*
     create board with specific size
 */
-initial_state(BoardSize,Board) :-
-    write('Write the size of the board (between 5 and 15)\n'),
-    read_size_board(BoardSize),
-    make_initial_board(BoardSize, Board),
+initial_state(Hight,Wide,Board) :-
+    read_size_board(Hight,Wide),
+    make_initial_board(Hight,Wide,Board),
     write('\n').
 
 /*
     display board
 */
-display_game(Turn,BoardSize,Board) :-
-    print_board(Board, BoardSize),
+display_game(Turn,Wide,Board) :-
+    print_board(Board,Wide),
     format('It is the turn of the player ~w.\n',Turn),
     !.   % remove output true ? do terminal quando acaba de correr

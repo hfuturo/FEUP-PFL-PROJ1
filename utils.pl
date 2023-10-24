@@ -1,18 +1,18 @@
 /*
     begining teacher code
 */
-read_number(BoardSize) :-
-    read_number_aux(0,false,BoardSize).
+read_number(Number) :-
+    read_number_aux(0,false,Number).
 
-read_number_aux(Acc,_,BoardSize) :-
+read_number_aux(Acc,_,Number) :-
     get_code(Input),
     Input >= 48,    % '0'
     Input =< 57,    % '9'
     !,
     Acc1 is 10*Acc + (Input-48),
-    read_number_aux(Acc1, true, BoardSize)
+    read_number_aux(Acc1, true, Number)
 .
-read_number_aux(BoardSize,true,BoardSize).
+read_number_aux(Number,true,Number).
 /*
     ending teacher code
 */
@@ -20,12 +20,20 @@ read_number_aux(BoardSize,true,BoardSize).
 /*
     read size board and check if it is valid
 */
-read_size_board(BoardSize) :-
+read_size_board(Hight,Wide) :-
+    write('Write the hight of the board (between 5 and 15)\n'),
+    read_size_board_side(Hight),
+    write('\n'),
+    write('Write the wide of the board (between 5 and 15)\n'),
+    read_size_board_side(Wide).
+
+
+read_size_board_side(Side) :-
     repeat,
     write('It has to be between 5 and 15: '),
-    read_number(BoardSize),
-    BoardSize>=5,
-    BoardSize=<15,
+    read_number(Side),
+    Side>=5,
+    Side=<15,
     !.
 
 /*
@@ -46,8 +54,8 @@ print_line_content([H|T]) :-
 /*
     create squares to separate the content of the board
 */
-print_limiter(_, BoardSize) :-
-    print_limiter_aux(0, BoardSize).
+print_limiter(Wide) :-
+    print_limiter_aux(0,Wide).
 
 print_limiter_aux(Pos,Max) :-
     Pos<Max,
