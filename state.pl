@@ -2,6 +2,9 @@
 :- consult(board).
 :- consult(piece).
 
+change_player(1,2).
+change_player(2,1).
+
 /*
     create board with specific size
 */
@@ -23,7 +26,13 @@ display_game(Turn,Wide,Board) :-
 */
 game_cycle(Turn,Hight,Wide,Board):-
     write('Write the position of the piece you want to move.\n'),
-    select_piece(Turn,Hight,Wide,Board).
+    choose_move(Turn,Hight,Wide,Board,TempBoard),
+    move(Turn,Hight,Wide,TempBoard,NewBoard),
+    change_player(Turn,NewTurn),
+    display_game(NewTurn,Wide,NewBoard),
+    !,
+    game_cycle(NewTurn,Hight,Wide,Board).
+
 
 /*
 codigo slides stor
@@ -32,15 +41,4 @@ game_cycle(Turn,Hight,Wide,Board):-
     game_over(Hight,Wide,Board,Winner), 
     !, 
     congratulate(Winner).
-
-game_cycle(Turn,Hight,Wide,Board):-
-    choose_move(Turn,Hight,Wide,Board,Move),
-    move(Turn,Hight,Wide,Board,Move,NewBoard),
-    next_player(Turn,NewTurn),
-    display_game(Board,Wide,NewTurn).
-    !,
-    game_cycle(NewTurn,Hight,Wide,Board).
-
-change_player(1,2).
-change_player(2,1).
 */
