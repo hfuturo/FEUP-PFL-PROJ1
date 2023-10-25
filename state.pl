@@ -32,7 +32,7 @@ game_cycle(Turn,Height,Width,Board,TotalMoves):-
     UpdatedTotalMoves is TotalMoves + 1,
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
     !,
-    game_cycle(NewTurn,Height,Width,Board,UpdatedTotalMoves).
+    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves).
 
 
 /*
