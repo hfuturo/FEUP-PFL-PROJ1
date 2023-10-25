@@ -31,10 +31,24 @@ make_board_player_initial(Player,PlayerBoard,Wide) :-
 /*
     print board in the console
 */
-print_board(Board,Wide) :-
+print_board(Board,Wide,Turn,TotalMoves) :-
     print_board_top_coordinates(Wide),
     write('\n'),
-    print_board_content(Board,Wide,1).
+    print_board_content(Board,Wide,1),
+    print_turn(Turn),
+    print_total_moves(TotalMoves).
+
+/*
+    print current player turn
+*/
+print_turn(Turn) :-
+    format('Player turn: ~w          ', [Turn]).
+
+/*
+    print the total number of moves made in this game.
+*/
+print_total_moves(TotalMoves) :-
+    format('Moves: ~w~n~n', [TotalMoves]).
 
 /*
     print top coordinates of the board
@@ -56,8 +70,7 @@ print_board_top_coordinates_aux(Wide, CurrentCoordinate) :-
     print content of the board
 */
 print_board_content([],Wide,_) :- 
-    print_limiter(Wide),
-    write('\n').
+    print_limiter(Wide).
 print_board_content([H|T],Wide,Line) :-
     print_limiter(Wide),
     print_line(H,Line),

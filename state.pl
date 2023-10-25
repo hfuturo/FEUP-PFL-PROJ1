@@ -16,22 +16,23 @@ initial_state(Hight,Wide,Board) :-
 /*
     display board
 */
-display_game(Turn,Wide,Board) :-
-    print_board(Board,Wide),
+display_game(Turn,Wide,Board,TotalMoves) :-
+    print_board(Board,Wide,Turn,TotalMoves),
     format('It is the turn of the player ~w.\n',Turn),
     !.   % remove output true ? do terminal quando acaba de correr
 
 /*
     cycle of the game
 */
-game_cycle(Turn,Hight,Wide,Board):-
+game_cycle(Turn,Hight,Wide,Board,TotalMoves):-
     write('Write the position of the piece you want to move.\n'),
     choose_move(Turn,Hight,Wide,Board,TempBoard),
     move(Turn,Hight,Wide,TempBoard,NewBoard),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Wide,NewBoard),
+    UpdatedTotalMoves is TotalMoves + 1,
+    display_game(NewTurn,Wide,NewBoard,UpdatedTotalMoves),
     !,
-    game_cycle(NewTurn,Hight,Wide,Board).
+    game_cycle(NewTurn,Hight,Wide,Board,UpdatedTotalMoves).
 
 
 /*
