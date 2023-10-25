@@ -1,20 +1,20 @@
 
 choose_move(Turn,Height,Width,Board,NewBoard) :-
-    select_piece(Turn,Height,Wide,Board,X,Y),
+    select_piece(Turn,Height,Width,Board,X,Y),
     change_piece(0,Board,X,Y,NewBoard).
 
-move(Turn,Height,Wide,Board,NewBoard) :-
-    select_move(Height,Wide,X,Y),
+move(Turn,Height,Width,Board,NewBoard) :-
+    select_move(Height,Width,X,Y),
     change_piece(Turn,Board,X,Y,NewBoard).
 
 /*
     select the move to make
 */
-select_move(Height,Wide,X,Y) :-
+select_move(Height,Width,X,Y) :-
     repeat,
     write('\nSelect the coordinates to where you want to move.\n'),
     write('Write the row of the new position.'),
-    read_position_piece(X,Wide),
+    read_position_piece(X,Width),
     write('Write the column of the new position.'),
     read_position_piece(Y,Height),
     !.
@@ -22,11 +22,11 @@ select_move(Height,Wide,X,Y) :-
 /*
     select the piece that the player wants to move
 */
-select_piece(Turn,Height,Wide,Board,X,Y) :-
+select_piece(Turn,Height,Width,Board,X,Y) :-
     repeat,
     write('\nSelect the coordinates where the piece is.\n'),
     write('Write the row of the piece.'),
-    read_position_piece(X,Wide),
+    read_position_piece(X,Width),
     write('Write the column of the piece.'),
     read_position_piece(Y,Height),
     get_position_piece(X,Y,Board,Piece),
