@@ -20,12 +20,12 @@ read_number_aux(Number,true,Number).
 /*
     read size board and check if it is valid
 */
-read_size_board(Hight,Wide) :-
-    write('Write the hight of the board (between 5 and 15)\n'),
-    read_size_board_side(Hight),
+read_size_board(Height,Width) :-
+    write('Write the Height of the board (between 5 and 15)\n'),
+    read_size_board_side(Height),
     write('\n'),
-    write('Write the wide of the board (between 5 and 15)\n'),
-    read_size_board_side(Wide).
+    write('Write the width of the board (between 5 and 15)\n'),
+    read_size_board_side(Width).
 
 
 read_size_board_side(Side) :-
@@ -54,8 +54,8 @@ print_line_content([H|T]) :-
 /*
     create squares to separate the content of the board
 */
-print_limiter(Wide) :-
-    print_limiter_aux(0,Wide).
+print_limiter(Width) :-
+    print_limiter_aux(0,Width).
 
 print_limiter_aux(Pos,Max) :-
     Pos<Max,

@@ -5,23 +5,23 @@
 /*
     create initial board
 */
-make_initial_board(Hight,Wide, Board) :-
-    make_board_filler_initial(BoardFiller,Hight,Wide),
-    make_board_player_initial(1,PlayerOneBoard,Wide),
-    make_board_player_initial(2,PlayerTwoBoard,Wide),
+make_initial_board(Height,Width, Board) :-
+    make_board_filler_initial(BoardFiller,Height,Width),
+    make_board_player_initial(1,PlayerOneBoard,Width),
+    make_board_player_initial(2,PlayerTwoBoard,Width),
     append(PlayerOneBoard,BoardFiller,TempBoard),
     append(TempBoard,PlayerTwoBoard,Board).
 
-make_board_filler_initial(BoardFiller,Hight,Wide):-
-    HightFiller is Hight-4,
-    length(LineFiller,Wide),
+make_board_filler_initial(BoardFiller,Height,Width):-
+    HeightFiller is Height-4,
+    length(LineFiller,Width),
     maplist(=(0), LineFiller),
-    length(BoardFiller,HightFiller),
+    length(BoardFiller,HeightFiller),
     maplist(=(LineFiller), BoardFiller).
 
-make_board_player_initial(Player,PlayerBoard,Wide) :-
-    RowWide is Wide-2,
-    length(InitialRow, RowWide),
+make_board_player_initial(Player,PlayerBoard,Width) :-
+    RowWidth is Width-2,
+    length(InitialRow, RowWidth),
     maplist(=(Player), InitialRow),
     append([0],InitialRow,MidleRow),
     append(MidleRow,[0],EndingRow),
@@ -31,10 +31,10 @@ make_board_player_initial(Player,PlayerBoard,Wide) :-
 /*
     print board in the console
 */
-print_board(Board,Wide,Turn,TotalMoves) :-
-    print_board_top_coordinates(Wide),
+print_board(Board,Width,Turn,TotalMoves) :-
+    print_board_top_coordinates(Width),
     write('\n'),
-    print_board_content(Board,Wide,1),
+    print_board_content(Board,Width,1),
     print_turn(Turn),
     print_total_moves(TotalMoves).
 
@@ -53,26 +53,26 @@ print_total_moves(TotalMoves) :-
 /*
     print top coordinates of the board
 */
-print_board_top_coordinates(Wide) :-
-    print_board_top_coordinates_aux(Wide, 1).
+print_board_top_coordinates(Width) :-
+    print_board_top_coordinates_aux(Width, 1).
 
 print_board_top_coordinates_aux(0,_).
-print_board_top_coordinates_aux(Wide, CurrentCoordinate) :-
-    Wide > 0,
+print_board_top_coordinates_aux(Width, CurrentCoordinate) :-
+    Width > 0,
     CoordinateAscii is CurrentCoordinate + 96,  % 'a' ASCII é 97 e coordenada começa em 1
     atom_codes(Coordinate, [CoordinateAscii]),  % convert codigo ASCII para string
     format('  ~s ', Coordinate),
-    Wide1 is Wide - 1,
+    Width1 is Width - 1,
     CurrentCoordinate1 is CurrentCoordinate + 1,
-    print_board_top_coordinates_aux(Wide1, CurrentCoordinate1). 
+    print_board_top_coordinates_aux(Width1, CurrentCoordinate1). 
 
 /*
     print content of the board
 */
-print_board_content([],Wide,_) :- 
-    print_limiter(Wide).
-print_board_content([H|T],Wide,Line) :-
-    print_limiter(Wide),
+print_board_content([],Width,_) :- 
+    print_limiter(Width).
+print_board_content([H|T],Width,Line) :-
+    print_limiter(Width),
     print_line(H,Line),
     Line1 is Line+1,
-    print_board_content(T,Wide,Line1).
+    print_board_content(T,Width,Line1).
