@@ -1,5 +1,5 @@
 /*
-    begining teacher code
+    read input number
 */
 read_number(Number) :-
     read_number_aux(0,false,Number).
@@ -13,9 +13,18 @@ read_number_aux(Acc,_,Number) :-
     read_number_aux(Acc1, true, Number)
 .
 read_number_aux(Number,true,Number).
+
 /*
-    ending teacher code
+    read char input and convert to number
 */
+read_char(Number) :-
+    repeat,
+    get_code(Input),
+     get_code(_), % break line
+    Number is Input-96,
+    Number>= 1,
+    Number=< 15,
+    !.
 
 /*
     read size board and check if it is valid
@@ -27,7 +36,9 @@ read_size_board(Height,Width) :-
     write('Write the width of the board (between 5 and 15)\n'),
     read_size_board_side(Width).
 
-
+/*
+    read side of the board and check if it is valid
+*/
 read_size_board_side(Side) :-
     repeat,
     write('It has to be between 5 and 15: '),
