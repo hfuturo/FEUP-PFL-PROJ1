@@ -2,8 +2,38 @@
     choose piece to move and remove it from its place
 */
 choose_move(Turn,Height,Width,Board,NewBoard) :-
-    select_piece(Turn,Height,Width,Board,X,Y),
+    %repeat,
+    select_piece(Turn,Height,Width,Board,XP,YP),
+    %select_move(Height,Width,XM,YM),
+    %check_move(XP,YP,XM,YM,Board).
+    %check_row(XP,YP,Board,Width,Turn),
     change_piece(0,Board,X,Y,NewBoard).
+
+check_row(XP,YP,Board,Width,Turn) :-
+    nth1(YP,Board,Row),
+    Number is 0,
+    check_row_positive_aux(XP,Width,Number,Row,Turn),
+    format('~w\n',Number),
+    check_row_negative_aux(XP,0,Number,Row,Turn).
+
+check_row_positive_aux(Width,Width,_,_,_) .
+check_row_positive_aux(XP,Width,Number,Row,Turn) :- 
+    nth1(XP,Row,Value),
+    player(Value,Turn),
+    !,
+    NewNumber is Number+1,
+    NewXP is XP+1, 
+    check_row_positive_aux(NewXP,Width,NewNumber,Row,Turn).
+
+check_row_negative_aux(0,_,_,_,_).
+check_row_negative_aux(XP,Min,Number,Row,Turn) :-
+    nth1(XP,Row,Value),
+    \+player(Value,Turn),
+    !,
+    NewNumber is Number+1,
+    NewXP is XP-1, 
+    check_row_negative_aux(NewXP,Min,NewNumber,Row,Turn).
+
 
 /*
     choose move to make and do the action
@@ -74,3 +104,6 @@ read_column_piece(Position,Coordinate) :-
 get_position_piece(X,Y,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
+
+player(1,1).
+player(2,2).
