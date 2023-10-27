@@ -3,12 +3,18 @@
 /*
     choose piece to move and remove it from its place
 */
-choose_move(Turn,Height,Width,Board,NewBoard) :-
+choose_move(Turn,Height,Width,Board,XP,YP,XM,YM) :-
     %repeat,
     select_piece(Turn,Height,Width,Board,XP,YP),
     select_move(Height,Width,XM,YM),
     check_move(XP,YP,XM,YM,Width,Height,Board,Turn,Bool).
     %change_piece(0,Board,X,Y,NewBoard).
+
+move(Turn,Height,Width,XP,YP,XM,YM,Board,NewBoard) :-
+    change_piece(0,Board,XP,YP,TempBoard),
+    change_piece(Turn,TempBoard,XM,YM,NewBoard).
+
+
 
 /*
     select the move to make
