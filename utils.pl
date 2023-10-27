@@ -20,7 +20,7 @@ read_number_aux(Number,true,Number).
 read_char(Number) :-
     repeat,
     get_code(Input),
-     get_code(_), % break line
+    get_code(_), % break line
     Number is Input-96,
     Number>= 1,
     Number=< 15,

@@ -9,7 +9,7 @@ choose_move(Turn,Height,Width,Board,NewBoard) :-
     select_move(Height,Width,XM,YM),
     check_move(XP,YP,XM,YM,Width,Height,Board,Turn,Bool).
     %change_piece(0,Board,X,Y,NewBoard).
-    
+
 /*
     select the move to make
 */
