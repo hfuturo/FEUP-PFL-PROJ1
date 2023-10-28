@@ -9,7 +9,6 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM) :-
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_move(Turn,Height,Width,Board,XM,YM),
     check_move(XP,YP,XM,YM,Distances,Bool),
-    format('Bool ~w\n',Bool),
     Bool is 1,
     !.
 
@@ -24,8 +23,7 @@ calculate_distances(X,Y,Turn,Height,Width,Board,Distances) :-
     diagonal_distance_NWSE(X,Y,Board,Width,Height,Turn,NWSEDiagonalDistance), % ↖↘
     append([ColumnDistance],[RowDistance],DistancesAux),
     append([NESWDiagonalDistance],[NWSEDiagonalDistance],DistancesAux2),
-    append(DistancesAux,DistancesAux2,Distances),
-    write(Distances).
+    append(DistancesAux,DistancesAux2,Distances).
 
 /*
     calcula a distancia que a peca pode correr na diagonal de NW-SE
@@ -102,7 +100,6 @@ diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
     diagonal_distance_NE(X,Y,XValue,Board,Width,Turn,Times,NEDiagonalDistance),  % ↗
     diagonal_distance_SW(X,Y,XValue,Board,Height,Turn,Times,SWDiagonalDistance), % ↙
     DiagonalDistance is NEDiagonalDistance + SWDiagonalDistance - 1.
-    %write(DiagonalDistance).
 
 /*
     calcula o numero de peças da mesma equipa seguidas que estão na diagonal de NE

@@ -16,14 +16,38 @@ check_move(XP,YP,XM,YM,Distances,Bool) :-
     Bool is 1.
 
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
-    XP is XM,
-    nth1(1,Distances,Value),
-    YM >= YP-Value,
-    YM =< YP+Value,
+    check_oposite_diff(XP,YP,XM,YM),
+    nth1(3,Distances,Value),
+    (
+        (YM >= YP-Value, XM =< XP+Value),
+        (YM =< YP+Value, XM >= XP-Value)
+    ),
+    !,
+    Bool is 1.
+
+check_move(XP,YP,XM,YM,Distances,Bool) :- 
+    check_same_diff(XP,YP,XM,YM),
+    nth1(4,Distances,Value),
+    (
+        (YM >= YP-Value, XM >= XP-Value),
+        (YM =< YP+Value, XM =< XP+Value)
+    ),
     !,
     Bool is 1.
 
 check_move(_,_,_,_,_,Bool) :- Bool is 0.
 
-[1,2]
-[2,3]
+abs_value(Number, AbsValue) :-
+    Number =< 0,
+    AbsValue is -Number.
+abs_value(Number, AbsValue) :- AbsValue is Number.
+
+check_same_diff(XP,YP,XM,YM) :-
+    DiffX is XP-XM,
+    DiffY is YP-YM,
+    DiffX is DiffY.
+
+check_oposite_diff(XP,YP,XM,YM) :-
+    DiffX is XP-XM,
+    DiffY is YP-YM,
+    DiffX is -DiffY.
