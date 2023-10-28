@@ -1,4 +1,6 @@
-
+/*
+    Verifica a se peça moveu a distancia horizontal correta
+*/
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
     YP is YM,
     nth1(2,Distances,Value),
@@ -7,6 +9,9 @@ check_move(XP,YP,XM,YM,Distances,Bool) :-
     !,
     Bool is 1.
 
+/*
+    Verifica se a peça moveu a distancia vertical correta
+*/
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
     XP is XM,
     nth1(1,Distances,Value),
@@ -15,6 +20,9 @@ check_move(XP,YP,XM,YM,Distances,Bool) :-
     !,
     Bool is 1.
 
+/*
+    Verifica se a peça moveu a distancia da diagonal NW-SE correta
+*/
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
     check_oposite_diff(XP,YP,XM,YM),
     nth1(3,Distances,Value),
@@ -25,6 +33,9 @@ check_move(XP,YP,XM,YM,Distances,Bool) :-
     !,
     Bool is 1.
 
+/*
+    Verifica se a peça moveu a distancia da diagonal NE-SW correta
+*/
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
     check_same_diff(XP,YP,XM,YM),
     nth1(4,Distances,Value),

@@ -3,27 +3,29 @@
 /*
     verifica se está numa situação onde o continuous jump é possivel
 */
-check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,Board,NewBoard) :-
+check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
     jump_possible(Distances,XP,YP,XM,YM),
     !,
-    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,Board,NewBoard).
+    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard).
 
-check_continuous_jump_cycle(_,_,_,_,_,_,_,Board,NewBoard) :- NewBoard is Board.
+check_continuous_jump_cycle(_,_,_,_,_,_,_,_,Board,Board).
 
 /*
     menu para se saber se quer fazer jump again e executa caso seja
 */
-do_continuous_jump_cycle(XM,YM,Turn,Height,Width,Board,NewBoard) :-
+do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
     menu_jump_cycle(Option),
     Option is 1,
     !,
     nl,
+    display_game(Turn,Width,Board,TotalMoves),
+    UpdatedTotalMoves is TotalMoves + 1,
     choose_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM),
     move(Turn,XM,YM,NXM,NYM,Board,NewBoard),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,NewBoard,NewNewBoard).
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard).
 
-do_continuous_jump_cycle(_,_,_,_,_,Board,Board).
+do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board).
 
 /*
     escolhe posição para onde mover, verificando que é um jump e se é possivel
@@ -76,6 +78,7 @@ menu_jump_cycle(Bool) :- Bool is 0.
 jump_possible(Distances,XP,YP,XM,YM) :-
     \+no_line(Distances),
     \+no_jump(XP,YP,XM,YM).
+
 /*
     verifica que não há linhas para fazer jump
 */
@@ -84,10 +87,10 @@ no_line(Distances) :-
     nth1(2,Distances,Elem2),
     nth1(3,Distances,Elem3),
     nth1(4,Distances,Elem4),
-    Elem1 is -1,
-    Elem2 is -1,
-    Elem3 is -1,
-    Elem4 is -1.
+    Elem1 is 1,
+    Elem2 is 1,
+    Elem3 is 1,
+    Elem4 is 1.
 
 /*
     verifica que ultima movimentação foi do tipo adjacente
