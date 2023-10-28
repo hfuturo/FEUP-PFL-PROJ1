@@ -27,7 +27,7 @@ display_game(Turn,Width,Board,TotalMoves) :-
 game_cycle(Turn,Height,Width,Board,TotalMoves):-
     write('Write the position of the piece you want to move.\n'),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM),
-    move(Turn,Height,Width,XP,YP,XM,YM,Board,NewBoard),
+    move(Turn,XP,YP,XM,YM,Board,NewBoard),
     change_player(Turn,NewTurn),
     UpdatedTotalMoves is TotalMoves + 1,
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),

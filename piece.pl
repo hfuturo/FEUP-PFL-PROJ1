@@ -4,12 +4,14 @@
     choose piece to move and remove it from its place
 */
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM) :-
-    %repeat,
+    repeat,
     select_piece(Turn,Height,Width,Board,XP,YP),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
-    select_move(Height,Width,XM,YM),
-    check_move(XP,YP,XM,YM,Width,Height,Board,Turn,Bool).
-    %change_piece(0,Board,X,Y,NewBoard).
+    select_move(Turn,Height,Width,Board,XM,YM),
+    check_move(XP,YP,XM,YM,Distances,Bool),
+    format('Bool ~w\n',Bool),
+    Bool is 1,
+    !.
 
 /*
     calcula todas as distancias em todas as direcoes que a peça consegue percorrer
@@ -260,20 +262,22 @@ row_distance_left(X,Row,XValue,Turn,Times,Distance) :-
     row_distance_left(UpdatedX,Row,UpdatedXVal,Turn,UpdatedTimes,UpdatedDistance),
     Distance is UpdatedDistance + 1.
 
-move(Turn,Height,Width,XP,YP,XM,YM,Board,NewBoard) :-
+move(Turn,XP,YP,XM,YM,Board,NewBoard) :-
     change_piece(0,Board,XP,YP,TempBoard),
     change_piece(Turn,TempBoard,XM,YM,NewBoard).
 
 /*
     select the move to make
 */
-select_move(Height,Width,X,Y) :-
+select_move(Turn,Height,Width,Board,X,Y) :-
     repeat,
     write('\nSelect the coordinates to where you want to move.\n'),
     write('Column: '),
     read_column_piece(X,Width),
     write('Row: '),
     read_row_piece(Y,Height),
+    get_position_piece(X,Y,Board,Piece),
+    Turn \== Piece,
     !.
 
 /*
