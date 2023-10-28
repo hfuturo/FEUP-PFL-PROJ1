@@ -66,11 +66,11 @@ diagonal_distance_NW(X,Y,XValue,Board,Turn,Times,Distance) :-
 /*
     calcula o numero de peças da mesma equipa seguidas que estão na diagonal de SE
 */
-diagonal_distance_SE(Width,_,_,_,Width,_,_,0,1) :- !.    % peça encontra-se encostada a board no lado direito
+diagonal_distance_SE(Width,_,_,_,Width,_,_,0,1)   :- !.  % peça encontra-se encostada a board no lado direito
 diagonal_distance_SE(_,Height,_,_,_,Height,_,0,1) :- !.  % peça encontra-se encostada a board em baixo
-diagonal_distance_SE(Width,_,1,_,Width,_,1,_,1) :- !.    % jogador 1 encontra 1 no fim da board do lado direito
+diagonal_distance_SE(Width,_,1,_,Width,_,1,_,1)   :- !.  % jogador 1 encontra 1 no fim da board do lado direito
 diagonal_distance_SE(_,Height,1,_,_,Height,1,_,1) :- !.  % jogador 1 encontra 1 no fim da board em baixo
-diagonal_distance_SE(Width,_,2,_,Width,_,2,_,1) :- !.    % jogador 2 encontra 2 no fim da board do lado direito
+diagonal_distance_SE(Width,_,2,_,Width,_,2,_,1)   :- !.  % jogador 2 encontra 2 no fim da board do lado direito
 diagonal_distance_SE(_,Height,2,_,_,Height,2,_,1) :- !.  % jogador 2 encontra 2 no fim da board em baixo
 diagonal_distance_SE(Width,_,_,_,Width,_,_,_,0).         % jogador 1/2 encontra 0,2/0,1 no fim da board do lado direito
 diagonal_distance_SE(_,Height,1,_,_,Height,1,_,0).       % jogador 1/2 encontra 0,2/0,1 no fim da board em baixo
@@ -106,11 +106,11 @@ diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
     calcula o numero de peças da mesma equipa seguidas que estão na diagonal de NE
 */
 diagonal_distance_NE(Width,_,_,_,Width,_,0,1) :- !. % peça encontra-se encostada a board na parte do lado direito
-diagonal_distance_NE(_,1,_,_,_,_,0,1) :- !.         % peça encontra-se encostada a board em cima
+diagonal_distance_NE(_,1,_,_,_,_,0,1)         :- !. % peça encontra-se encostada a board em cima
 diagonal_distance_NE(Width,_,1,_,Width,1,_,1) :- !. % jogador 1 encontra 1 no fim da board do lado direito
-diagonal_distance_NE(_,1,1,_,_,1,_,1) :- !.         % jogador 1 encontra 1 no fim da board em cima
+diagonal_distance_NE(_,1,1,_,_,1,_,1)         :- !. % jogador 1 encontra 1 no fim da board em cima
 diagonal_distance_NE(Width,_,2,_,Width,2,_,1) :- !. % jogador 2 encontra 2 no fim da board do lado direito
-diagonal_distance_NE(_,1,2,_,_,2,_,1) :- !.         % jogador 2 encontra 2 no fim da board em cima
+diagonal_distance_NE(_,1,2,_,_,2,_,1)         :- !. % jogador 2 encontra 2 no fim da board em cima
 diagonal_distance_NE(Width,_,_,_,Width,_,_,0).      % jogador 1/2 encontra 0,2/0,1 no fim da board do lado direito
 diagonal_distance_NE(_,1,_,_,_,_,_,0).              % jogador 1/2 encontra 0,2/0,1 no fim da board em cima
 diagonal_distance_NE(_,_,0,_,_,1,_,0).              % jogador 1 encontra 0
@@ -132,13 +132,13 @@ diagonal_distance_NE(X,Y,XValue,Board,Width,Turn,Times,Distance) :-
 /*
     calcula o numero de peças da mesma equipa seguidas que estão na diagonal de SW
 */
-diagonal_distance_SW(1,_,_,_,_,_,0,1) :- !.        % peça encontra-se encostada a board na parte do lado esquerdo
+diagonal_distance_SW(1,_,_,_,_,_,0,1)           :- !.   % peça encontra-se encostada a board na parte do lado esquerdo
 diagonal_distance_SW(_,Height,_,_,Height,_,0,1) :- !.   % peça encontra-se encostada a board em baixo
-diagonal_distance_SW(1,_,1,_,_,1,_,1) :- !.        % jogador 1 encontra 1 no fim da board do lado esquerdo
+diagonal_distance_SW(1,_,1,_,_,1,_,1)           :- !.   % jogador 1 encontra 1 no fim da board do lado esquerdo
 diagonal_distance_SW(_,Height,1,_,Height,1,_,1) :- !.   % jogador 1 encontra 1 no fim da board em baixo
-diagonal_distance_SW(1,_,2,_,_,2,_,1) :- !.        % jogador 2 encontra 2 no fim da board do lado esquerdo
+diagonal_distance_SW(1,_,2,_,_,2,_,1)           :- !.   % jogador 2 encontra 2 no fim da board do lado esquerdo
 diagonal_distance_SW(_,Height,2,_,Height,2,_,1) :- !.   % jogador 2 encontra 2 no fim da board em baixo
-diagonal_distance_SW(1,_,_,_,_,_,_,0).             % jogador 1/2 encontra 0,2/0,1 no fim da board do lado esquerdo
+diagonal_distance_SW(1,_,_,_,_,_,_,0).                  % jogador 1/2 encontra 0,2/0,1 no fim da board do lado esquerdo
 diagonal_distance_SW(_,Height,_,_,Height,_,_,0).        % jogador 1/2 encontra 0,2/0,1 no fim da board em baixo
 diagonal_distance_SW(_,_,0,_,_,1,_,0).                  % jogador 1 encontra 0
 diagonal_distance_SW(_,_,2,_,_,1,_,0).                  % jogador 1 encontra 2
