@@ -5,7 +5,7 @@
 */
 check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
-    jump_possible(Distances,XP,YP,XM,YM),
+    jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn),
     !,
     do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard).
 
@@ -75,9 +75,142 @@ menu_jump_cycle(Bool) :- Bool is 0.
 /*
     verifica se está numa posição de continuous jump
 */
-jump_possible(Distances,XP,YP,XM,YM) :-
+jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
     \+no_line(Distances),
-    \+no_jump(XP,YP,XM,YM).
+    \+no_jump(XP,YP,XM,YM),
+    can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn).
+
+can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
+    nth1(1,Distances,Vertical),
+    nth1(2,Distances,Horizontal),
+    nth1(3,Distances,DiagonalNE),
+    nth1(4,Distances,DiagonalNW),
+    write(Distances),
+    format('~nXM: ~w | ', [XM]),
+    format('YM: ~w~n', [YM]),
+
+    (
+        % vertical
+        (
+            % up
+            (
+                Vertical > 1,
+                Height >= YM + Vertical,
+                UpdatedY is YM + Vertical,
+                nth1(UpdatedY,Board,Row),
+                nth1(XM,Row,XVal),
+                Turn =\= XVal,
+                UpdatedY =\= YP,
+                write('up\n')
+            );
+
+            % down
+            (
+                Vertical > 1,
+                1 =< YM - Vertical,
+                UpdatedY is YM - Vertical,
+                nth1(UpdatedY,Board,Row),
+                nth1(XM,Row,XVal),
+                Turn =\= XVal,
+                UpdatedY =\= YP,
+                write('down\n')
+            )
+        );
+
+        % horizontal
+        (
+            % right
+            (
+                Horizontal > 1,
+                Width >= XM + Horizontal,
+                UpdatedX is XM + Horizontal,
+                nth1(Y,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                UpdatedX =\= XP,
+                write('right\n')
+            );
+
+            % left      
+            (
+                Horizontal > 1,
+                1 =< XM - Horizontal,
+                UpdatedX is XM - Horizontal,
+                nth1(Y,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                UpdatedX =\= XP,
+                format('XVal: ~w~n',[XVal]),
+                write('left\n')
+            )
+        );
+
+        % diagonal NE-SW
+        (
+            % NE
+            (
+                DiagonalNE > 1,
+                1 =< YM - DiagonalNE,
+                Width >= XM + DiagonalNE,
+                UpdatedY is YM - DiagonalNE,
+                UpdatedX is XM + DiagonalNE,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            );
+
+            % SW
+            (
+                DiagonalNE > 1,
+                Height >= YM + DiagonalNE,
+                1 =< XM - DiagonalNE,
+                UpdatedY is YM + DiagonalNE,
+                UpdatedX is XM - DiagonalNE,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            )
+        );
+
+        % diagonal NW-SE
+        (
+            % NW
+            (
+                DiagonalNW > 1,
+                1 =< YM - DiagonalNW,
+                1 =< XM - DiagonalNW,
+                UpdatedY is YM - DiagonalNW,
+                UpdatedX is XM - DiagonalNW,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            );
+
+            % SE
+            (
+                DiagonalNW > 1,
+                Height >= YM + DiagonalNW,
+                Width >= XM + DiagonalNW,
+                UpdatedY is YM + DiagonalNW,
+                UpdatedX is XM + DiagonalNW,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            )
+        )                
+    ).
 
 /*
     verifica que não há linhas para fazer jump
