@@ -1,6 +1,7 @@
 :- consult(utils).
 :- consult(board).
 :- consult(piece).
+:- consult(jump).
 
 change_player(1,2).
 change_player(2,1).
@@ -27,10 +28,12 @@ display_game(Turn,Width,Board,TotalMoves) :-
 game_cycle(Turn,Height,Width,Board,TotalMoves):-
     write('Write the position of the piece you want to move.\n'),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard),
+    move(Turn,XP,YP,XM,YM,Board,TempBoard),
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempBoard,NewBoard),
     change_player(Turn,NewTurn),
     UpdatedTotalMoves is TotalMoves + 1,
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
+
     !,
     game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves).
 
