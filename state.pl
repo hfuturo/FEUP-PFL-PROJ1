@@ -7,7 +7,7 @@ change_player(1,2).
 change_player(2,1).
 
 /*
-    create board with specific size
+    criar um tabuleiro com um tamanho especifico
 */
 initial_state(Height,Width,Board) :-
     read_size_board(Height,Width),
@@ -15,22 +15,30 @@ initial_state(Height,Width,Board) :-
     write('\n').
 
 /*
-    display board
+    print do tabuleiro
 */
 display_game(Turn,Width,Board,TotalMoves) :-
     print_board(Board,Width,Turn,TotalMoves),
     !.   % remove output true ? do terminal quando acaba de correr
 
+
+game_first_play(Turn,Height,Width,Board,NewBoard) :-
+    format('It is the turn of the player ~w.\n',Turn),
+    write('Write the position of the piece you want to move.\n'),
+    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM),
+    move(Turn,XP,YP,XM,YM,Board,NewBoard).
+
+
+/*
+    verificar se o jogo acabou e congratular o vencedor
+*/
 game_cycle(Turn,Height,Width,Board,_):- 
     game_over(Board,Width,Height,Turn,Winner), 
     !, 
     congratulate(Winner).
 
-
-
-
 /*
-    cycle of the game
+    ciclo do jogo
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves):-
     format('It is the turn of the player ~w.\n',Turn),
@@ -45,42 +53,48 @@ game_cycle(Turn,Height,Width,Board,TotalMoves):-
     !,
     game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves).
 
+/*
+    verificar se o jogo acabou, e se sim ver quem ganhou
+*/
 game_over(Board,Width,Height,Turn,Winner) :-
     change_player(Turn,NewTurn),
     Y is 1,
-    check_winner(Board,Width,Height,Width,Y,NewTurn,FirstWinner),
+    check_winner(Board,Width,Height,Y,Turn,FirstWinner),
     FirstWinner is 0,
     !,
-    check_winner(Board,Width,Height,Width,Y,Turn,SecondWinner),
+    check_winner(Board,Width,Height,Y,NewTurn,SecondWinner),
     SecondWinner is 1,
-    Winner is Turn.
-
-game_over(_,_,_,Turn,Winner) :-
-    change_player(Turn,NewTurn),
     Winner is NewTurn.
 
-check_winner(Board,Width,Height,Width,Y,Player,BoardWinner) :-
+game_over(_,_,_,Turn,Turn).
+
+/*
+    verificar se jogador venceu
+*/
+check_winner(Board,Width,Height,Y,Player,BoardWinner) :-
     Y =< Height,
     X is 1,
-    check_winner_row(Board,Width,Height,Width,Y,X,Player,Winner),
+    check_winner_row(Board,Width,Height,Y,X,Player,Winner),
     Winner is 1,
     NY is Y+1,
-    check_winner(Board,Width,Height,Width,NY,Player,BoardWinner).
+    check_winner(Board,Width,Height,NY,Player,BoardWinner),
+    !.
 
-check_winner(_,_,Height,_,Y,_,1) :- Y > Height.
-check_winner(_,_,_,_,_,_,BoardWinner) :- BoardWinner is 0.
+check_winner(_,_,Height,Y,_,1) :- Y > Height.
+check_winner(_,_,_,_,_,BoardWinner) :- BoardWinner is 0.
 
-check_winner_row(Board,Width,Height,Width,Y,X,Player,RowWinner) :-
+check_winner_row(Board,Width,Height,Y,X,Player,RowWinner) :-
     X =< Width,
-    check_winner_piece(Board,Width,Height,Width,Y,X,Player,Winner),
+    check_winner_piece(Board,Width,Height,Y,X,Player,Winner),
     Winner is 1,
     NX is X+1,
-    check_winner_row(Board,Width,Height,Width,Y,NX,Player,RowWinner).
+    check_winner_row(Board,Width,Height,Y,NX,Player,RowWinner),
+    !.
 
-check_winner_row(_,Width,_,_,_,X,_,1) :- X > Width.
-check_winner_row(_,_,_,_,_,_,_,RowWinner) :- RowWinner is 0.
+check_winner_row(_,Width,_,_,X,_,1) :- X > Width.
+check_winner_row(_,_,_,_,_,_,RowWinner) :- RowWinner is 0.
 
-check_winner_piece(Board,Width,Height,Width,Y,X,Player,PieceWinner) :-
+check_winner_piece(Board,Width,Height,Y,X,Player,PieceWinner) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Value),
     Value is Player,
@@ -90,17 +104,17 @@ check_winner_piece(Board,Width,Height,Width,Y,X,Player,PieceWinner) :-
     YDOWN is Y-1,
 
     /* SAME ROW */
-    check_adjacent_pieces(Board,Width,Height,Width,Y,XUP,Player,Winner1),
-    check_adjacent_pieces(Board,Width,Height,Width,Y,XDOWN,Player,Winner2),
+    check_adjacent_pieces(Board,Width,Height,Y,XUP,Player,Winner1),
+    check_adjacent_pieces(Board,Width,Height,Y,XDOWN,Player,Winner2),
     /* SAME COLUMN */
-    check_adjacent_pieces(Board,Width,Height,Width,YUP,X,Player,Winner3),
-    check_adjacent_pieces(Board,Width,Height,Width,YDOWN,X,Player,Winner4),
+    check_adjacent_pieces(Board,Width,Height,YUP,X,Player,Winner3),
+    check_adjacent_pieces(Board,Width,Height,YDOWN,X,Player,Winner4),
     /* SAME DIAGONAL CRESCENTE */
-    check_adjacent_pieces(Board,Width,Height,Width,YUP,XUP,Player,Winner5),
-    check_adjacent_pieces(Board,Width,Height,Width,YDOWN,XDOWN,Player,Winner6),
+    check_adjacent_pieces(Board,Width,Height,YUP,XUP,Player,Winner5),
+    check_adjacent_pieces(Board,Width,Height,YDOWN,XDOWN,Player,Winner6),
     /* SAME DIAGONAL DECRESCENTE */
-    check_adjacent_pieces(Board,Width,Height,Width,YUP,XDOWN,Player,Winner7),
-    check_adjacent_pieces(Board,Width,Height,Width,YDOWN,XUP,Player,Winner8),
+    check_adjacent_pieces(Board,Width,Height,YUP,XDOWN,Player,Winner7),
+    check_adjacent_pieces(Board,Width,Height,YDOWN,XUP,Player,Winner8),
 
     (
         Winner1 is 0;
@@ -115,9 +129,9 @@ check_winner_piece(Board,Width,Height,Width,Y,X,Player,PieceWinner) :-
     PieceWinner is 0,
     !.
 
-check_winner_piece(_,_,_,_,_,_,_,1).
+check_winner_piece(_,_,_,_,_,_,1).
 
-check_adjacent_pieces(Board,Width,Height,Width,Y,X,Player,Winner) :-
+check_adjacent_pieces(Board,Width,Height,Y,X,Player,Winner) :-
     Y =< Height,
     Y >= 1,
     X =< Width,
@@ -128,7 +142,7 @@ check_adjacent_pieces(Board,Width,Height,Width,Y,X,Player,Winner) :-
     Winner is 0,
     !.
 
-check_adjacent_pieces(_,_,_,_,_,_,_,1) .
+check_adjacent_pieces(_,_,_,_,_,_,1) .
 
 
 /*
