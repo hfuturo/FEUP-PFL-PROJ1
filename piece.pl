@@ -18,9 +18,68 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM) :-
 calculate_distances(X,Y,Turn,Height,Width,Board,Distances) :-
     row_distance(X,Y,Board,Width,Turn,RowDistance),
     column_distance(X,Y,Board,Height,Turn,ColumnDistance),
-    diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,DiagonalDistance),
+    diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,NESWDiagonalDistance),
+    diagonal_distance_NWSE(X,Y,Board,Width,Height,Turn,NWSEDiagonalDistance),
     append([ColumnDistance],[RowDistance],DistancesAux),
+    append([NESWDiagonalDistance],[NWSEDiagonalDistance],DistancesAux2),
+    append(DistancesAux,DistancesAux2,Distances),
     write(Distances).
+
+diagonal_distance_NWSE(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
+    nth1(Y,Board,Row),
+    nth1(X,Row,XValue),
+    Times is 0,
+    diagonal_distance_NW(X,Y,XValue,Board,Turn,Times,NWDiagonalDistance),  % ↗
+    diagonal_distance_SE(X,Y,XValue,Board,Width,Height,Turn,Times,SEDiagonalDistance), % ↙
+    DiagonalDistance is NWDiagonalDistance + SEDiagonalDistance - 1.
+
+diagonal_distance_NW(1,_,_,_,_,0,1) :- !.    % peça encontra-se encostada a board no lado esquerdo
+diagonal_distance_NW(_,1,_,_,_,0,1) :- !.    % peça encontra-se encostada a board em cima
+diagonal_distance_NW(1,_,1,_,1,_,1) :- !.    % jogador 1 encontra 1 no fim da board do lado esquerdo
+diagonal_distance_NW(_,1,1,_,1,_,1) :- !.    % jogador 1 encontra 1 no fim da board em cima
+diagonal_distance_NW(1,_,2,_,2,_,1) :- !.    % jogador 2 encontra 2 no fim da board em cima
+diagonal_distance_NW(_,1,2,_,2,_,1) :- !.    % jogador 2 encontra 2 no fim da board em cima
+diagonal_distance_NW(1,_,_,_,_,_,0).         % jogador 1/2 encontra 0,2/0,1 no fim da board no lado esquerdo
+diagonal_distance_NW(_,1,_,_,_,_,0).         % jogador 1/2 encontra 0,2/0,1 no fim da board em cima
+diagonal_distance_NW(_,_,0,_,1,_,0).         % jogador 1 encontra 0
+diagonal_distance_NW(_,_,2,_,1,_,0).         % jogador 1 encontra 2
+diagonal_distance_NW(_,_,0,_,2,_,0).         % jogador 2 encontra 0
+diagonal_distance_NW(_,_,1,_,2,_,0).         % jogador 2 encontra 1
+diagonal_distance_NW(X,Y,XValue,Board,Turn,Times,Distance) :-
+    X >= 1,
+    Y >= 1,
+    XValue is Turn,
+    UpdatedX is X - 1,
+    UpdatedY is Y - 1,
+    UpdatedTimes is Times + 1,
+    nth1(UpdatedY,Board,Row),
+    nth1(UpdatedX,Row,UpdatedXVal),
+    diagonal_distance_NW(UpdatedX,UpdatedY,UpdatedXVal,Board,Turn,UpdatedTimes,UpdatedDistance),
+    Distance is UpdatedDistance + 1.
+
+diagonal_distance_SE(Width,_,_,_,Width,_,_,0,1) :- !.    % peça encontra-se encostada a board no lado direito
+diagonal_distance_SE(_,Height,_,_,_,Height,_,0,1) :- !.  % peça encontra-se encostada a board em baixo
+diagonal_distance_SE(Width,_,1,_,Width,_,1,_,1) :- !.    % jogador 1 encontra 1 no fim da board do lado direito
+diagonal_distance_SE(_,Height,1,_,_,Height,1,_,1) :- !.  % jogador 1 encontra 1 no fim da board em baixo
+diagonal_distance_SE(Width,_,2,_,Width,_,2,_,1) :- !.    % jogador 2 encontra 2 no fim da board do lado direito
+diagonal_distance_SE(_,Height,2,_,_,Height,2,_,1) :- !.  % jogador 2 encontra 2 no fim da board em baixo
+diagonal_distance_SE(Width,_,_,_,Width,_,_,_,0).         % jogador 1/2 encontra 0,2/0,1 no fim da board do lado direito
+diagonal_distance_SE(_,Height,1,_,_,Height,1,_,0).       % jogador 1/2 encontra 0,2/0,1 no fim da board em baixo
+diagonal_distance_SE(_,_,0,_,_,_,1,_,0) :- !.            % jogador 1 encontra 0
+diagonal_distance_SE(_,_,2,_,_,_,1,_,0) :- !.            % jogador 1 encontra 2
+diagonal_distance_SE(_,_,0,_,_,_,2,_,0) :- !.            % jogador 2 encontra 0
+diagonal_distance_SE(_,_,1,_,_,_,2,_,0) :- !.            % jogador 2 encontra 1
+diagonal_distance_SE(X,Y,XValue,Board,Width,Height,Turn,Times,Distance) :-
+    X =< Width,
+    Y =< Height,
+    XValue is Turn,
+    UpdatedX is X + 1,
+    UpdatedY is Y + 1,
+    UpdatedTimes is Times + 1,
+    nth1(UpdatedY,Board,Row),
+    nth1(UpdatedX,Row,UpdatedXVal),
+    diagonal_distance_SE(UpdatedX,UpdatedY,UpdatedXVal,Board,Width,Height,Turn,UpdatedTimes,UpdatedDistance),
+    Distance is UpdatedDistance + 1.
 
 /*
     calcula a distancia que a peca pode correr na diagonal de NE-SW
@@ -31,20 +90,20 @@ diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
     Times is 0,
     diagonal_distance_NE(X,Y,XValue,Board,Width,Turn,Times,NEDiagonalDistance),  % ↗
     diagonal_distance_SW(X,Y,XValue,Board,Height,Turn,Times,SWDiagonalDistance), % ↙
-    DiagonalDistance is NEDiagonalDistance + SWDiagonalDistance - 1,
-    write(DiagonalDistance).
+    DiagonalDistance is NEDiagonalDistance + SWDiagonalDistance - 1.
+    %write(DiagonalDistance).
 
 /*
     calcula o numero de peças da mesma equipa seguidas que estão na diagonal de NE
 */
 diagonal_distance_NE(Width,_,_,_,Width,_,0,1) :- !. % peça encontra-se encostada a board na parte do lado direito
-diagonal_distance_NE(_,1,_,_,_,_,0,1) :- !.     % peça encontra-se encostada a board em cima
+diagonal_distance_NE(_,1,_,_,_,_,0,1) :- !.         % peça encontra-se encostada a board em cima
 diagonal_distance_NE(Width,_,1,_,Width,1,_,1) :- !. % jogador 1 encontra 1 no fim da board do lado direito
-diagonal_distance_NE(_,1,1,_,_,1,_,1) :- !.     % jogador 1 encontra 1 no fim da board em cima
+diagonal_distance_NE(_,1,1,_,_,1,_,1) :- !.         % jogador 1 encontra 1 no fim da board em cima
 diagonal_distance_NE(Width,_,2,_,Width,2,_,1) :- !. % jogador 2 encontra 2 no fim da board do lado direito
-diagonal_distance_NE(_,1,2,_,_,2,_,1) :- !.     % jogador 2 encontra 2 no fim da board em cima
+diagonal_distance_NE(_,1,2,_,_,2,_,1) :- !.         % jogador 2 encontra 2 no fim da board em cima
 diagonal_distance_NE(Width,_,_,_,Width,_,_,0).      % jogador 1/2 encontra 0,2/0,1 no fim da board do lado direito
-diagonal_distance_NE(_,1,_,_,_,_,_,0).          % jogador 1/2 encontra 0,2/0,1 no fim da board em cima
+diagonal_distance_NE(_,1,_,_,_,_,_,0).              % jogador 1/2 encontra 0,2/0,1 no fim da board em cima
 diagonal_distance_NE(_,_,0,_,_,1,_,0).              % jogador 1 encontra 0
 diagonal_distance_NE(_,_,2,_,_,1,_,0).              % jogador 1 encontra 2
 diagonal_distance_NE(_,_,0,_,_,2,_,0).              % jogador 2 encontra 0
