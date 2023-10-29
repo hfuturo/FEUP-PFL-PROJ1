@@ -107,10 +107,9 @@ do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,Visit
     display_game(Turn,Width,Board,TotalMoves),
     UpdatedTotalMoves is TotalMoves + 1,
     choose_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,VisitedPositions),
-    move(Turn,XM,YM,NXM,NYM,Board,NewBoard),
-    format('NXM: ~w | NYM: ~w~n',[NXM,NYM]),
-    display_game(Turn,Width,NewBoard,TotalMoves),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard,VisitedPositions).
+    move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
+    display_game(Turn,Width,TempBoard,TotalMoves),
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions).
 
 do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board,_).
 

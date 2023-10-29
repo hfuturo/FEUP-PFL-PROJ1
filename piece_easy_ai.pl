@@ -90,9 +90,9 @@ do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoar
     nl,
     UpdatedTotalMoves is TotalMoves + 1,
     choose_jump_random(Turn,Height,Width,Board,XM,YM,NXM,NYM),
-    move(Turn,XM,YM,NXM,NYM,Board,NewBoard),
-    display_game(Turn,Width,NewBoard,TotalMoves),
-    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard,VisitedPositions).
+    move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
+    display_game(Turn,Width,TempBoard,TotalMoves),
+    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions).
 
 do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board,_).
 
