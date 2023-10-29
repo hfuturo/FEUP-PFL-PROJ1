@@ -31,8 +31,7 @@ read_char(Number) :-
 */
 read_size_board(Height,Width) :-
     write('Write the Height of the board (between 5 and 15)\n'),
-    read_size_board_side(Height),
-    write('\n'),
+    read_size_board_side(Height), nl,
     write('Write the width of the board (between 5 and 15)\n'),
     read_size_board_side(Width).
 
@@ -47,32 +46,3 @@ read_size_board_side(Side) :-
     Side=<15,
     !.
 
-/*
-    print line of the board
-*/
-print_line(Content,Line) :-
-    print_line_content(Content),
-    format('| ~w\n',Line).
-
-/*
-    print content of the line of the board
-*/
-print_line_content([]).
-print_line_content([H|T]) :-
-    format('| ~w ',H),
-    print_line_content(T).
-
-/*
-    create squares to separate the content of the board
-*/
-print_limiter(Width) :-
-    print_limiter_aux(0,Width).
-
-print_limiter_aux(Pos,Max) :-
-    Pos<Max,
-    write('----'),
-    Pos1 is Pos+1,
-    print_limiter_aux(Pos1,Max).
-print_limiter_aux(Max,Max) :-
-    write('-'),
-    write('\n').

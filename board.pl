@@ -1,7 +1,5 @@
 :- use_module(library(lists)).
 
-:- consult(utils).
-
 /*
     create initial board
 */
@@ -27,13 +25,11 @@ make_board_player_initial(Player,PlayerBoard,Width) :-
     append(MidleRow,[0],EndingRow),
     append([EndingRow],[EndingRow],PlayerBoard).
 
-
 /*
     print board in the console
 */
 print_board(Board,Width,Turn,TotalMoves) :-
-    print_board_top_coordinates(Width),
-    write('\n'),
+    print_board_top_coordinates(Width), nl,
     print_board_content(Board,Width,1),
     print_turn(Turn),
     print_total_moves(TotalMoves).
@@ -76,3 +72,32 @@ print_board_content([H|T],Width,Line) :-
     print_line(H,Line),
     Line1 is Line+1,
     print_board_content(T,Width,Line1).
+
+/*
+    print line of the board
+*/
+print_line(Content,Line) :-
+    print_line_content(Content),
+    format('| ~w\n',Line).
+
+/*
+    print content of the line of the board
+*/
+print_line_content([]).
+print_line_content([H|T]) :-
+    format('| ~w ',H),
+    print_line_content(T).
+
+/*
+    create squares to separate the content of the board
+*/
+print_limiter(Width) :-
+    print_limiter_aux(0,Width).
+
+print_limiter_aux(Pos,Max) :-
+    Pos<Max,
+    write('----'),
+    Pos1 is Pos+1,
+    print_limiter_aux(Pos1,Max).
+print_limiter_aux(Max,Max) :-
+    write('-'), nl.
