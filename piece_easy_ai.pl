@@ -71,13 +71,14 @@ choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,_) :-
 /*
     Verifica se está numa situação onde o continuous jump é possivel em modo Easy AI
 */
-check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
+check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
-    jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn),
+    jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
+    append(VisitedPositions,[XM,YM],NewVisitedPositions),
     !,
-    do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard).
+    do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,NewVisitedPositions).
 
-check_continuous_jump_cycle_random(_,_,_,_,_,_,_,_,Board,Board).
+check_continuous_jump_cycle_random(_,_,_,_,_,_,_,_,Board,Board,_).
 
 /*
     Fazer um continuous jump caso se queira em modo Easy AI
@@ -91,18 +92,19 @@ do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoar
     choose_jump_random(Turn,Height,Width,Board,XM,YM,NXM,NYM),
     move(Turn,XM,YM,NXM,NYM,Board,NewBoard),
     display_game(Turn,Width,NewBoard,TotalMoves),
-    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard).
+    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard,VisitedPositions).
 
-do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board).
+do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board,_).
 
 /*
     Escolher posição para onde mover, verificando que é um jump e se é possivel em modo Easy AI
 */
-choose_jump_random(Turn,Height,Width,Board,XP,YP,XM,YM) :-
+choose_jump_random(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions) :-
     repeat,
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_random_move(Turn,Height,Width,Board,XM,YM,XP,YP,Distances),
     check_move(XP,YP,XM,YM,Distances,Bool),
     \+no_jump(XP,YP,XM,YM),
+    \+member([XM,YM],VisitedPositions),
     Bool is 1,
     !.

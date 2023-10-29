@@ -87,38 +87,43 @@ read_column_piece(Position,Coordinate) :-
 /*
     verifica se está numa situação onde o continuous jump é possivel
 */
-check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
+check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
-    jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn),
+    jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
+    append(VisitedPositions,[XM,YM],NewVisitedPositions),
     !,
-    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard).
+    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,NewVisitedPositions).
 
-check_continuous_jump_cycle(_,_,_,_,_,_,_,_,Board,Board).
+check_continuous_jump_cycle(_,_,_,_,_,_,_,_,Board,Board,_).
 
 /*
     menu para se saber se quer fazer jump again e executa caso seja
 */
-do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
+do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
     menu_jump_cycle(Option),
     Option is 1,
     !,
     nl,
     display_game(Turn,Width,Board,TotalMoves),
     UpdatedTotalMoves is TotalMoves + 1,
-    choose_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM),
+    choose_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,VisitedPositions),
     move(Turn,XM,YM,NXM,NYM,Board,NewBoard),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard).
+    format('NXM: ~w | NYM: ~w~n',[NXM,NYM]),
+    display_game(Turn,Width,NewBoard,TotalMoves),
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,NewBoard,NewNewBoard,VisitedPositions).
 
-do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board).
+do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board,_).
 
 /*
     escolhe posição para onde mover, verificando que é um jump e se é possivel
 */
-choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM) :-
+choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions) :-
     repeat,
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_move(Turn,Height,Width,Board,XM,YM,XP,YP),
     check_move(XP,YP,XM,YM,Distances,Bool),
     \+no_jump(XP,YP,XM,YM),
+    \+member([XM,YM],VisitedPositions),
+    write('jump\n'),
     Bool is 1,
     !.

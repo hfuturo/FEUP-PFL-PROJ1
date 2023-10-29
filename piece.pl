@@ -25,16 +25,16 @@ get_position_piece(X,Y,Board,Piece) :-
 /*
     verifica se está numa posição de continuous jump
 */
-jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
+jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
     \+no_line(Distances),
     \+no_jump(XP,YP,XM,YM),
-    can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn).
+    can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions).
 
-can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
+can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
     nth1(1,Distances,Vertical),
     nth1(2,Distances,Horizontal),
     nth1(3,Distances,DiagonalNE),
-    nth1(4,Distances,DiagonalNW),
+    nth1(4,Distances,DiagonalNW),   
 
     (
         % vertical
@@ -46,6 +46,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedY is YM - Vertical,
                 nth1(UpdatedY,Board,Row),
                 nth1(XM,Row,XVal),
+                \+member([XM,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedY =\= YP
             );
@@ -57,6 +58,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedY is YM + Vertical,
                 nth1(UpdatedY,Board,Row),
                 nth1(XM,Row,XVal),
+                \+member([XM,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedY =\= YP
             )
@@ -71,6 +73,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM + Horizontal,
                 nth1(YM,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,YM],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedX =\= XP
             );
@@ -82,6 +85,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM - Horizontal,
                 nth1(YM,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,YM],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedX =\= XP
             )
@@ -98,6 +102,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM + DiagonalNE,
                 nth1(UpdatedY,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
                     UpdatedY =\= YP ; UpdatedX =\= XP
@@ -113,6 +118,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM - DiagonalNE,
                 nth1(UpdatedY,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
                     UpdatedY =\= YP ; UpdatedX =\= XP
@@ -131,6 +137,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM - DiagonalNW,
                 nth1(UpdatedY,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
                     UpdatedY =\= YP ; UpdatedX =\= XP
@@ -146,6 +153,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 UpdatedX is XM + DiagonalNW,
                 nth1(UpdatedY,Board,Row),
                 nth1(UpdatedX,Row,XVal),
+                \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
                     UpdatedY =\= YP ; UpdatedX =\= XP
