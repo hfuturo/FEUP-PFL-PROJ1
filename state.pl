@@ -50,7 +50,7 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     ciclo de jogo em modo Easy AI
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
-    (Mode is 4);(Mode is 2, Turn is 2),
+    ((Mode is 4);(Mode is 2, Turn is 2)),
     choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
@@ -64,7 +64,8 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
 /*
     ciclo de jogo em modo Difficult AI
 */
-game_cycle(Turn,Height,Width,Board,TotalMoves,Mode).
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
+    ((Mode is 5);(Mode is 3, Turn is 2)).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
