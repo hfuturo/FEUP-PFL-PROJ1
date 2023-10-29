@@ -30,9 +30,9 @@ read_char(Number) :-
     read size board and check if it is valid
 */
 read_size_board(Height,Width) :-
-    write('Write the Height of the board (between 5 and 15)\n'),
+    write('Write the Height of the board.\n'),
     read_size_board_side(Height), nl,
-    write('Write the width of the board (between 5 and 15)\n'),
+    write('Write the width of the board.\n'),
     read_size_board_side(Width).
 
 /*

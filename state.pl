@@ -85,7 +85,7 @@ congratulate(Winner) :-
     format('Player ~w won!',Winner).
 
 print_player_turn(Turn) :-
-    write('-----------------------------------------------------\n'),
-    format('| It is the turn of the player ~w.                   |\n',Turn),
-    write('| Write the position of the piece you want to move. |\n'),
-    write('-----------------------------------------------------\n').
+    write('-----------------------------------------------------'),
+    format('\n| It is the turn of the player ~w.                   |',Turn),
+    write('\n| Write the position of the piece you want to move. |'),
+    write('\n-----------------------------------------------------').
