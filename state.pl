@@ -1,9 +1,10 @@
 :- consult(utils).
 :- consult(board).
-:- consult(piece).
-:- consult(continuous_jump).
 :- consult(check_win).
-:- consult(ai).
+
+:- consult(piece_person).
+:- consult(piece_easy_ai).
+:- consult(piece).
 
 change_player(1,2).
 change_player(2,1).
@@ -53,7 +54,7 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
-    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard),
+    check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard),
     change_player(Turn,NewTurn),
     UpdatedTotalMoves is TotalMoves + 1,
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),

@@ -16,3 +16,21 @@ menu_game_mode(Option) :-
     !,
     Option is Number.
 
+/*
+    menu para decidir entre fazer jump outra vez ou não
+*/
+menu_jump_cycle(Option) :-
+    repeat,
+    write('\n-----------------------------------|'),
+    write('\n|       MENU CONTINUOUS JUMP       |'),
+    write('\n| Do you want to continue jumping? |'),
+    write('\n| 1: Yes                           |'),
+    write('\n| 2: No                            |'),
+    write('\n-----------------------------------|'), nl,
+    write('Select the number of the option: '),
+    read_number(Number),
+    Number > 0,
+    Number =< 2,
+    !,
+    Option is Number.
+

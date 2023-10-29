@@ -1,70 +1,12 @@
-:- consult(check_move).
-:- consult(line_distance).
-
 /*
-    escolher movimento na primeira jogada
-*/
-choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,0) :-
-    repeat,
-    write('\n----------------------------------------------------|'),
-    write('\n| First move of the game, it must be a Single Step. |'),
-    write('\n----------------------------------------------------|'),
-    select_piece(Turn,Height,Width,Board,XP,YP),
-    select_move(Turn,Height,Width,Board,XM,YM,XP,YP),
-    check_move_single_step(XP,YP,XM,YM,Bool),
-    Bool is 1,
-    !.
-
-/*
-    escolher movimento
-*/
-choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_) :-
-    repeat,
-    select_piece(Turn,Height,Width,Board,XP,YP),
-    calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
-    select_move(Turn,Height,Width,Board,XM,YM,XP,YP),
-    check_move(XP,YP,XM,YM,Distances,Bool),
-    Bool is 1,
-    !.
-
-/*
-    atualzizar o tabuleiro de acordo com a movimentação
+    Atualzizar o tabuleiro de acordo com a movimentação
 */
 move(Turn,XP,YP,XM,YM,Board,NewBoard) :-
     change_piece(0,Board,XP,YP,TempBoard),
     change_piece(Turn,TempBoard,XM,YM,NewBoard).
 
 /*
-    escolher o movimento a fazer
-*/
-select_move(Turn,Height,Width,Board,X,Y,XP,YP) :-
-    repeat,
-    write('\nSelect the coordinates to where you want to move.\n'),
-    write('Column: '),
-    read_column_piece(X,Width),
-    write('Row: '),
-    read_row_piece(Y,Height),
-    get_position_piece(X,Y,Board,Piece),
-    Turn \== Piece,
-    (XP \== X; YP \== Y),
-    !.
-
-/*
-    escolher a peça a mover
-*/
-select_piece(Turn,Height,Width,Board,X,Y) :-
-    repeat,
-    write('\nSelect the coordinates where the piece is.\n'),
-    write('Column: '),
-    read_column_piece(X,Width),
-    write('Row: '),
-    read_row_piece(Y,Height),
-    get_position_piece(X,Y,Board,Piece),
-    Turn is Piece,
-    !.
-
-/*
-    alterar peça numa determinada posição do tabuleiro
+    Alterar peça numa determinada posição do tabuleiro
 */
 change_piece(Value,Board,X,Y,NewBoard) :-
     nth1(Y,Board,Row),
@@ -72,30 +14,171 @@ change_piece(Value,Board,X,Y,NewBoard) :-
     nth1(X,NewRow,Value,TempRow),
     nth1(Y,Board,_,TempBoard),
     nth1(Y,NewBoard,NewRow,TempBoard).
-  
-/*
-    ler coordenada Y da peça
-*/  
-read_row_piece(Position,Coordinate) :-
-    repeat,
-    read_number(Position),
-    Position>=1,
-    Position=<Coordinate,
-    !.
 
 /*
-    ler coordenada X da peça
-*/
-read_column_piece(Position,Coordinate) :-
-    repeat,
-    read_char(Position),
-    Position>=1,
-    Position=<Coordinate,
-    !.
-
-/*
-    ver qual a peça que está numa determinada posição do tabuleiro
+    Ver qual a peça que está numa determinada posição do tabuleiro
 */
 get_position_piece(X,Y,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
+
+/*
+    verifica se está numa posição de continuous jump
+*/
+jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
+    \+no_line(Distances),
+    \+no_jump(XP,YP,XM,YM),
+    can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn).
+
+can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
+    nth1(1,Distances,Vertical),
+    nth1(2,Distances,Horizontal),
+    nth1(3,Distances,DiagonalNE),
+    nth1(4,Distances,DiagonalNW),
+
+    (
+        % vertical
+        (
+            % up
+            (
+                Vertical > 1,
+                1 =< YM - Vertical,
+                UpdatedY is YM - Vertical,
+                nth1(UpdatedY,Board,Row),
+                nth1(XM,Row,XVal),
+                Turn =\= XVal,
+                UpdatedY =\= YP
+            );
+
+            % down
+            (
+                Vertical > 1,
+                Height >= YM + Vertical,
+                UpdatedY is YM + Vertical,
+                nth1(UpdatedY,Board,Row),
+                nth1(XM,Row,XVal),
+                Turn =\= XVal,
+                UpdatedY =\= YP
+            )
+        );
+
+        % horizontal
+        (
+            % right
+            (
+                Horizontal > 1,
+                Width >= XM + Horizontal,
+                UpdatedX is XM + Horizontal,
+                nth1(Y,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                UpdatedX =\= XP
+            );
+
+            % left      
+            (
+                Horizontal > 1,
+                1 =< XM - Horizontal,
+                UpdatedX is XM - Horizontal,
+                nth1(Y,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                UpdatedX =\= XP
+            )
+        );
+
+        % diagonal NE-SW
+        (
+            % NE
+            (
+                DiagonalNE > 1,
+                1 =< YM - DiagonalNE,
+                Width >= XM + DiagonalNE,
+                UpdatedY is YM - DiagonalNE,
+                UpdatedX is XM + DiagonalNE,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            );
+
+            % SW
+            (
+                DiagonalNE > 1,
+                Height >= YM + DiagonalNE,
+                1 =< XM - DiagonalNE,
+                UpdatedY is YM + DiagonalNE,
+                UpdatedX is XM - DiagonalNE,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            )
+        );
+
+        % diagonal NW-SE
+        (
+            % NW
+            (
+                DiagonalNW > 1,
+                1 =< YM - DiagonalNW,
+                1 =< XM - DiagonalNW,
+                UpdatedY is YM - DiagonalNW,
+                UpdatedX is XM - DiagonalNW,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            );
+
+            % SE
+            (
+                DiagonalNW > 1,
+                Height >= YM + DiagonalNW,
+                Width >= XM + DiagonalNW,
+                UpdatedY is YM + DiagonalNW,
+                UpdatedX is XM + DiagonalNW,
+                nth1(UpdatedY,Board,Row),
+                nth1(UpdatedX,Row,XVal),
+                Turn =\= XVal,
+                (   % necessário verificar se novo jump não é a coord anterior
+                    UpdatedY =\= YP ; UpdatedX =\= XP
+                )
+            )
+        )                
+    ).
+
+/*
+    verifica que não há linhas para fazer jump
+*/
+no_line(Distances) :-
+    nth1(1,Distances,Elem1),
+    nth1(2,Distances,Elem2),
+    nth1(3,Distances,Elem3),
+    nth1(4,Distances,Elem4),
+    Elem1 is 1,
+    Elem2 is 1,
+    Elem3 is 1,
+    Elem4 is 1.
+
+/*
+    verifica que ultima movimentação foi do tipo adjacente
+*/
+no_jump(XP,YP,XM,YM) :-
+    (
+        (XP is XM+1, YP is YM);
+        (XP is XM-1, YP is YM);
+        (XP is XM, YP is YM+1);
+        (XP is XM, YP is YM-1);
+
+        (XP is XM+1, YP is YM+1);
+        (XP is XM+1, YP is YM-1);
+        (XP is XM-1, YP is YM+1);
+        (XP is XM-1, YP is YM-1)
+    ).
