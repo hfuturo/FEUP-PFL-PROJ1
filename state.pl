@@ -3,6 +3,7 @@
 :- consult(piece).
 :- consult(continuous_jump).
 :- consult(check_win).
+:- consult(ai).
 
 change_player(1,2).
 change_player(2,1).
@@ -23,17 +24,17 @@ display_game(Turn,Width,Board,TotalMoves) :-
 /*
     verificar se o jogo acabou e congratular o vencedor
 */
-game_cycle(Turn,Height,Width,Board,_):- 
+game_cycle(Turn,Height,Width,Board,_,_):- 
     game_over(Board,Width,Height,Turn,Winner), 
     !, 
     congratulate(Winner).
 
-/*
-    ciclo do jogo
+/* 
+    ciclo do jogo em modo Person
 */
-game_cycle(Turn,Height,Width,Board,TotalMoves):-
-    format('It is the turn of the player ~w.\n',Turn),
-    write('Write the position of the piece you want to move.\n'),
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
+    ((Mode is 1);(Mode is 2, Turn is 1);(Mode is 3, Turn is 1)),
+    print_player_turn(Turn),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
@@ -42,7 +43,27 @@ game_cycle(Turn,Height,Width,Board,TotalMoves):-
     UpdatedTotalMoves is TotalMoves + 1,
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves).
+    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
+
+/*
+    ciclo de jogo em modo Easy AI
+*/
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
+    (Mode is 4);(Mode is 2, Turn is 2),
+    choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
+    move(Turn,XP,YP,XM,YM,Board,TempBoard),
+    UpdatedTotalMoves is TotalMoves + 1,
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard),
+    change_player(Turn,NewTurn),
+    UpdatedTotalMoves is TotalMoves + 1,
+    display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
+    !,
+    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
+
+/*
+    ciclo de jogo em modo Difficult AI
+*/
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
@@ -61,3 +82,9 @@ game_over(_,_,_,Turn,Turn).
 
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
+
+print_player_turn(Turn) :-
+    write('-----------------------------------------------------\n'),
+    format('| It is the turn of the player ~w.                   |\n',Turn),
+    write('| Write the position of the piece you want to move. |\n'),
+    write('-----------------------------------------------------\n').

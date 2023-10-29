@@ -52,12 +52,10 @@ menu_jump_cycle(Option) :-
     write('\n-----------------------------------|'), nl,
     write('Select the number of the option: '),
     read_number(Number),
-    Number >= 0,
+    Number > 0,
     Number =< 2,
     !,
     Option is Number.
-
-menu_jump_cycle(Bool) :- Bool is 0.
 
 /*
     verifica se está numa posição de continuous jump
