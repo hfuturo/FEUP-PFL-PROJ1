@@ -82,8 +82,8 @@ do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board).
 choose_jump_random(Turn,Height,Width,Board,XP,YP,XM,YM) :-
     repeat,
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
-    select_move_random(Turn,Height,Width,Board,XM,YM,XP,YP),
-    check_move_random(XP,YP,XM,YM,Distances,Bool),
+    select_random_move(Turn,Height,Width,Board,XM,YM,XP,YP),
+    check_move(XP,YP,XM,YM,Distances,Bool),
     \+no_jump(XP,YP,XM,YM),
     Bool is 1,
     !.
