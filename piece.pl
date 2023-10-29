@@ -69,7 +69,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 Horizontal > 1,
                 Width >= XM + Horizontal,
                 UpdatedX is XM + Horizontal,
-                nth1(Y,Board,Row),
+                nth1(YM,Board,Row),
                 nth1(UpdatedX,Row,XVal),
                 Turn =\= XVal,
                 UpdatedX =\= XP
@@ -80,7 +80,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 Horizontal > 1,
                 1 =< XM - Horizontal,
                 UpdatedX is XM - Horizontal,
-                nth1(Y,Board,Row),
+                nth1(YM,Board,Row),
                 nth1(UpdatedX,Row,XVal),
                 Turn =\= XVal,
                 UpdatedX =\= XP
