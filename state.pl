@@ -21,14 +21,6 @@ display_game(Turn,Width,Board,TotalMoves) :-
     print_board(Board,Width,Turn,TotalMoves),
     !.   % remove output true ? do terminal quando acaba de correr
 
-
-game_first_play(Turn,Height,Width,Board,NewBoard) :-
-    format('It is the turn of the player ~w.\n',Turn),
-    write('Write the position of the piece you want to move.\n'),
-    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard).
-
-
 /*
     verificar se o jogo acabou e congratular o vencedor
 */
@@ -43,7 +35,7 @@ game_cycle(Turn,Height,Width,Board,_):-
 game_cycle(Turn,Height,Width,Board,TotalMoves):-
     format('It is the turn of the player ~w.\n',Turn),
     write('Write the position of the piece you want to move.\n'),
-    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM),
+    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
     check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard),

@@ -85,9 +85,6 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
     nth1(2,Distances,Horizontal),
     nth1(3,Distances,DiagonalNE),
     nth1(4,Distances,DiagonalNW),
-    write(Distances),
-    format('~nXM: ~w | ', [XM]),
-    format('YM: ~w~n', [YM]),
 
     (
         % vertical
@@ -95,25 +92,23 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
             % up
             (
                 Vertical > 1,
-                Height >= YM + Vertical,
-                UpdatedY is YM + Vertical,
-                nth1(UpdatedY,Board,Row),
-                nth1(XM,Row,XVal),
-                Turn =\= XVal,
-                UpdatedY =\= YP,
-                write('up\n')
-            );
-
-            % down
-            (
-                Vertical > 1,
                 1 =< YM - Vertical,
                 UpdatedY is YM - Vertical,
                 nth1(UpdatedY,Board,Row),
                 nth1(XM,Row,XVal),
                 Turn =\= XVal,
-                UpdatedY =\= YP,
-                write('down\n')
+                UpdatedY =\= YP
+            );
+
+            % down
+            (
+                Vertical > 1,
+                Height >= YM + Vertical,
+                UpdatedY is YM + Vertical,
+                nth1(UpdatedY,Board,Row),
+                nth1(XM,Row,XVal),
+                Turn =\= XVal,
+                UpdatedY =\= YP
             )
         );
 
@@ -127,8 +122,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 nth1(Y,Board,Row),
                 nth1(UpdatedX,Row,XVal),
                 Turn =\= XVal,
-                UpdatedX =\= XP,
-                write('right\n')
+                UpdatedX =\= XP
             );
 
             % left      
@@ -139,9 +133,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn) :-
                 nth1(Y,Board,Row),
                 nth1(UpdatedX,Row,XVal),
                 Turn =\= XVal,
-                UpdatedX =\= XP,
-                format('XVal: ~w~n',[XVal]),
-                write('left\n')
+                UpdatedX =\= XP
             )
         );
 

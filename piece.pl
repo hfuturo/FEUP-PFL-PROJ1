@@ -3,7 +3,16 @@
 /*
     choose piece to move and remove it from its place
 */
-choose_move(Turn,Height,Width,Board,XP,YP,XM,YM) :-
+choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,0) :-
+    repeat,
+    write('\nFirst move of the game, it must be a Single Step.'),
+    select_piece(Turn,Height,Width,Board,XP,YP),
+    select_move(Turn,Height,Width,Board,XM,YM),
+    check_move_single_step(XP,YP,XM,YM,Bool),
+    Bool is 1,
+    !.
+
+choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_) :-
     repeat,
     select_piece(Turn,Height,Width,Board,XP,YP),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
