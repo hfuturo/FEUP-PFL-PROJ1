@@ -70,7 +70,7 @@ check_continuous_jump_cycle_random(_,_,_,_,_,_,_,_,Board,Board).
     Fazer um continuous jump caso se queira em modo Easy AI
 */
 do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
-    random(1,2,Option),
+    random(1,3,Option),
     Option is 1,
     !,
     nl,
