@@ -10,6 +10,7 @@ select_random_move(Turn,Height,Width,Board,X,Y,XP,YP) :-
     repeat,
     random(1,Width,X),
     random(1,Height,Y),
+    %format('X: ~w Y: ~w',[X,Y]),
     get_position_piece(X,Y,Board,Piece),
     Turn \== Piece,
     (XP \== X; YP \== Y),
@@ -20,8 +21,12 @@ select_random_move(Turn,Height,Width,Board,X,Y,XP,YP) :-
 */
 select_random_piece(Turn,Height,Width,Board,X,Y) :-
     repeat,
-    random(1,Width,X),
-    random(1,Height,Y),
+    UpdatedWidth is Width + 1,
+    UpdatedHeight is Height + 1,
+    random(1,UpdatedWidth,X),
+    random(1,UpdatedHeight,Y),
+    %write(X),
+    %write(Y),nl,
     get_position_piece(X,Y,Board,Piece),
     Turn is Piece,
     !.
