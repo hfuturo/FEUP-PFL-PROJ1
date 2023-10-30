@@ -83,13 +83,13 @@ check_continuous_jump_cycle_random(_,_,_,_,_,_,_,_,Board,Board,_).
 /*
     Fazer um continuous jump caso se queira em modo Easy AI
 */
-do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard) :-
+do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
     random(1,3,Option),
     Option is 1,
     !,
     nl,
     UpdatedTotalMoves is TotalMoves + 1,
-    choose_jump_random(Turn,Height,Width,Board,XM,YM,NXM,NYM),
+    choose_jump_random(Turn,Height,Width,Board,XM,YM,NXM,NYM,VisitedPositions),
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
     display_game(Turn,Width,TempBoard,TotalMoves),
     check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions).
@@ -101,8 +101,15 @@ do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board,_).
 */
 choose_jump_random(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions) :-
     repeat,
+    write('aqui\n'),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_random_move(Turn,Height,Width,Board,XM,YM,XP,YP,Distances),
+    write('--------------------'),
+    format('[~w,',XP),
+    format('~w]\n',YP),
+    format('[~w,',XM),
+    format('~w]\n',YM),
+
     check_move(XP,YP,XM,YM,Distances,Bool),
     \+no_jump(XP,YP,XM,YM),
     \+member([XM,YM],VisitedPositions),

@@ -30,11 +30,25 @@ game_cycle(Turn,Height,Width,Board,_,_):-
     !, 
     congratulate(Winner).
 
+/*
+    write('\n| 7: Easy AI vs Difficult AI                |'),
+    write('\n| 8: Difficult AI vs Easy AI                |'),
+    write('\n| 9: Difficult AI vs Difficult AI           |'),
+*/
+
+
+
 /* 
     ciclo do jogo em modo Person
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
-    ((Mode is 1);(Mode is 2, Turn is 1);(Mode is 3, Turn is 1)),
+    (
+        (Mode is 1);
+        (Mode is 2, Turn is 1);
+        (Mode is 3, Turn is 2);
+        (Mode is 5, Turn is 1);
+        (Mode is 6, Turn is 2)
+    ),
     print_player_turn(Turn),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
@@ -51,7 +65,13 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     ciclo de jogo em modo Easy AI
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
-    ((Mode is 4);(Mode is 2, Turn is 2)),
+    (
+        (Mode is 2, Turn is 2);
+        (Mode is 3, Turn is 1);
+        (Mode is 4);
+        (Mode is 7, Turn is 1);
+        (Mode is 8, Turn is 2)
+    ),
     choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
@@ -67,8 +87,14 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     ciclo de jogo em modo Difficult AI
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
-    ((Mode is 5);(Mode is 3, Turn is 2)).
-
+    (
+        (Mode is 5, Turn is 2);
+        (Mode is 6, Turn is 1);
+        (Mode is 7, Turn is 2);
+        (Mode is 8, Turn is 1);
+        (Mode is 9)
+    ).
+    
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
 */
