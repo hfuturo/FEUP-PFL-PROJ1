@@ -28,8 +28,8 @@ select_move(Turn,Height,Width,Board,X,Y,XP,YP) :-
     write('Row: '),
     read_row_piece(Y,Height),
     get_position_piece(X,Y,Board,Piece),
-    Turn \== Piece,
-    (XP \== X; YP \== Y),
+    Turn =\= Piece,
+    (XP =\= X; YP =\= Y),
     !.
 
 /*

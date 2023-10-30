@@ -3,10 +3,11 @@
 :- consult(line_distance).
 :- consult(piece).
 
+/*
 select_greddy_move(Board,Width,Height,Turn) :-
 
 .
-
+*/
 /*
     vê o nivel de isolamento para cada jogada possivel
 */

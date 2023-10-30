@@ -12,8 +12,8 @@ select_random_move(Turn,Height,Width,Board,X,Y,XP,YP,0,_) :-
     random(1,Width,X),
     random(1,Height,Y),
     get_position_piece(X,Y,Board,Piece),
-    Turn \== Piece,
-    (XP \== X; YP \== Y),
+    Turn =\= Piece,
+    (XP =\= X; YP =\= Y),
     !.
 */
 

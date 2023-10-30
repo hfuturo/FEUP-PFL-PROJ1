@@ -125,8 +125,8 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
         (Mode is 7, Turn is 2);
         (Mode is 8, Turn is 1);
         (Mode is 9)
-    ),
-    select_greddy_move(Turn,Height,Width,Board,X,Y,XP,YP).
+    ).
+    %select_greddy_move(Turn,Height,Width,Board,X,Y,XP,YP).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
