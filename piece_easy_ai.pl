@@ -101,15 +101,8 @@ do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board,_).
 */
 choose_jump_random(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions) :-
     repeat,
-    write('aqui\n'),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_random_move(Turn,Height,Width,Board,XM,YM,XP,YP,Distances),
-    write('--------------------'),
-    format('[~w,',XP),
-    format('~w]\n',YP),
-    format('[~w,',XM),
-    format('~w]\n',YM),
-
     check_move(XP,YP,XM,YM,Distances,Bool),
     \+no_jump(XP,YP,XM,YM),
     \+member([XM,YM],VisitedPositions),

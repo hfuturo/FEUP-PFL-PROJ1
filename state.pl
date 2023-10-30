@@ -4,6 +4,7 @@
 
 :- consult(piece_person).
 :- consult(piece_easy_ai).
+:- consult(piece_difficult_ai).
 :- consult(piece).
 
 change_player(1,2).
@@ -29,14 +30,6 @@ game_cycle(Turn,Height,Width,Board,_,_):-
     game_over(Board,Width,Height,Turn,Winner), 
     !, 
     congratulate(Winner).
-
-/*
-    write('\n| 7: Easy AI vs Difficult AI                |'),
-    write('\n| 8: Difficult AI vs Easy AI                |'),
-    write('\n| 9: Difficult AI vs Difficult AI           |'),
-*/
-
-
 
 /* 
     ciclo do jogo em modo Person
@@ -93,8 +86,9 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
         (Mode is 7, Turn is 2);
         (Mode is 8, Turn is 1);
         (Mode is 9)
-    ).
-    
+    ),
+    select_greddy_move(Turn,Height,Width,Board,X,Y,XP,YP).
+
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
 */
