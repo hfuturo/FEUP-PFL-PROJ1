@@ -1,3 +1,5 @@
+:- use_module(library(system), [now/1]).
+
 /*
     read input number
 */
@@ -45,4 +47,7 @@ read_size_board_side(Side) :-
     Side>=5,
     Side=<15,
     !.
-
+    
+init_random_state :-
+    now(X),
+    setrand(X).

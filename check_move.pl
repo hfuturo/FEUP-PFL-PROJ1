@@ -1,21 +1,4 @@
 /*
-    Verifica se o movimento é single step
-*/
-check_move_single_step(XP,YP,XM,YM,Bool) :- 
-    DiffX is XP - XM,
-    abs_value(DiffX,AbsDiffX),
-    DiffY is YP - YM,
-    abs_value(DiffY,AbsDiffY),
-    AbsDiffX =< 1,
-    AbsDiffX >= -1,
-    AbsDiffY =< 1,
-    AbsDiffY >= -1,
-    !,
-    Bool is 1.
-
-check_move_single_step(_,_,_,_,Bool) :- Bool is 0.
-
-/*
     Verifica a se peça moveu a distancia horizontal correta
 */
 check_move(XP,YP,XM,YM,Distances,Bool) :- 
