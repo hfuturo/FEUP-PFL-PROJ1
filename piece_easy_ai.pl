@@ -71,30 +71,30 @@ choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,_) :-
 /*
     Verifica se está numa situação onde o continuous jump é possivel em modo Easy AI
 */
-check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
+check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
     jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
     append(VisitedPositions,[XM,YM],NewVisitedPositions),
     !,
-    do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,NewVisitedPositions).
+    do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,NewVisitedPositions).
 
-check_continuous_jump_cycle_random(_,_,_,_,_,_,_,_,Board,Board,_).
+check_continuous_jump_cycle_random(_,_,_,_,_,_,_,TotalMoves,TotalMoves,Board,Board,_).
 
 /*
     Fazer um continuous jump caso se queira em modo Easy AI
 */
-do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions) :-
+do_continuous_jump_cycle_random(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions) :-
+    display_game(Turn,Width,Board,TotalMoves),
     random(1,3,Option),
     Option is 1,
     !,
     nl,
-    UpdatedTotalMoves is TotalMoves + 1,
+    TempTotalMoves is TotalMoves + 1,
     choose_jump_random(Turn,Height,Width,Board,XM,YM,NXM,NYM,VisitedPositions),
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
-    display_game(Turn,Width,TempBoard,TotalMoves),
-    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions).
+    check_continuous_jump_cycle_random(XM,YM,NXM,NYM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions).
 
-do_continuous_jump_cycle_random(_,_,_,_,_,_,Board,Board,_).
+do_continuous_jump_cycle_random(_,_,_,_,_,TotalMoves,TotalMoves,Board,Board,_).
 
 /*
     Escolher posição para onde mover, verificando que é um jump e se é possivel em modo Easy AI
