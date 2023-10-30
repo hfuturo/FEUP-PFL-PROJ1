@@ -8,9 +8,8 @@
 */
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,0) :-
     repeat,
-    write('\n-----------------------------------------------------'),
-    write('\n| First move of the game, it must be a Single Step. |'),
-    write('\n-----------------------------------------------------'),
+    write('-----------------------------------------------------'),
+    write('\n| First move of the game, it must be a Single Step. |\n'),
     select_piece(Turn,Height,Width,Board,XP,YP),
     select_move(Turn,Height,Width,Board,XM,YM,XP,YP),
     check_move_single_step(XP,YP,XM,YM,Bool),
@@ -52,9 +51,9 @@ select_move(Turn,Height,Width,Board,X,Y,XP,YP) :-
 */
 select_piece(Turn,Height,Width,Board,X,Y) :-
     repeat,
-    write('\n----------------------------------------------'),
-    write('\n| Select the coordinates where the piece is. |'),
-    write('\n----------------------------------------------\n'),
+    write('-----------------------------------------------------'),
+    write('\n| Select the coordinates where the piece is.        |'),
+    write('\n-----------------------------------------------------\n'),
     write('Column: '),
     read_column_piece(X,Width),
     write('Row: '),

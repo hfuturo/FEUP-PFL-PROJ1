@@ -42,7 +42,6 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
         (Mode is 5, Turn is 1);
         (Mode is 6, Turn is 2)
     ),
-    print_player_turn(Turn),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
@@ -106,9 +105,3 @@ game_over(_,_,_,Turn,Turn).
 
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
-
-print_player_turn(Turn) :-
-    write('-----------------------------------------------------'),
-    format('\n| It is the turn of the player ~w.                   |',Turn),
-    write('\n| Write the position of the piece you want to move. |'),
-    write('\n-----------------------------------------------------').

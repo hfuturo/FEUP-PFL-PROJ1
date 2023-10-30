@@ -84,6 +84,13 @@ print_line(Content,Line) :-
     print content of the line of the board
 */
 print_line_content([]).
+
+print_line_content([H|T]) :- 
+    H is 0, 
+    !,  
+    write('|   '), 
+    print_line_content(T).
+
 print_line_content([H|T]) :-
     format('| ~w ',H),
     print_line_content(T).
