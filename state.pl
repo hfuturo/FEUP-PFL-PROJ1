@@ -84,8 +84,6 @@ game_cycle(Turn,Height,Width,Board,0,Mode):-
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     player_type(Mode,Turn,Type),
     (Type is 1;Type is 2),
-
-
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
@@ -104,8 +102,12 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     Type is 3,
 
     choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard),
+    move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
+
+    append([[XP,YP]],[],VisitedPositions),
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
+    
     change_player(Turn,NewTurn),
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
     !,
