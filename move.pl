@@ -95,29 +95,23 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
     sort(Pieces, SortedPieces),
     length(SortedPieces,MaxIndex),
     nth1(MaxIndex,SortedPieces,Elem),
-    nth1(2,Elem,XP),
-    nth1(3,Elem,YP),
-    check_isolation_piece(Turn,Height,Width,Board,XP,YP,XM,YM,Min).
-
-/*
-    nth1(1,SortedPieces,Elem),
-    nth1(1,Elem,MinimumIsolationLevel),
-    length(Pieces,ListLength),
-    UpdatedListLength is ListLength + 1,
-    repeat,
-    random(1,UpdatedListLength,RandomElem),
-    nth1(RandomElem,Pieces,Coord),
-    nth1(1,Coord,IsolationLevel),
-    MinimumIsolationLevel is IsolationLevel,
-    !,
-    %nth1(1,SortedPieces,Elem),
-    %format('Coord: ~w~n',[Coord]),
-    nth1(2,Coord,XP),
-    nth1(3,Coord,YP),
-    nth1(4,Coord,XM),
-    nth1(5,Coord,YM).
-    */
-
+    nth1(1,Elem,MaxValue),
+    findall(
+        [Value,X,Y],
+        (
+            member([Value,X,Y],Pieces),
+            Value =:= MaxValue
+        ),
+        PossibleMoves
+    ),
+    sort(PossibleMoves,PossibleMovesNoRepeated),
+    length(PossibleMovesNoRepeated,PossibleMovesLength),
+    UpdatedPossibleMovesLength is PossibleMovesLength + 1,
+    random(1,UpdatedPossibleMovesLength,RandomMove),
+    nth1(RandomMove,PossibleMovesNoRepeated,SelectedMove),
+    nth1(2,SelectedMove,XP),
+    nth1(3,SelectedMove,YP),
+    check_isolation_piece(Turn,Height,Width,Board,XP,YP,XM,YM).
 
 /* modo pessoa ou easy ai */
 choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-

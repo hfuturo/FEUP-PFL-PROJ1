@@ -45,12 +45,12 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
     nth1(1,SortedPossibleMoves,Elem),
     nth1(1,Elem,Min),nth1(2,Elem,XM),nth1(3,Elem,YM).
 
-check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :- XM is 0, YM is 0, Min is 8.
+check_isolation_jump(_,_,_,_,_,_,XM,YM,Min,_) :- XM is 0, YM is 0, Min is 8.
 
 /*
     vê o nivel de isolamento para cada jogada possivel
 */
-check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM,Min) :-
+check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM) :-
     calculate_distances(X,Y,Turn,Height,Width,Board,Distances),
     nth1(1,Distances,JumpColumn),
     nth1(2,Distances,JumpRow),
