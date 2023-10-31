@@ -27,9 +27,8 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
     check_isolation_move(XSW,YSW,Value6,Height,Width,Board,Turn,1),
     check_isolation_move(XNW,YNW,Value7,Height,Width,Board,Turn,1),
     check_isolation_move(XSE,YSE,Value8,Height,Width,Board,Turn,1),
-    
-    append([[Value1,XLeft,Y],[Value2,XRight,Y],[Value3,X,YUp],[Value4,X,YDown],[Value5,XNE,YNE],[Value6,XSW,YSW],[Value7,XNW,YNW],[Value8,XSE,YSE]],[],Moves),
 
+    append([[Value1,XLeft,Y],[Value2,XRight,Y],[Value3,X,YUp],[Value4,X,YDown],[Value5,XNE,YNE],[Value6,XSW,YSW],[Value7,XNW,YNW],[Value8,XSE,YSE]],[],Moves),
     findall(
         [Value,X,Y],
         (
@@ -37,8 +36,14 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
             \+member([X,Y],VisitedPositions)
         ),
         PossibleMoves
-    ),
-    PossibleMoves =\= [],
+    ),nl,
+
+    write(Moves),nl,
+    write(VisitedPositions),nl,
+    write(PossibleMoves),nl,
+
+    length(PossibleMoves,Number),
+    Number =\= 0,
     !,
     sort(PossibleMoves,SortedPossibleMoves),
     nth1(1,SortedPossibleMoves,Elem),
@@ -135,8 +140,6 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn,_) :-
 
     append([Piece1,Piece2,Piece3,Piece4,Piece5,Piece6,Piece7,Piece8],[],Isolation),
     delete(Isolation,Turn,NewIsolation),
-
-    %write(Isolation),nl,write(NewIsolation),nl,
 
     length(Isolation,Number),
     length(NewIsolation,NewNumber),
