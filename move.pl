@@ -93,12 +93,23 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
         Pieces
     ),
     sort(Pieces, SortedPieces),
-    write(SortedPieces),
+    %format('Sorted: ~w~n',[SortedPieces]),    
     nth1(1,SortedPieces,Elem),
-    nth1(2,Elem,XP),
-    nth1(3,Elem,YP),
-    nth1(4,Elem,XM),
-    nth1(5,Elem,YM).
+    nth1(1,Elem,MinimumIsolationLevel),
+    length(Pieces,ListLength),
+    UpdatedListLength is ListLength + 1,
+    repeat,
+    random(1,UpdatedListLength,RandomElem),
+    nth1(RandomElem,Pieces,Coord),
+    nth1(1,Coord,IsolationLevel),
+    MinimumIsolationLevel is IsolationLevel,
+    !,
+    %nth1(1,SortedPieces,Elem),
+    %format('Coord: ~w~n',[Coord]),
+    nth1(2,Coord,XP),
+    nth1(3,Coord,YP),
+    nth1(4,Coord,XM),
+    nth1(5,Coord,YM).
 
 
 /* modo pessoa ou easy ai */
