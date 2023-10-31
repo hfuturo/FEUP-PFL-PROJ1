@@ -2,57 +2,106 @@
 :- consult(check_move).
 :- consult(line_distance).
 :- consult(piece).
+:- use_module(library(between)).
 
 /*
 select_greddy_move(Board,Width,Height,Turn) :-
 
 .
 */
+
+choose_greedy_move(Turn, Height, Width, Board, XP, YP, XM, YM) :-
+    findall(
+        [Min,X,Y,XT,YT], 
+        (
+            between(1, Width, X), 
+            between(1, Height, Y), 
+            get_position_player(X, Y, Width, Height, Board, Turn),
+            check_isolation_piece(Turn,Height,Width,Board,X,Y,XT,YT,Min)
+        ), 
+        Pieces
+    ),
+    sort(Pieces, SortedPieces),
+    write(SortedPieces),
+    nth1(1,SortedPieces,Elem),
+    nth1(2,Elem,XP),
+    nth1(3,Elem,YP),
+    nth1(4,Elem,XM),
+    nth1(5,Elem,YM).
+
+get_position_player(X, Y, Width, Height, Board, Player) :-
+    nth1(Y, Board, Row),
+    nth1(X, Row, Piece),
+    Piece =:= Player.
+
 /*
     vê o nivel de isolamento para cada jogada possivel
 */
-check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM) :-
+check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM,Min) :-
     calculate_distances(X,Y,Turn,Height,Width,Board,Distances),
     nth1(1,Distances,JumpColumn),
     nth1(2,Distances,JumpRow),
     nth1(3,Distances,JumpNESW),
     nth1(4,Distances,JumpNWSE),
 
-    XLeft is X-JumpRow, XRight is X+JumpRow,
-    YUp is X-JumpColumn, YDown is X+JumpColumn,
-    XSW is X-JumpNESW, XNE is X+JumpNESW, YNE is Y-JumpNESW, YSW is Y+JumpNESW,
-    XNW is X-JumpNWSE, XSE is X+JumpNWSE, YNW is Y-JumpNWSE, YSE is Y+JumpNWSE,
+    XLeft is X-JumpRow, 
+    XRight is X+JumpRow,
+    YUp is Y-JumpColumn, 
+    YDown is Y+JumpColumn,
 
-    /* jump */
+    XSW is X-JumpNESW, 
+    XNE is X+JumpNESW, 
+    YNE is Y-JumpNESW, 
+    YSW is Y+JumpNESW,
+    XNW is X-JumpNWSE, 
+    XSE is X+JumpNWSE, 
+    YNW is Y-JumpNWSE, 
+    YSE is Y+JumpNWSE,
 
     check_isolation_move(XLeft,Y,Value1,Height,Width,Board,Turn),
     check_isolation_move(XRight,Y,Value2,Height,Width,Board,Turn),
-
     check_isolation_move(X,YUp,Value3,Height,Width,Board,Turn),
     check_isolation_move(X,YDown,Value4,Height,Width,Board,Turn),
-
     check_isolation_move(XNE,YNE,Value5,Height,Width,Board,Turn),
     check_isolation_move(XSW,YSW,Value6,Height,Width,Board,Turn),
     check_isolation_move(XNW,YNW,Value7,Height,Width,Board,Turn),
-    check_isolation_move(XSE,YSE,Value8,Height,Width,Board,Turn).
+    check_isolation_move(XSE,YSE,Value8,Height,Width,Board,Turn),
+    
+    append([[XLeft,Y],[XRight,Y],[X,YUp],[X,YDown],[XNE,YNE],[XSW,YSW],[XNW,YNW],[XSE,YSE]],[],Moves),
+    append([Value1,Value2,Value3,Value4,Value5,Value6,Value7,Value8],[],Values),
+
+    min_member(Min,Values),
+    nth1(Index,Values,Min),
+    nth1(Index,Moves,Elem),
+    nth1(1,Elem,XM),
+    nth1(2,Elem,YM),
+
+    !.
 
 /*
     vê o nivel de isolamento de uma peça, mas se o valor dela for o Player, isolamento é 0
 */
+check_isolation_move(X,Y,Value,Height,Width,_,_) :-
+    (
+        X<1;
+        X>Width;
+        Y<1;
+        Y>Height
+    ),
+    Value is 8,
+    !.
+
+
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :- 
     get_position_piece_check(X,Y,Height,Width,Board,Piece),
     Piece is Turn,
-    Value is 0,
+    Value is 8,
     !.
 
 /*
     vê o nivel de isolamento de uma peça
 */
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
-    (
-        (X>=1,X=<Width),
-        (Y>=1,Y=<Height)
-    ),
     XM is X-1,
     XP is X+1,
     YM is Y-1,
@@ -78,7 +127,7 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
     length(NewIsolation,NewNumber),
     Value is Number-NewNumber.
 
-check_isolation_move(_,_,_,_,_,_,_,0).
+check_isolation_move(_,_,_,_,_,_,_,8).
 
 /*
     valor numa posição retornando 0 se for fora do board (util para calcular isolamento)
@@ -91,4 +140,4 @@ get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
 
-get_position_piece_check(_,_,_,_,_,0).
+get_position_piece_check(_,_,_,_,_,8).

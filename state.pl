@@ -125,8 +125,11 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
         (Mode is 7, Turn is 2);
         (Mode is 8, Turn is 1);
         (Mode is 9)
-    ).
-    %select_greddy_move(Turn,Height,Width,Board,X,Y,XP,YP).
+    ),
+    choose_greedy_move(Turn, Height, Width, Board, XP, YP, XM, YM),
+    move(Turn,XP,YP,XM,YM,Board,NewBoard),
+    change_player(Turn,NewTurn),
+    display_game(NewTurn,Width,NewBoard,1).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
