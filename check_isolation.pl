@@ -30,18 +30,14 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
 
     append([[Value1,XLeft,Y],[Value2,XRight,Y],[Value3,X,YUp],[Value4,X,YDown],[Value5,XNE,YNE],[Value6,XSW,YSW],[Value7,XNW,YNW],[Value8,XSE,YSE]],[],Moves),
     findall(
-        [Value,X,Y],
+        [Value, XT, YT], 
         (
-            member([Value,X,Y],Moves),
-            \+member([X,Y],VisitedPositions)
+            member([Value, XT, YT], Moves), 
+            \+ member([XT, YT], VisitedPositions),
+            inside_board(X,Y,Height,Width)
         ),
         PossibleMoves
-    ),nl,
-
-    write(Moves),nl,
-    write(VisitedPositions),nl,
-    write(PossibleMoves),nl,
-
+    ),
     length(PossibleMoves,Number),
     Number =\= 0,
     !,
@@ -157,3 +153,10 @@ get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
     nth1(X,Row,Piece).
 
 get_position_piece_check(_,_,_,_,_,0).
+
+
+inside_board(X,Y,Height,Width) :-
+    X>=1,
+    X=<Width,
+    Y>=1,
+    Y=<Height.

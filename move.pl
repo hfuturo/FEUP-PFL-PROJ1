@@ -70,7 +70,6 @@ select_move(Turn,Height,Width,Board,X,Y,XP,YP,Distances,VisitedPositions,2) :-
 /* modo pessoa ou easy ai */
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     (Type is 1;Type is 2),
-    write('--------------------'),
     repeat,
     append([],[],VisitedPositions),
     (Type is 1; Type is 2),
@@ -83,22 +82,17 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     !.
 
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
-write('tou aqui\n'),
     findall(
         [Value,X,Y], 
         (
             between(1, Width, X), 
             between(1, Height, Y), 
             get_position_player(X, Y, Board, Turn),
-            %check_isolation_piece(Turn,Height,Width,Board,X,Y,XT,YT,Min),
             check_isolation_move(X,Y,Value,Height,Width,Board,Turn,0)
         ), 
         Pieces
     ),
-    write('antes\n'),
     sort(Pieces, SortedPieces),
-        write(SortedPieces),
-
     length(SortedPieces,MaxIndex),
     nth1(MaxIndex,SortedPieces,Elem),
     nth1(2,Elem,XP),
@@ -139,7 +133,6 @@ choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
 
 /* modo pessoa ou easy ai */
 check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions,Type) :-
-    format('xp ~w yp ~w xm ~w ym ~w\n',[XP,YP,XM,YM]),
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
     jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
     append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
@@ -162,30 +155,17 @@ do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,Visit
     check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type).
 
 do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions,3) :-
-    write('vai ver -------------------------------------------------------\n'),
-    
     display_game(Turn,Width,Board,TotalMoves),
-    write('1\n'),
-
     check_isolation_move(XM,YM,Isolation,Height,Width,Board,Turn,0),
-    write('2\n'),
-
     check_isolation_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,Min,VisitedPositions),
-    write('3\n'),
-
-format('XM ~w,YM ~w,NXM ~w,NYM ~w\n',[XM,YM,NXM,NYM]),
-format('Isolation ~w Min ~w\n',[Isolation,Min]),
     (
         NXM =\= 0,
         NYM =\=0,
         Isolation>Min
     ),
     !,
-    write('entrou -------------------------------------------------------\n'),
-    sleep(10),
-
     UpdatedTotalMoves is TotalMoves + 1,
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type).
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,3).
 
 do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board,_,_).
