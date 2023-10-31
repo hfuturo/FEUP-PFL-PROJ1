@@ -1,5 +1,25 @@
 /*
-    Atualzizar o tabuleiro de acordo com a movimentação
+    Ler coordenada Y da peça
+*/  
+read_row_piece(Position,Coordinate) :-
+    repeat,
+    read_number(Position),
+    Position>=1,
+    Position=<Coordinate,
+    !.
+
+/*
+    Ler coordenada X da peça
+*/
+read_column_piece(Position,Coordinate) :-
+    repeat,
+    read_char(Position),
+    Position>=1,
+    Position=<Coordinate,
+    !.
+
+/*
+    Atualizar o tabuleiro de acordo com a movimentação
 */
 move(Turn,XP,YP,XM,YM,Board,NewBoard) :-
     change_piece(0,Board,XP,YP,TempBoard),
@@ -21,6 +41,11 @@ change_piece(Value,Board,X,Y,NewBoard) :-
 get_position_piece(X,Y,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
+
+get_position_player(X, Y, Board, Player) :-
+    nth1(Y, Board, Row),
+    nth1(X, Row, Piece),
+    Piece =:= Player.
 
 /*
     verifica se está numa posição de continuous jump

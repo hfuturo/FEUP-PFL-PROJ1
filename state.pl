@@ -3,13 +3,47 @@
 :- consult(utils).
 :- consult(board).
 :- consult(check_win).
-:- consult(piece_person).
-:- consult(piece_easy_ai).
-:- consult(piece_difficult_ai).
 :- consult(piece).
+:- consult(move).
 
 change_player(1,2).
 change_player(2,1).
+
+/* modo pessoa */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 1);
+        (Mode is 2, Turn is 1);
+        (Mode is 3, Turn is 2);
+        (Mode is 5, Turn is 1);
+        (Mode is 6, Turn is 2)
+    ),
+    !,
+    Type is 1.
+
+/* modo easy ai */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 2, Turn is 2);
+        (Mode is 3, Turn is 1);
+        (Mode is 4);
+        (Mode is 7, Turn is 1);
+        (Mode is 8, Turn is 2)
+    ),
+    !,
+    Type is 2.
+
+/* modo difficult ai */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 5, Turn is 2);
+        (Mode is 6, Turn is 1);
+        (Mode is 7, Turn is 2);
+        (Mode is 8, Turn is 1);
+        (Mode is 9)
+    ),
+    !,
+    Type is 3.
 
 /*
     criar um tabuleiro com um tamanho especifico
@@ -32,86 +66,35 @@ game_cycle(Turn,Height,Width,Board,_,_):-
     !, 
     congratulate(Winner).
 
-
 /*
     ciclo do jogo -> primeira jogada
 */
 game_cycle(Turn,Height,Width,Board,0,Mode):-
-    (
-        (Mode is 1);
-        (Mode is 2, Turn is 1);
-        (Mode is 3, Turn is 2);
-        (Mode is 5, Turn is 1);
-        (Mode is 6, Turn is 2)
-    ),
-    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,0),
+    player_type(Mode,Turn,Type),
+    (Type is 1;Type is 2),
+
+    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,NewBoard),
-    append([[XP,YP]],[],VisitedPositions),
     change_player(Turn,NewTurn),
     display_game(NewTurn,Width,NewBoard,1),
     !,
     game_cycle(NewTurn,Height,Width,NewBoard,1,Mode).
 
-/*
-    ciclo de jogo em modo Easy AI -> primeira jogada
-*/
-game_cycle(Turn,Height,Width,Board,0,Mode) :-
-    (
-        (Mode is 2, Turn is 2);
-        (Mode is 3, Turn is 1);
-        (Mode is 4);
-        (Mode is 7, Turn is 1);
-        (Mode is 8, Turn is 2)
-    ),
-    choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,[]),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard),
-    append([[XP,YP]],[],VisitedPositions),
-    change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,1),
-    %sleep(3),
-    !,
-    game_cycle(NewTurn,Height,Width,NewBoard,1,Mode).
 
-/* 
-    ciclo do jogo em modo Person
-*/
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
-    (
-        (Mode is 1);
-        (Mode is 2, Turn is 1);
-        (Mode is 3, Turn is 2);
-        (Mode is 5, Turn is 1);
-        (Mode is 6, Turn is 2)
-    ),
-    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,TotalMoves),
-    move(Turn,XP,YP,XM,YM,Board,TempBoard),
-    UpdatedTotalMoves is TotalMoves + 1,
-    append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions),
-    change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
-    !,
-    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
+    player_type(Mode,Turn,Type),
+    (Type is 1;Type is 2),
 
-/*
-    ciclo de jogo em modo Easy AI
-*/
-game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
-    (
-        (Mode is 2, Turn is 2);
-        (Mode is 3, Turn is 1);
-        (Mode is 4);
-        (Mode is 7, Turn is 1);
-        (Mode is 8, Turn is 2)
-    ),
-    choose_random_move(Turn,Height,Width,Board,XP,YP,XM,YM,[]),
+write('aqui1\n'),
+
+
+    choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     UpdatedTotalMoves is TotalMoves + 1,
     append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle_random(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions),
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
     change_player(Turn,NewTurn),
     display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
-   %sleep(4),
     !,
     game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
 
@@ -119,17 +102,11 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     ciclo de jogo em modo Difficult AI
 */
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
-    (
-        (Mode is 5, Turn is 2);
-        (Mode is 6, Turn is 1);
-        (Mode is 7, Turn is 2);
-        (Mode is 8, Turn is 1);
-        (Mode is 9)
-    ),
-    choose_greedy_move(Turn, Height, Width, Board, XP, YP, XM, YM),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard),
-    change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,1).
+    player_type(Mode,Turn,Type),
+    Type is 3,
+
+    choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
+    move(Turn,XP,YP,XM,YM,Board,NewBoard).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou

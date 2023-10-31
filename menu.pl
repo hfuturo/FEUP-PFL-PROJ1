@@ -23,7 +23,7 @@ menu_game_mode(Option) :-
 /*
     menu para decidir entre fazer jump outra vez ou não
 */
-menu_jump_cycle(Option) :-
+menu_jump_cycle(Option,1) :-
     repeat,
     write('\n------------------------------------'),
     write('\n|       MENU CONTINUOUS JUMP       |'),
@@ -38,3 +38,7 @@ menu_jump_cycle(Option) :-
     !,
     Option is Number.
 
+menu_jump_cycle(Option,Type) :-
+    (Type is 2; Type is 3), !,
+    random(1,3,Option).
+    

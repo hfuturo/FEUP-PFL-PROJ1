@@ -1,39 +1,3 @@
-:- use_module(library(lists)).
-:- consult(check_move).
-:- consult(line_distance).
-:- consult(piece).
-:- use_module(library(between)).
-
-/*
-select_greddy_move(Board,Width,Height,Turn) :-
-
-.
-*/
-
-choose_greedy_move(Turn, Height, Width, Board, XP, YP, XM, YM) :-
-    findall(
-        [Min,X,Y,XT,YT], 
-        (
-            between(1, Width, X), 
-            between(1, Height, Y), 
-            get_position_player(X, Y, Width, Height, Board, Turn),
-            check_isolation_piece(Turn,Height,Width,Board,X,Y,XT,YT,Min)
-        ), 
-        Pieces
-    ),
-    sort(Pieces, SortedPieces),
-    write(SortedPieces),
-    nth1(1,SortedPieces,Elem),
-    nth1(2,Elem,XP),
-    nth1(3,Elem,YP),
-    nth1(4,Elem,XM),
-    nth1(5,Elem,YM).
-
-get_position_player(X, Y, Width, Height, Board, Player) :-
-    nth1(Y, Board, Row),
-    nth1(X, Row, Piece),
-    Piece =:= Player.
-
 /*
     vê o nivel de isolamento para cada jogada possivel
 */
@@ -102,6 +66,7 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
     vê o nivel de isolamento de uma peça
 */
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
+write('entra    \n'),
     XM is X-1,
     XP is X+1,
     YM is Y-1,
@@ -123,11 +88,12 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
 
     append([Piece1,Piece2,Piece3,Piece4,Piece5,Piece6,Piece7,Piece8],[],Isolation),
     delete(Isolation,Turn,NewIsolation),
+
+    write(Isolation),nl,write(NewIsolation),nl,
+
     length(Isolation,Number),
     length(NewIsolation,NewNumber),
     Value is Number-NewNumber.
-
-check_isolation_move(_,_,_,_,_,_,_,8).
 
 /*
     valor numa posição retornando 0 se for fora do board (util para calcular isolamento)
@@ -140,4 +106,4 @@ get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
 
-get_position_piece_check(_,_,_,_,_,8).
+get_position_piece_check(_,_,_,_,_,0).
