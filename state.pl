@@ -85,8 +85,6 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     player_type(Mode,Turn,Type),
     (Type is 1;Type is 2),
 
-write('aqui1\n'),
-
 
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
@@ -106,7 +104,12 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     Type is 3,
 
     choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
-    move(Turn,XP,YP,XM,YM,Board,NewBoard).
+    move(Turn,XP,YP,XM,YM,Board,NewBoard),
+    UpdatedTotalMoves is TotalMoves + 1,
+    change_player(Turn,NewTurn),
+    display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
+    !,
+    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou

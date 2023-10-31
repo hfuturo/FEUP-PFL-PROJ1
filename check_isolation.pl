@@ -66,7 +66,7 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
     vê o nivel de isolamento de uma peça
 */
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn) :-
-write('entra    \n'),
+%write('entra    \n'),
     XM is X-1,
     XP is X+1,
     YM is Y-1,
