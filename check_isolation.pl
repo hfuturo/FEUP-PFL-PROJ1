@@ -136,6 +136,8 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn,_) :-
     append([Piece1,Piece2,Piece3,Piece4,Piece5,Piece6,Piece7,Piece8],[],Isolation),
     delete(Isolation,Turn,NewIsolation),
 
+    %write(Isolation),nl,write(NewIsolation),nl,
+
     length(Isolation,Number),
     length(NewIsolation,NewNumber),
     Value is Number-NewNumber.
