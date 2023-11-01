@@ -1,3 +1,7 @@
+/*
+    Escolhe o modo de jogo
+    menu_game_mode(-Option)
+*/
 menu_game_mode(Option) :-
     repeat,
     write('\n---------------------------------------------'),
@@ -21,7 +25,8 @@ menu_game_mode(Option) :-
     Option is Number.
 
 /*
-    menu para decidir entre fazer jump outra vez ou não
+    Escolhe se quer ou não fazer um continuous jump
+    menu_jump_cycle(-Option,+Type)
 */
 menu_jump_cycle(Option,1) :-
     repeat,

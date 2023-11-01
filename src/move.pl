@@ -11,6 +11,10 @@
 :- consult(menu).
 :- consult(utils).
 
+/*
+    Escolhe a peça para mover
+    select_piece(+Turn,+Height,+Width,+Board,-X,-Y,+Type)
+*/
 /* modo pessoa */
 select_piece(Turn,Height,Width,Board,X,Y,1) :-
     repeat,
@@ -36,6 +40,10 @@ select_piece(Turn,Height,Width,Board,X,Y,2) :-
     Turn is Piece,
     !.
 
+/*
+    Escolhe a nova posição para a peça
+    select_move(+Turn,+Height,+Width,+Board,-X,-Y,+XP,+YP,+Distances,+VisitedPositions,+Type)
+*/
 /* modo pessoa */
 select_move(Turn,Height,Width,Board,X,Y,XP,YP,_,_,1) :-
     repeat,
@@ -68,7 +76,10 @@ select_move(Turn,Height,Width,Board,X,Y,XP,YP,Distances,VisitedPositions,2) :-
     ),
     !.
 
-
+/*
+    Escolhe o movimento a fazer, verificando se é possivel
+    choose_move(+Turn,+Height,+Width,+Board,-XP,-YP,-XM,-YM,+VisitedPositions,+Type)
+*/
 /* modo pessoa ou easy ai */
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     (Type is 1;Type is 2),
@@ -82,6 +93,7 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     check_move(XP,YP,XM,YM,Distances),
     !.
 
+/* difficult ai */
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
     findall(
         [Value,X,Y], 
@@ -114,6 +126,10 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
     nth1(3,SelectedMove,YP),
     check_isolation_piece(Turn,Height,Width,Board,XP,YP,XM,YM).
 
+/*
+    Escolhe o jump a fazer, verificando se é possivel
+    choose_jump(+Turn,+Height,+Width,+Board,-XP,-YP,-XM,-YM,+VisitedPositions,+Type)
+*/
 /* modo pessoa ou easy ai */
 choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     (Type is 1; Type is 2),
@@ -125,7 +141,10 @@ choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     \+member([XM,YM],VisitedPositions),
     !.
 
-/* modo pessoa ou easy ai */
+/*
+    Verifica se é possivel fazer um continuous jump, e sim chama os predicados necessários
+    check_continuous_jump_cycle(+XP,+YP,+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
+*/
 check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,Type) :-
     change_player(Turn,NewTurn),
     (
@@ -140,6 +159,11 @@ check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,NewTotalMov
 
 check_continuous_jump_cycle(_,_,_,_,_,_,_,NewTotalMoves,NewTotalMoves,Board,Board,_,_).
 
+/*
+    Faz um continuous jump se for a vontade do jogador
+    do_continuous_jump_cycle(+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
+*/
+/* modo pessoa */
 do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,1) :-
     display_game(Turn,Width,Board,TotalMoves),
     menu_jump_cycle(Option,1),
@@ -151,6 +175,7 @@ do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
     check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,1).
 
+/* modo easy ai */
 do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,2) :-
     menu_jump_cycle(Option,2),
     Option is 1,
@@ -162,6 +187,7 @@ do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
     check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,2).
 
+/* modo difficult ai */
 do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,3) :-
     check_isolation_move(XM,YM,Isolation,Height,Width,Board,Turn,0),
     check_isolation_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,Min,VisitedPositions),
