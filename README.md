@@ -10,6 +10,22 @@ Contribuição: **%**
 
 # Instalação e Execução
 
+Para instalar este jogo, o utilizador necessita de instalar a pasta zip chamada `PFL_TP1_T01_Apart_4.zip`, descomprimir os ficheiros e entrar na pasta `src`. Aqui dentro, é necessário consultar o ficheiro `main.pl`. Para fazer isto, o utilizador pode utlizar a UI fornecida pelo SICSTUS ou escrever o seguinte da linha de comandos:
+
+```sh
+$ sicstus
+?-  consult('main.pl').
+```
+
+*Nota*: É necessário ter instalado o SICStus Prolog 4.8 ou uma versão mais recente.
+
+Para executar o jogo basta chamar o predicado `play/0` da seguinte forma
+
+```sh
+?-  play.
+```
+
+
 # Descrição do jogo
 
 Apart é um jogo de tabuleiro para dois jogadores. É jogado num tabuleiro quadrado de 8x8 e cada jogador tem ao seu dispor 12 peças. Para distinguir as peças de ambos os jogadores, estas encontram-se com cores diferentes.
