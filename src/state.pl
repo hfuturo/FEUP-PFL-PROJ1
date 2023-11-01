@@ -62,14 +62,38 @@ display_game(Turn,Width,Board,TotalMoves) :-
     !.   % remove output true ? do terminal quando acaba de correr
 
 display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+    Round < 10,
     write('**************\n'),
     write('*            *\n'),
     format('*   Round ~w  *\n',Round),
     write('*            *\n'),
     write('**************\n'),
-    display_game(1,Width,NewBoard,NewTotalMoves).
+    display_game(1,Width,NewBoard,NewTotalMoves),
+    !.
 
-display_game_with_round(2,Width,NewBoard,NewTotalMoves,Round) :-
+display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+    Round >= 10,
+    Round < 100,
+    write('***************\n'),
+    write('*             *\n'),
+    format('*   Round ~w  *\n',Round),
+    write('*             *\n'),
+    write('***************\n'),
+    display_game(1,Width,NewBoard,NewTotalMoves),
+    !.
+
+display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+    Round >= 100,
+    Round < 1000,
+    write('****************\n'),
+    write('*              *\n'),
+    format('*   Round ~w  *\n',Round),
+    write('*              *\n'),
+    write('****************\n'),
+    display_game(1,Width,NewBoard,NewTotalMoves),
+    !.
+
+display_game_with_round(2,Width,NewBoard,NewTotalMoves,_) :-
     display_game(2,Width,NewBoard,NewTotalMoves).
 
 
