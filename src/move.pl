@@ -126,29 +126,28 @@ choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     !.
 
 /* modo pessoa ou easy ai */
-check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions,Type) :-
+check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,Type) :-
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
     jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
     append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
     !,
-    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,NewVisitedPositions,Type).
+    do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,NewVisitedPositions,Type).
 
-check_continuous_jump_cycle(_,_,_,_,_,_,_,_,Board,Board,_,_).
+check_continuous_jump_cycle(_,_,_,_,_,_,_,NewTotalMoves,NewTotalMoves,Board,Board,_,_).
 
-do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions,Type) :-
+do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,Type) :-
     (Type is 1;Type is 2),
     display_game(Turn,Width,Board,TotalMoves),
     menu_jump_cycle(Option,Type),
     Option is 1,
     !,
     nl,
-    display_game(Turn,Width,Board,TotalMoves),
-    UpdatedTotalMoves is TotalMoves + 1,
+    TempTotalMoves is TotalMoves + 1,
     choose_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,VisitedPositions,Type),
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type).
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type).
 
-do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,VisitedPositions,3) :-
+do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,3) :-
     display_game(Turn,Width,Board,TotalMoves),
     check_isolation_move(XM,YM,Isolation,Height,Width,Board,Turn,0),
     check_isolation_jump(Turn,Height,Width,Board,XM,YM,NXM,NYM,Min,VisitedPositions),
@@ -158,8 +157,8 @@ do_continuous_jump_cycle(XM,YM,Turn,Height,Width,TotalMoves,Board,NewBoard,Visit
         Isolation>Min
     ),
     !,
-    UpdatedTotalMoves is TotalMoves + 1,
+    TempTotalMoves is TotalMoves + 1,
     move(Turn,XM,YM,NXM,NYM,Board,TempBoard),
-    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,3).
+    check_continuous_jump_cycle(XM,YM,NXM,NYM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,3).
 
-do_continuous_jump_cycle(_,_,_,_,_,_,Board,Board,_,_).
+do_continuous_jump_cycle(_,_,_,_,_,NewTotalMoves,NewTotalMoves,Board,Board,_,_).

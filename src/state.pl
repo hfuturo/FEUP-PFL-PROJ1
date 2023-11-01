@@ -86,13 +86,13 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     (Type is 1;Type is 2),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
-    UpdatedTotalMoves is TotalMoves + 1,
+    TempTotalMoves is TotalMoves + 1,
     append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
+    display_game(NewTurn,Width,NewBoard,NewTotalMoves),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
+    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode).
 
 /*
     ciclo de jogo em modo Difficult AI
@@ -102,13 +102,13 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     Type is 3,
     choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
-    UpdatedTotalMoves is TotalMoves + 1,
+    TempTotalMoves is TotalMoves + 1,
     append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,UpdatedTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
+    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,UpdatedTotalMoves),
+    display_game(NewTurn,Width,NewBoard,NewTotalMoves),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,UpdatedTotalMoves,Mode).
+    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
@@ -127,3 +127,6 @@ game_over(_,_,_,Turn,Turn).
 
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
+
+change_round(1,Round,NewRound) :- NewRound is Round+1.
+change_round(2,Round,NewRound) :- NewRound is Round.

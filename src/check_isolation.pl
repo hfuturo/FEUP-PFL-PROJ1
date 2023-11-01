@@ -1,3 +1,7 @@
+/*
+    Verifica se há algum continuous jump que se pode fazer, e se sim diz preenche XM e YM com as coordenadas da nova posição
+    check_isolation_jump(+Turn,+Height,+Width,+Board,+X,+Y,-XM,-YM,-Min,+VisitedPositions)
+*/
 check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
     calculate_distances(X,Y,Turn,Height,Width,Board,Distances),
     nth1(1,Distances,JumpColumn),
@@ -34,7 +38,10 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
         (
             member([Value, XT, YT], Moves), 
             \+ member([XT, YT], VisitedPositions),
-            inside_board(X,Y,Height,Width)
+            X>=1,
+            X=<Width,
+            Y>=1,
+            Y=<Height
         ),
         PossibleMoves
     ),
@@ -48,7 +55,8 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
 check_isolation_jump(_,_,_,_,_,_,XM,YM,Min,_) :- XM is 0, YM is 0, Min is 8.
 
 /*
-    vê o nivel de isolamento para cada jogada possivel
+    Calcula o nivel de isolamento que se pode atingir com cada movimento possivel a partir de uma peça, preenchendo XM e YM com as coordenadas da mulher opção
+    check_isolation_piece(+Turn,+Height,+Width,+Board,+X,+Y,-XM,-YM) :-
 */
 check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM) :-
     calculate_distances(X,Y,Turn,Height,Width,Board,Distances),
@@ -92,7 +100,12 @@ check_isolation_piece(Turn,Height,Width,Board,X,Y,XM,YM) :-
     !.
 
 /*
-    vê o nivel de isolamento de uma peça, mas se o valor dela for o Player, isolamento é 0
+    Verifica o nivel de isolamento de uma peça
+    Se o Bool for 1, verifica-se se o valor que está nessas coordenadas é igual ao player 
+        -> util para quando se usa este predicado para calcular o nivel de isolamento de um movimento, que caso seja para uma "casa" ocupada por uma peça do mesmo jogador, torna-se impossivel e por isso define-se como isolamento minimo;
+    Se o Bool for 0, não se verifica isto
+        -> util para descobrir qual a peça menos ou mais isolada.
+    check_isolation_move(+X,+Y,-Value,+Height,+Width,+Board,+Turn,+Bool) 
 */
 check_isolation_move(X,Y,Value,Height,Width,_,_,_) :-
     (
@@ -111,9 +124,6 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn,1) :-
     Value is 8,
     !.
 
-/*
-    vê o nivel de isolamento de uma peça
-*/
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn,_) :-
     XM is X-1,
     XP is X+1,
@@ -142,7 +152,10 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn,_) :-
     Value is Number-NewNumber.
 
 /*
-    valor numa posição retornando 0 se for fora do board (util para calcular isolamento)
+    Valor da peça que se encontra nas coordenadas X e Y
+    Este predicado é usado para calcular o nivel de isolamento de uma peça, sendo chamado com as coordenadas das peças que rodeiam uma determinada pela.
+    Desta forma, se encontra-se fora do tabuleiro, então é como se a peça em questão estivesse isolada nesse lado, e por isso dizemos que o seu valor é 0, não afetando assim o nivel de isolamento.
+    get_position_piece_check(+X,+Y,+Height,+Width,+Board,-Piece)
 */
 get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
     (
@@ -153,10 +166,3 @@ get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
     nth1(X,Row,Piece).
 
 get_position_piece_check(_,_,_,_,_,0).
-
-
-inside_board(X,Y,Height,Width) :-
-    X>=1,
-    X=<Width,
-    Y>=1,
-    Y=<Height.
