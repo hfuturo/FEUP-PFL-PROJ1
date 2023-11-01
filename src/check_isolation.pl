@@ -152,9 +152,7 @@ check_isolation_move(X,Y,Value,Height,Width,Board,Turn,_) :-
     Value is Number-NewNumber.
 
 /*
-    Valor da peça que se encontra nas coordenadas X e Y
-    Este predicado é usado para calcular o nivel de isolamento de uma peça, sendo chamado com as coordenadas das peças que rodeiam uma determinada pela.
-    Desta forma, se encontra-se fora do tabuleiro, então é como se a peça em questão estivesse isolada nesse lado, e por isso dizemos que o seu valor é 0, não afetando assim o nivel de isolamento.
+    Indica o valor da peça que se encontra nas coordenadas X e Y, sendo 0 caso a peça esteja fora do tabuleiro
     get_position_piece_check(+X,+Y,+Height,+Width,+Board,-Piece)
 */
 get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
@@ -162,7 +160,6 @@ get_position_piece_check(X,Y,Height,Width,Board,Piece) :-
         (X>=1,X=<Width),
         (Y>=1,Y=<Height)
     ),
-    nth1(Y,Board,Row),
-    nth1(X,Row,Piece).
+    get_position_piece(X,Y,Board,Piece).
 
 get_position_piece_check(_,_,_,_,_,0).

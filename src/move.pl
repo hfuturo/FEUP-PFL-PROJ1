@@ -85,7 +85,6 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     (Type is 1;Type is 2),
     repeat,
     append([],[],VisitedPositions),
-    (Type is 1; Type is 2),
     repeat,
     select_piece(Turn,Height,Width,Board,XP,YP,Type),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
@@ -100,7 +99,7 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
         (
             between(1, Width, X), 
             between(1, Height, Y), 
-            get_position_player(X, Y, Board, Turn),
+            get_position_player(X,Y,Board,Width,Height,Turn),
             check_isolation_move(X,Y,Value,Height,Width,Board,Turn,0)
         ), 
         Pieces
@@ -113,7 +112,7 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
         [Value,X,Y],
         (
             member([Value,X,Y],Pieces),
-            Value =:= MaxValue
+            Value is MaxValue
         ),
         PossibleMoves
     ),

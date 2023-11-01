@@ -1,5 +1,47 @@
 :- use_module(library(system), [now/1]).
 
+
+/*
+    Indica qual o tipo de jogador
+    player_type(+Mode,+Turn,+Type)
+*/
+
+/* modo pessoa */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 1);
+        (Mode is 2, Turn is 1);
+        (Mode is 3, Turn is 2);
+        (Mode is 5, Turn is 1);
+        (Mode is 6, Turn is 2)
+    ),
+    !,
+    Type is 1.
+
+/* modo easy ai */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 2, Turn is 2);
+        (Mode is 3, Turn is 1);
+        (Mode is 4);
+        (Mode is 7, Turn is 1);
+        (Mode is 8, Turn is 2)
+    ),
+    !,
+    Type is 2.
+
+/* modo difficult ai */
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 5, Turn is 2);
+        (Mode is 6, Turn is 1);
+        (Mode is 7, Turn is 2);
+        (Mode is 8, Turn is 1);
+        (Mode is 9)
+    ),
+    !,
+    Type is 3.
+
 /*
     Troca de jogador
     change_player(?Player1,?Player2)
@@ -65,7 +107,6 @@ read_size_board_side(Side) :-
     Side>=5,
     Side=<15,
     !.
-   
     
 init_random_state :-
     now(X),

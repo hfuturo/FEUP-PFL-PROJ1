@@ -1,5 +1,6 @@
 /*
-    Ler coordenada Y da peça
+    Lê a coordenada Y
+    read_row_piece(-Position,+Coordinate)
 */  
 read_row_piece(Position,Coordinate) :-
     repeat,
@@ -9,7 +10,8 @@ read_row_piece(Position,Coordinate) :-
     !.
 
 /*
-    Ler coordenada X da peça
+    Lê a coordenada X
+    read_column_piece(-Position,+Coordinate)
 */
 read_column_piece(Position,Coordinate) :-
     repeat,
@@ -19,14 +21,16 @@ read_column_piece(Position,Coordinate) :-
     !.
 
 /*
-    Atualizar o tabuleiro de acordo com a movimentação
+    Atualiza o tabuleiro de acordo com a movimentação
+    move(+Turn,+XP,+YP,+XM,+YM,+Board,-NewBoard)
 */
 move(Turn,XP,YP,XM,YM,Board,NewBoard) :-
     change_piece(0,Board,XP,YP,TempBoard),
     change_piece(Turn,TempBoard,XM,YM,NewBoard).
 
 /*
-    Alterar peça numa determinada posição do tabuleiro
+    Altera a peça numa determinada posição do tabuleiro
+    change_piece(+Value,+Board,+X,+Y,-NewBoard)
 */
 change_piece(Value,Board,X,Y,NewBoard) :-
     nth1(Y,Board,Row),
@@ -36,25 +40,38 @@ change_piece(Value,Board,X,Y,NewBoard) :-
     nth1(Y,NewBoard,NewRow,TempBoard).
 
 /*
-    Ver qual a peça que está numa determinada posição do tabuleiro
+    Vê qual a peça que está numa determinada posição do tabuleiro
+    get_position_piece(+X,+Y,+Board,-Piece) :-
 */
 get_position_piece(X,Y,Board,Piece) :-
     nth1(Y,Board,Row),
     nth1(X,Row,Piece).
 
-get_position_player(X, Y, Board, Player) :-
-    nth1(Y, Board, Row),
-    nth1(X, Row, Piece),
-    Piece =:= Player.
+/*
+    Vê se a peça é o do jogador
+    get_position_player(+X,+Y,+Board,+Width,+Height,+Player)
+*/
+get_position_player(X,Y,Board,Width,Height,Player) :-
+    Y =< Height,
+    Y >= 1,
+    X =< Width,
+    X >= 1,
+    get_position_piece(X,Y,Board,Piece),
+    Piece is Player.
 
 /*
-    verifica se está numa posição de continuous jump
+    Verifica se está numa posição onde é possivel fazer um continuous jump
+    jump_possible(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
 */
 jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
     \+no_line(Distances),
     \+no_jump(XP,YP,XM,YM),
     can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions).
 
+/*
+    Verifica se existe um jump válido
+    can_jump(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
+*/
 can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
     nth1(1,Distances,Vertical),
     nth1(2,Distances,Horizontal),
@@ -69,8 +86,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Vertical > 1,
                 1 =< YM - Vertical,
                 UpdatedY is YM - Vertical,
-                nth1(UpdatedY,Board,Row),
-                nth1(XM,Row,XVal),
+                get_position_piece(XM,UpdatedY,Board,XVal),
                 \+member([XM,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedY =\= YP
@@ -81,8 +97,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Vertical > 1,
                 Height >= YM + Vertical,
                 UpdatedY is YM + Vertical,
-                nth1(UpdatedY,Board,Row),
-                nth1(XM,Row,XVal),
+                get_position_piece(XM,UpdatedY,Board,XVal),
                 \+member([XM,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedY =\= YP
@@ -96,8 +111,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Horizontal > 1,
                 Width >= XM + Horizontal,
                 UpdatedX is XM + Horizontal,
-                nth1(YM,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,YM,Board,XVal),
                 \+member([UpdatedX,YM],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedX =\= XP
@@ -108,8 +122,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Horizontal > 1,
                 1 =< XM - Horizontal,
                 UpdatedX is XM - Horizontal,
-                nth1(YM,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,YM,Board,XVal),
                 \+member([UpdatedX,YM],VisitedPositions),
                 Turn =\= XVal,
                 UpdatedX =\= XP
@@ -125,8 +138,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Width >= XM + DiagonalNE,
                 UpdatedY is YM - DiagonalNE,
                 UpdatedX is XM + DiagonalNE,
-                nth1(UpdatedY,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,UpdatedY,Board,XVal),
                 \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
@@ -141,8 +153,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 1 =< XM - DiagonalNE,
                 UpdatedY is YM + DiagonalNE,
                 UpdatedX is XM - DiagonalNE,
-                nth1(UpdatedY,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,UpdatedY,Board,XVal),
                 \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
@@ -160,8 +171,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 1 =< XM - DiagonalNW,
                 UpdatedY is YM - DiagonalNW,
                 UpdatedX is XM - DiagonalNW,
-                nth1(UpdatedY,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,UpdatedY,Board,XVal),
                 \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
@@ -176,8 +186,7 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
                 Width >= XM + DiagonalNW,
                 UpdatedY is YM + DiagonalNW,
                 UpdatedX is XM + DiagonalNW,
-                nth1(UpdatedY,Board,Row),
-                nth1(UpdatedX,Row,XVal),
+                get_position_piece(UpdatedX,UpdatedY,Board,XVal),
                 \+member([UpdatedX,UpdatedY],VisitedPositions),
                 Turn =\= XVal,
                 (   % necessário verificar se novo jump não é a coord anterior
@@ -188,7 +197,8 @@ can_jump(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions) :-
     ).
 
 /*
-    verifica que não há linhas para fazer jump
+    Verifica que não há linhas para fazer jump
+    no_line(+Distances)
 */
 no_line(Distances) :-
     nth1(1,Distances,Elem1),
@@ -201,7 +211,8 @@ no_line(Distances) :-
     Elem4 is 1.
 
 /*
-    verifica que ultima movimentação foi do tipo adjacente
+    Verifica que a ultima movimentação foi do tipo adjacente
+    no_jump(+XP,+YP,+XM,+YM)
 */
 no_jump(XP,YP,XM,YM) :-
     (

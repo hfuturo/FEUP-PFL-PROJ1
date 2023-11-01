@@ -6,66 +6,37 @@
 :- consult(piece).
 :- consult(move).
 
-/* modo pessoa */
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 1);
-        (Mode is 2, Turn is 1);
-        (Mode is 3, Turn is 2);
-        (Mode is 5, Turn is 1);
-        (Mode is 6, Turn is 2)
-    ),
-    !,
-    Type is 1.
-
-/* modo easy ai */
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 2, Turn is 2);
-        (Mode is 3, Turn is 1);
-        (Mode is 4);
-        (Mode is 7, Turn is 1);
-        (Mode is 8, Turn is 2)
-    ),
-    !,
-    Type is 2.
-
-/* modo difficult ai */
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 5, Turn is 2);
-        (Mode is 6, Turn is 1);
-        (Mode is 7, Turn is 2);
-        (Mode is 8, Turn is 1);
-        (Mode is 9)
-    ),
-    !,
-    Type is 3.
-
 /*
-    criar um tabuleiro com um tamanho especifico
+    Cria um tabuleiro com um tamanho especifico
+    initial_state(-Height,-Width,-Board)
 */
 initial_state(Height,Width,Board) :-
     read_size_board(Height,Width),
     make_initial_board(Height,Width,Board), nl.
+
 /*
-    print do tabuleiro
+    Faz o output do estado atual do jogo
+    display_game(+Turn,+Width,+Board,+TotalMoves)
 */
 display_game(Turn,Width,Board,TotalMoves) :-
     print_board(Board,Width,Turn,TotalMoves),
     !.   % remove output true ? do terminal quando acaba de correr
 
-display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+/*
+    Faz o output do estado atual do jogo com a indicação da ronda
+    display_game_with_round(+Player,+Width,+Board,+TotalMoves,+Round)
+*/
+display_game_with_round(1,Width,Board,TotalMoves,Round) :-
     Round < 10,
     write('**************\n'),
     write('*            *\n'),
     format('*   Round ~w  *\n',Round),
     write('*            *\n'),
     write('**************\n'),
-    display_game(1,Width,NewBoard,NewTotalMoves),
+    display_game(1,Width,Board,TotalMoves),
     !.
 
-display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+display_game_with_round(1,Width,Board,TotalMoves,Round) :-
     Round >= 10,
     Round < 100,
     write('***************\n'),
@@ -73,10 +44,10 @@ display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
     format('*   Round ~w  *\n',Round),
     write('*             *\n'),
     write('***************\n'),
-    display_game(1,Width,NewBoard,NewTotalMoves),
+    display_game(1,Width,Board,TotalMoves),
     !.
 
-display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+display_game_with_round(1,Width,Board,TotalMoves,Round) :-
     Round >= 100,
     Round < 1000,
     write('****************\n'),
@@ -84,24 +55,25 @@ display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
     format('*   Round ~w  *\n',Round),
     write('*              *\n'),
     write('****************\n'),
-    display_game(1,Width,NewBoard,NewTotalMoves),
+    display_game(1,Width,Board,TotalMoves),
     !.
 
-display_game_with_round(2,Width,NewBoard,NewTotalMoves,_) :-
-    display_game(2,Width,NewBoard,NewTotalMoves).
+display_game_with_round(2,Width,Board,TotalMoves,_) :-
+    display_game(2,Width,Board,TotalMoves).
 
 
 /*
-    verificar se o jogo acabou e congratular o vencedor
+    Ciclo do jogo
+    game_cycle(+Turn,+Height,+Width,+Board,+TotalMoves,+Mode,+Round)
 */
+
+/* verifica se existe um vencedor */
 game_cycle(Turn,Height,Width,Board,_,_,_):- 
     game_over(Board,Width,Height,Turn,Winner), 
     !, 
     congratulate(Winner).
 
-/*
-    ciclo do jogo -> primeira jogada
-*/
+/* na primeira jogada não é possivel fazer continuous jump */
 game_cycle(Turn,Height,Width,Board,0,Mode,Round):-
     player_type(Mode,Turn,Type),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
@@ -127,7 +99,8 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round):-
     game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode,NewRound).
 
 /*
-    verificar se o jogo acabou, e se sim ver quem ganhou
+    Verificar se o jogo acabou, e se sim vê quem ganhou
+    game_over(+Board,+Width,+Height,+Turn,-Winner)
 */
 game_over(Board,Width,Height,Turn,Winner) :-
     change_player(Turn,NewTurn),
@@ -139,6 +112,10 @@ game_over(Board,Width,Height,Turn,Winner) :-
 
 game_over(_,_,_,Turn,Turn).
 
+/*
+    Congratula o vencedor
+    congratulate(+Winner)
+*/
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
 

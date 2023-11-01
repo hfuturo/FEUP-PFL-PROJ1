@@ -3,6 +3,7 @@
     Verifica se a peça moveu uma distancia possivel
     check_move(+XP,+YP,+XM,+YM,+Distances) :- 
 */
+
 /* horizontal */
 check_move(XP,YP,XM,YM,Distances) :- 
     YP is YM,
