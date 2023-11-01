@@ -32,16 +32,17 @@ check_isolation_jump(Turn,Height,Width,Board,X,Y,XM,YM,Min,VisitedPositions) :-
     check_isolation_move(XNW,YNW,Value7,Height,Width,Board,Turn,1),
     check_isolation_move(XSE,YSE,Value8,Height,Width,Board,Turn,1),
 
-    append([[Value1,XLeft,Y],[Value2,XRight,Y],[Value3,X,YUp],[Value4,X,YDown],[Value5,XNE,YNE],[Value6,XSW,YSW],[Value7,XNW,YNW],[Value8,XSE,YSE]],[],Moves),
+    append([[Value1,XLeft,Y,JumpColumn],[Value2,XRight,Y,JumpColumn],[Value3,X,YUp,JumpRow],[Value4,X,YDown,JumpRow],[Value5,XNE,YNE,JumpNESW],[Value6,XSW,YSW,JumpNESW],[Value7,XNW,YNW,JumpNWSE],[Value8,XSE,YSE,JumpNWSE]],[],Moves),
     findall(
         [Value, XT, YT], 
         (
-            member([Value, XT, YT], Moves), 
+            member([Value, XT, YT, LineDistance], Moves), 
             \+ member([XT, YT], VisitedPositions),
             X>=1,
             X=<Width,
             Y>=1,
-            Y=<Height
+            Y=<Height,
+            LineDistance>1 % single step
         ),
         PossibleMoves
     ),
