@@ -3,11 +3,13 @@
 :- use_module(library(lists)).
 :- use_module(library(between)).
 
+:- consult(check_win).
 :- consult(check_move).
 :- consult(check_isolation).
 :- consult(distance).
 :- consult(piece).
 :- consult(menu).
+:- consult(utils).
 
 /* modo pessoa */
 select_piece(Turn,Height,Width,Board,X,Y,1) :-
@@ -125,6 +127,11 @@ choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
 
 /* modo pessoa ou easy ai */
 check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TotalMoves,NewTotalMoves,Board,NewBoard,VisitedPositions,Type) :-
+    change_player(Turn,NewTurn),
+    (
+        \+check_winner(Board,Width,Height,1,Turn),
+        \+check_winner(Board,Width,Height,1,NewTurn)
+    ),
     calculate_distances(XM,YM,Turn,Height,Width,Board,Distances),
     jump_possible(Distances,XP,YP,XM,YM,Width,Height,Board,Turn,VisitedPositions),
     append(VisitedPositions,[[XM,YM]],NewVisitedPositions),

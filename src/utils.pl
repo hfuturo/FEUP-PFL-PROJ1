@@ -1,6 +1,20 @@
 :- use_module(library(system), [now/1]).
 
 /*
+    Troca de jogador
+    change_player(?Player1,?Player2)
+*/
+change_player(1,2).
+change_player(2,1).
+
+/*
+    Atualiza a ronda do jogo
+    change_player(+Player,+Round,-NewRound)
+*/
+change_round(1,Round,NewRound) :- NewRound is Round+1.
+change_round(2,Round,NewRound) :- NewRound is Round.
+
+/*
     Lê um número de input
     read_number(-Number)
 */

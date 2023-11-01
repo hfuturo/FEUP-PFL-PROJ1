@@ -39,6 +39,7 @@ check_move(XP,YP,XM,YM,Distances) :-
 
 /*
     Calcula o valor absoluto de um número
+    abs_value(+Number,-AbsValue)
 */
 abs_value(Number, AbsValue) :-
     Number =< 0,
@@ -46,7 +47,8 @@ abs_value(Number, AbsValue) :-
 abs_value(Number, AbsValue) :- AbsValue is Number.
 
 /*
-    Verificar se a diferença é a mesma
+    Verifica se as diferenças entre XP-XM e YP-YM são as mesmas
+    check_same_diff(+XP,+YP,+XM,+YM)
 */
 check_same_diff(XP,YP,XM,YM) :-
     DiffX is XP-XM,
@@ -54,7 +56,8 @@ check_same_diff(XP,YP,XM,YM) :-
     DiffX is DiffY.
 
 /*
-    Verificar se a diferença é diferente
+    Verifica se as diferenças entre XP-XM e YP-YM são opostas
+    check_oposite_diff(+XP,+YP,+XM,+YM)
 */
 check_oposite_diff(XP,YP,XM,YM) :-
     DiffX is XP-XM,

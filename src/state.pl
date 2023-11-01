@@ -6,12 +6,6 @@
 :- consult(piece).
 :- consult(move).
 
-change_player(1,2).
-change_player(2,1).
-
-change_round(1,Round,NewRound) :- NewRound is Round+1.
-change_round(2,Round,NewRound) :- NewRound is Round.
-
 /* modo pessoa */
 player_type(Mode,Turn,Type) :-
     (
@@ -110,8 +104,6 @@ game_cycle(Turn,Height,Width,Board,_,_,_):-
 */
 game_cycle(Turn,Height,Width,Board,0,Mode,Round):-
     player_type(Mode,Turn,Type),
-    (Type is 1;Type is 2),
-
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,NewBoard),
     change_player(Turn,NewTurn),
@@ -123,25 +115,7 @@ game_cycle(Turn,Height,Width,Board,0,Mode,Round):-
 
 game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round):-
     player_type(Mode,Turn,Type),
-    (Type is 1;Type is 2),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
-    move(Turn,XP,YP,XM,YM,Board,TempBoard),
-    TempTotalMoves is TotalMoves + 1,
-    append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
-    change_player(Turn,NewTurn),
-    change_round(NewTurn,Round,NewRound),
-    display_game_with_round(NewTurn,Width,NewBoard,NewTotalMoves,NewRound),
-    !,
-    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode,NewRound).
-
-/*
-    ciclo de jogo em modo Difficult AI
-*/
-game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round) :-
-    player_type(Mode,Turn,Type),
-    Type is 3,
-    choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,TempBoard),
     TempTotalMoves is TotalMoves + 1,
     append([[XP,YP]],[],VisitedPositions),
@@ -158,11 +132,9 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round) :-
 game_over(Board,Width,Height,Turn,Winner) :-
     change_player(Turn,NewTurn),
     Y is 1,
-    check_winner(Board,Width,Height,Y,Turn,FirstWinner),
-    FirstWinner is 0,
+    \+check_winner(Board,Width,Height,Y,Turn),
     !,
-    check_winner(Board,Width,Height,Y,NewTurn,SecondWinner),
-    SecondWinner is 1,
+    check_winner(Board,Width,Height,Y,NewTurn),
     Winner is NewTurn.
 
 game_over(_,_,_,Turn,Turn).

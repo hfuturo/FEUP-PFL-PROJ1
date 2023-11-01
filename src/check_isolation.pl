@@ -117,7 +117,6 @@ check_isolation_move(X,Y,Value,Height,Width,_,_,_) :-
     Value is 8,
     !.
 
-
 check_isolation_move(X,Y,Value,Height,Width,Board,Turn,1) :- 
     get_position_piece_check(X,Y,Height,Width,Board,Piece),
     Piece is Turn,
