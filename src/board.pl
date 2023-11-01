@@ -1,7 +1,8 @@
 :- use_module(library(lists)).
 
 /*
-    create initial board
+    Cria o tabuleiro inicial
+    make_initial_board(+Height,+Width,-Board)
 */
 make_initial_board(Height,Width, Board) :-
     make_board_filler_initial(BoardFiller,Height,Width),
@@ -10,6 +11,10 @@ make_initial_board(Height,Width, Board) :-
     append(PlayerOneBoard,BoardFiller,TempBoard),
     append(TempBoard,PlayerTwoBoard,Board).
 
+/*
+    Cria as linhas vazias do tabuleiro inicial
+    make_board_filler_initial(-BoardFiller,+Height,+Width)
+*/
 make_board_filler_initial(BoardFiller,Height,Width):-
     HeightFiller is Height-4,
     length(LineFiller,Width),
@@ -17,6 +22,10 @@ make_board_filler_initial(BoardFiller,Height,Width):-
     length(BoardFiller,HeightFiller),
     maplist(=(LineFiller), BoardFiller).
 
+/*
+    Cria as linhas com peças do tabuleiro inicial
+    make_board_player_initial(+Player,-PlayerBoard,+Width)
+*/
 make_board_player_initial(Player,PlayerBoard,Width) :-
     RowWidth is Width-2,
     length(InitialRow, RowWidth),
@@ -26,7 +35,8 @@ make_board_player_initial(Player,PlayerBoard,Width) :-
     append([EndingRow],[EndingRow],PlayerBoard).
 
 /*
-    print board in the console
+    Faz o output do tabuleiro
+    print_board(+Board,+Width,+Turn,+TotalMoves)
 */
 print_board(Board,Width,Turn,TotalMoves) :-
     print_board_top_coordinates(Width), nl,
@@ -35,23 +45,30 @@ print_board(Board,Width,Turn,TotalMoves) :-
     print_total_moves(TotalMoves).
 
 /*
-    print current player turn
+    Faz o output que dá a informação de qual o jogador a jogar
+    print_turn(+Turn)
 */
 print_turn(Turn) :-
     format('Player turn: ~w          ', [Turn]).
 
 /*
-    print the total number of moves made in this game.
+    Faz o output que dá a informação de quantas jogadas foram feitas
+    print_total_moves(+TotalMoves)
 */
 print_total_moves(TotalMoves) :-
     format('Moves: ~w~n~n', [TotalMoves]).
 
 /*
-    print top coordinates of the board
+    Faz o output das coordenadas horizontais do tabuleiro
+    print_board_top_coordinates(+Width)
 */
 print_board_top_coordinates(Width) :-
     print_board_top_coordinates_aux(Width, 1).
 
+/*
+    Faz o output de uma coordenada horizontal do tabuleiro
+    print_board_top_coordinates_aux(+Width,+CurrentCoordinate)
+*/
 print_board_top_coordinates_aux(0,_).
 print_board_top_coordinates_aux(Width, CurrentCoordinate) :-
     Width > 0,
@@ -63,7 +80,8 @@ print_board_top_coordinates_aux(Width, CurrentCoordinate) :-
     print_board_top_coordinates_aux(Width1, CurrentCoordinate1). 
 
 /*
-    print content of the board
+    Faz o output do conteudo do tabuleiro
+    print_board_content(+[H|T],+Width,+Line)
 */
 print_board_content([],Width,_) :- 
     print_limiter(Width).
@@ -74,14 +92,16 @@ print_board_content([H|T],Width,Line) :-
     print_board_content(T,Width,Line1).
 
 /*
-    print line of the board
+    Faz o output de uma linha do tabuleiro
+    print_line(+Content,+Line) :-
 */
 print_line(Content,Line) :-
     print_line_content(Content),
     format('| ~w\n',Line).
 
 /*
-    print content of the line of the board
+    Faz o output do conteudo de uma linha do tabuleiro
+    print_line_content(+[H|T]) 
 */
 print_line_content([]).
 
@@ -96,11 +116,16 @@ print_line_content([H|T]) :-
     print_line_content(T).
 
 /*
-    create squares to separate the content of the board
+    Faz o output dos limites entre linhas do tabuleiro
+    print_limiter(+Width)
 */
 print_limiter(Width) :-
     print_limiter_aux(0,Width).
 
+/*
+    Faz o output dos limites entre "casas" do tabuleiro
+    print_limiter_aux(+Pos,+Max)
+*/
 print_limiter_aux(Pos,Max) :-
     Pos<Max,
     write('----'),

@@ -1,7 +1,8 @@
 :- use_module(library(system), [now/1]).
 
 /*
-    read input number
+    Lê um número de input
+    read_number(-Number)
 */
 read_number(Number) :-
     read_number_aux(0,false,Number).
@@ -17,19 +18,21 @@ read_number_aux(Acc,_,Number) :-
 read_number_aux(Number,true,Number).
 
 /*
-    read char input and convert to number
+    Lê um caracter de input
+    read_char(-Letter)
 */
-read_char(Number) :-
+read_char(Letter) :-
     repeat,
     get_code(Input),
     get_code(_), % break line
-    Number is Input-96,
-    Number>= 1,
-    Number=< 15,
+    Letter is Input-96,
+    Letter>= 1,
+    Letter=< 15,
     !.
 
 /*
-    read size board and check if it is valid
+    Lê dois números de input
+    read_size_board(-Height,-Width)
 */
 read_size_board(Height,Width) :-
     write('Write the Height of the board.\n'),
@@ -38,7 +41,8 @@ read_size_board(Height,Width) :-
     read_size_board_side(Width).
 
 /*
-    read side of the board and check if it is valid
+    Lê o número de input que define o tamanho de um dos lados do tabuleiro
+    read_size_board_side(-Side) :-
 */
 read_size_board_side(Side) :-
     repeat,
@@ -47,6 +51,7 @@ read_size_board_side(Side) :-
     Side>=5,
     Side=<15,
     !.
+   
     
 init_random_state :-
     now(X),
