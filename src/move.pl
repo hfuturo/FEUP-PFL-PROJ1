@@ -77,8 +77,7 @@ choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     select_piece(Turn,Height,Width,Board,XP,YP,Type),
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_move(Turn,Height,Width,Board,XM,YM,XP,YP,Distances,VisitedPositions,Type),
-    check_move(XP,YP,XM,YM,Distances,Bool),
-    Bool is 1,
+    check_move(XP,YP,XM,YM,Distances),
     !.
 
 choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,3) :-
@@ -119,10 +118,9 @@ choose_jump(Turn,Height,Width,Board,XP,YP,XM,YM,VisitedPositions,Type) :-
     repeat,
     calculate_distances(XP,YP,Turn,Height,Width,Board,Distances),
     select_move(Turn,Height,Width,Board,XM,YM,XP,YP,Distances,VisitedPositions,Type),
-    check_move(XP,YP,XM,YM,Distances,Bool),
+    check_move(XP,YP,XM,YM,Distances),
     \+no_jump(XP,YP,XM,YM),
     \+member([XM,YM],VisitedPositions),
-    Bool is 1,
     !.
 
 /* modo pessoa ou easy ai */
