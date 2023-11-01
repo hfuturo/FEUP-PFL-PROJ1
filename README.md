@@ -43,7 +43,7 @@ Regras:
 
 - O jogo começa com o jogador que tiver as peças brancas.
 - Uma peça só pode ser movida por jogada.
-- A primeira jogada do jogo tem de ser um **single step**.
+- A primeira jogada do jogo não pode conter um **continuous jump**.
 - Uma peça pode ser movida ao longo de uma linha a que pertença, desde que a distância percorrida pela peça seja igual ao tamanho dessa linha.
 - A peça pode saltar por peças que se encontram a meio do caminho e, se tiver uma peça inimiga onde 'aterrar', a peça inimiga é capturada e removida do jogo.
 - Peças não podem ser movidas para um lugar onde já esteja uma peça da mesma cor.
