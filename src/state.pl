@@ -9,6 +9,9 @@
 change_player(1,2).
 change_player(2,1).
 
+change_round(1,Round,NewRound) :- NewRound is Round+1.
+change_round(2,Round,NewRound) :- NewRound is Round.
+
 /* modo pessoa */
 player_type(Mode,Turn,Type) :-
     (
@@ -58,10 +61,22 @@ display_game(Turn,Width,Board,TotalMoves) :-
     print_board(Board,Width,Turn,TotalMoves),
     !.   % remove output true ? do terminal quando acaba de correr
 
+display_game_with_round(1,Width,NewBoard,NewTotalMoves,Round) :-
+    write('**************\n'),
+    write('*            *\n'),
+    format('*   Round ~w  *\n',Round),
+    write('*            *\n'),
+    write('**************\n'),
+    display_game(1,Width,NewBoard,NewTotalMoves).
+
+display_game_with_round(2,Width,NewBoard,NewTotalMoves,Round) :-
+    display_game(2,Width,NewBoard,NewTotalMoves).
+
+
 /*
     verificar se o jogo acabou e congratular o vencedor
 */
-game_cycle(Turn,Height,Width,Board,_,_):- 
+game_cycle(Turn,Height,Width,Board,_,_,_):- 
     game_over(Board,Width,Height,Turn,Winner), 
     !, 
     congratulate(Winner).
@@ -69,19 +84,20 @@ game_cycle(Turn,Height,Width,Board,_,_):-
 /*
     ciclo do jogo -> primeira jogada
 */
-game_cycle(Turn,Height,Width,Board,0,Mode):-
+game_cycle(Turn,Height,Width,Board,0,Mode,Round):-
     player_type(Mode,Turn,Type),
     (Type is 1;Type is 2),
 
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
     move(Turn,XP,YP,XM,YM,Board,NewBoard),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,1),
+    change_round(NewTurn,Round,NewRound),
+    display_game_with_round(NewTurn,Width,NewBoard,1,NewRound),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,1,Mode).
+    game_cycle(NewTurn,Height,Width,NewBoard,1,Mode,NewRound).
 
 
-game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round):-
     player_type(Mode,Turn,Type),
     (Type is 1;Type is 2),
     choose_move(Turn,Height,Width,Board,XP,YP,XM,YM,_,Type),
@@ -90,14 +106,15 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode):-
     append([[XP,YP]],[],VisitedPositions),
     check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,NewTotalMoves),
+    change_round(NewTurn,Round,NewRound),
+    display_game_with_round(NewTurn,Width,NewBoard,NewTotalMoves,NewRound),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode).
+    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode,NewRound).
 
 /*
     ciclo de jogo em modo Difficult AI
 */
-game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
+game_cycle(Turn,Height,Width,Board,TotalMoves,Mode,Round) :-
     player_type(Mode,Turn,Type),
     Type is 3,
     choose_move(Turn, Height, Width, Board, XP, YP, XM, YM,_,Type),
@@ -106,9 +123,10 @@ game_cycle(Turn,Height,Width,Board,TotalMoves,Mode) :-
     append([[XP,YP]],[],VisitedPositions),
     check_continuous_jump_cycle(XP,YP,XM,YM,Turn,Height,Width,TempTotalMoves,NewTotalMoves,TempBoard,NewBoard,VisitedPositions,Type),
     change_player(Turn,NewTurn),
-    display_game(NewTurn,Width,NewBoard,NewTotalMoves),
+    change_round(NewTurn,Round,NewRound),
+    display_game_with_round(NewTurn,Width,NewBoard,NewTotalMoves,NewRound),
     !,
-    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode).
+    game_cycle(NewTurn,Height,Width,NewBoard,NewTotalMoves,Mode,NewRound).
 
 /*
     verificar se o jogo acabou, e se sim ver quem ganhou
@@ -128,5 +146,3 @@ game_over(_,_,_,Turn,Turn).
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
 
-change_round(1,Round,NewRound) :- NewRound is Round+1.
-change_round(2,Round,NewRound) :- NewRound is Round.
