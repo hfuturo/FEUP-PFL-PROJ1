@@ -238,6 +238,33 @@ game_over((_,Turn,_),Turn).
 
 ### Avaliação do estado do jogo
 
+O predicado `value(+GameState, -Value)` avalia o tabuleiro de jogo.
+
+Como já foi referido antes, o jogo acaba quando um dos jogadores ganha, no entanto caso o jogador faça um movimento vencedor para ambos os lados, é o seu adversário quem ganha. Para além disso, a posição das peças de um jogador não tem o "poder" de bloquear um possivel movimento do adversário.
+
+Desta forma, é importante que o jogador esteja atento e veja que resultado gerará a sua jogada, ou seja, se causará ou não, a vitória do seu adversário.
+
+Optamos assim por avaliar o tabuleiro da seguinte forma:
+
+- se for verificado que o oponente ganhou, este vale 0 pontos;
+- se for verificado que o jogador ganhou, este vale 10 pontos;
+- se ninguém ganhar, vale 5.
+
+```prolog
+value((Board,Turn,_),Value) :-
+    change_player(Turn,NewTurn),
+    check_winner(Board,1,NewTurn),
+    !,
+    Value is 0.
+
+value((Board,Turn,_),Value) :-
+    check_winner(Board,1,Turn),
+    !,
+    Value is 10.
+
+value(_,Value) :- Value is 5.
+```
+
 ### Jogada do computador
 
 Este jogo possui dois tipos de jogadas por computador. O primeiro tipo é baseado em aleatoriedade, onde o computador seleciona a peça que vai mover, bem como a jogada a fazer, de forma totalmente aleatória. Caso haja a hipótese de realizar um continuous jump, o computador vai gerar um número aleatório entre `1` e `2` e, caso o número gerado seja 1, o computador realiza o continuous jump.
