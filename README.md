@@ -81,6 +81,8 @@ Abaixo apresentamos o propósito de cada um:
 
 ### Representação interna do estado do jogo
 
+O estado interno do jogo é guardado numa variável chamada GameState. Esta variável é composta pelo tabuleiro, jogador atual, número total de movimentações realizadas, posições visitadas pela peça da jogada atual, um booleano que representa se estamos a realizar um continuous jump e pelas coordenadas da peça da jogada atual.
+
 - Tabuleiro
 
 O tabuleiro é representado como uma matriz, isto é, uma lista com sublistas. Cada sublista representa uma linha do tabuleiro e cada elemento dentro de cada sublista representa um quadrado do tabuleiro.
@@ -114,50 +116,22 @@ change_player(1,2).
 change_player(2,1).
 ```
 
-- Tipo de jogador
+- Número total de movimentações realizados
 
-Outro aspeto importante é o tipo de jogador que está atualmente a jogar, uma vez que este pode ser um dos utilizadores ou um dos *bots*. Para simplificar isto, criamos uma variável `Type` que guarda o tipo de jogador que está a jogar atualmente. Para obter esta variável utilizamos o seguinte predicado `player_type(+Mode,+Turn,+Type)` que tem em conta o `Mode` e a `Turn`, uma vez que um jogo pode ter mais do que um tipo de jogadores (por exemplo, `Person vs Easy AI`).
+O número total de movimentações realizados é representado pela variável `TotalMoves` e é meramente uma informação adicional representada quando se dá display do board.
 
-`Type` pode ter três valores distintos:
+- Posições visitadas pela peça atual
 
-- `1` Representa o modo de `utilizador`.
-- `2` Representa o modo de `Easy AI`.
-- `3` Representa o modo de `Difficult AI`.
+Para obedecer às regras do jogo, uma peça só pode visitar uma casa apenas uma vez durante a mesma jogada. Para tal, foi necessário criar a variável `VisitedPositions` que guarda as posições que a peça da jogada atual já visitou.
 
-```prolog
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 1);
-        (Mode is 2, Turn is 1);
-        (Mode is 3, Turn is 2);
-        (Mode is 5, Turn is 1);
-        (Mode is 6, Turn is 2)
-    ),
-    !,
-    Type is 1.
+- Booleano que representa a realização de um continuous jump
 
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 2, Turn is 2);
-        (Mode is 3, Turn is 1);
-        (Mode is 4);
-        (Mode is 7, Turn is 1);
-        (Mode is 8, Turn is 2)
-    ),
-    !,
-    Type is 2.
+Para saber se um jogador quer realizar um continuous jump foi necessário criar uma variável chamada `ContinuousJump`. Esta variável é importante pois quando se realiza um continuous jump é necessário ter em atenção as posições já visitadas por esta peça, daí ser necessário guardar um registo das posições já visitadas na variável `VisitedPositions`.
 
-player_type(Mode,Turn,Type) :-
-    (
-        (Mode is 5, Turn is 2);
-        (Mode is 6, Turn is 1);
-        (Mode is 7, Turn is 2);
-        (Mode is 8, Turn is 1);
-        (Mode is 9)
-    ),
-    !,
-    Type is 3.
-```
+- Coordenadas da peça atual
+
+As coordenadas da peça atual, tal como o nome indica, representam a posição da peça que irá ser movida na jogada. A coordenada X é representada pela variável `X` e a coordenada Y é representada pela variável `Y`.
+
 
 ### Visualização do estado do jogo
 
