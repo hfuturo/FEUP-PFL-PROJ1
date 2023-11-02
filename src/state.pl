@@ -69,48 +69,45 @@ display_game_with_round((Board,2,TotalMoves),_) :-
 */
 
 /* verifica se existe um vencedor */
-game_cycle(BoardSize,GameState,_,_):- 
+game_cycle(GameState,_,_):- 
     game_over(GameState,Winner), 
     !, 
     congratulate(Winner).
 
 /* na primeira jogada não é possivel fazer continuous jump */
-game_cycle(BoardSize,(Board,Turn,0),Mode,Round):-
+game_cycle((Board,Turn,0),Mode,Round):-
     player_type(Mode,Turn,Type),
-    choose_move(BoardSize,(Board,Turn,0),Move,_,Type),
+    choose_move((Board,Turn,0),Move,_,Type),
     move((Board,Turn,0),Move,(NewBoard,_,NewTotalMoves)),
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
     display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
     !,
-    game_cycle(BoardSize,(NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
+    game_cycle((NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
 
 
-game_cycle(BoardSize,(Board,Turn,TotalMoves),Mode,Round):-
+game_cycle((Board,Turn,TotalMoves),Mode,Round):-
     player_type(Mode,Turn,Type),
-    choose_move(BoardSize,(Board,Turn,TotalMoves),(XP,YP,XM,YM),_,Type),
+    choose_move((Board,Turn,TotalMoves),(XP,YP,XM,YM),_,Type),
     move((Board,Turn,TotalMoves),(XP,YP,XM,YM),TempGameState),
     append([[XP,YP]],[],VisitedPositions),
-    check_continuous_jump_cycle((XP,YP,XM,YM),BoardSize,TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),
+    check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
     display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
     !,
-    game_cycle(BoardSize,(NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
+    game_cycle((NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
 
 /*
     Verificar se o jogo acabou, e se sim vê quem ganhou
     game_over(+Board,+Width,+Height,+Turn,-Winner)
 */
 game_over((Board,Turn,_),Winner) :-
-    nth1(1,Board,Row),
-    length(Row,Width),
-    length(Board,Height),
     change_player(Turn,NewTurn),
     Y is 1,
-    \+check_winner((Height,Width),Board,Y,Turn),
+    \+check_winner(Board,Y,Turn),
     !,
-    check_winner((Height,Width),Board,Y,NewTurn),
+    check_winner(Board,Y,NewTurn),
     Winner is NewTurn.
 
 game_over((_,Turn,_),Turn).

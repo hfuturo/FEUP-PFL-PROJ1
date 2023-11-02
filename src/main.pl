@@ -7,6 +7,8 @@ play :-
     Round is 1,
     menu_game_mode(Mode), nl,
     initial_state((Height,Width),GameState),
+    assertz(board_size(Height,Width)),
     display_game_with_round(GameState,Round),
-    game_cycle((Height,Width),GameState,Mode,Round).
+    game_cycle(GameState,Mode,Round),
+    retract(board_size(Height,Width)).
     
