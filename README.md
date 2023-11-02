@@ -277,6 +277,14 @@ Para decidir se o algorítmo faz um continuous jump, este verifica se o nível d
 
 # Conclusões
 
+A nivel geral o jogo Apart foi implementado com sucesso, tendo-se criado os modos Pessoa vs Pessoa, Pessoa vs Computador e Computador vs Computador, podendo-se ainda escolher entre um modo fácil ou dificil.
+
+Uma das regras do jogo é que quando uma peça faz um "salto" e chega a uma casa onde pode tornar a fazê-lo, tem a oportunidade de o fazer ou não.
+
+No entanto, no modo dificil do computador, quando se verifica se o salto irá trazer benefícios a nivel do isolamento da peça, não se vê se essa movimentação irá provocar a vitória do adversário, ao contrário do que é feito na escolha do movimento inicial.
+
+Podemos assim concluir que este projeto foi importante para aumentarmos o nosso conhecimento em Prolog, havendo ainda espaço para melhorias.
+
 # Bibliografia
 
 Durante a execução do trabalho, foram consultados os seguintes sites para obter informação sobre o jogo:
