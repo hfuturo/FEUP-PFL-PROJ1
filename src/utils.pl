@@ -90,7 +90,7 @@ read_char(Letter) :-
     Lê dois números de input
     read_size_board(-Height,-Width)
 */
-read_size_board(Height,Width) :-
+read_size_board((Height,Width)) :-
     write('Write the Height of the board.\n'),
     read_size_board_side(Height), nl,
     write('Write the width of the board.\n'),

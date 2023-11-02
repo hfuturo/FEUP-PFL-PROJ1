@@ -10,11 +10,11 @@
     Cria um tabuleiro com um tamanho especifico
     initial_state(-Height,-Width,-Board)
 */
-initial_state((Height,Width),(Board,Turn,TotalMoves)) :-
+initial_state(BoardSize,(Board,Turn,TotalMoves)) :-
     TotalMoves is 0,
     Turn is 1,
-    read_size_board(Height,Width),
-    make_initial_board(Height,Width,Board), nl.
+    read_size_board(BoardSize),
+    make_initial_board(BoardSize,Board), nl.
 
 /*
     Faz o output do estado atual do jogo
@@ -22,8 +22,8 @@ initial_state((Height,Width),(Board,Turn,TotalMoves)) :-
 */
 display_game(GameState) :-
     print_board(GameState),
-    !.   % remove output true ? do terminal quando acaba de correr
-
+    !.
+    
 /*
     Faz o output do estado atual do jogo com a indicação da ronda
     display_game_with_round(+Player,+Width,+Board,+TotalMoves,+Round)
@@ -62,7 +62,6 @@ display_game_with_round((Board,1,TotalMoves),Round) :-
 
 display_game_with_round((Board,2,TotalMoves),_) :-
     display_game((Board,2,TotalMoves)).
-
 
 /*
     Ciclo do jogo

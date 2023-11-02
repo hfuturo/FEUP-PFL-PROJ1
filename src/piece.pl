@@ -52,13 +52,16 @@ get_position_piece(X,Y,Board,Piece) :-
     Vê se a peça é o do jogador
     get_position_player(+X,+Y,+Board,+Width,+Height,+Player)
 */
-get_position_player(X,Y,(Width,Height),(Board,Player,_)) :-
+get_position_player(X,Y,BoardSize,(Board,Player,_)) :-
+    check_inside_board(X,Y,BoardSize),
+    get_position_piece(X,Y,Board,Piece),
+    Piece is Player.
+
+check_inside_board(X,Y,(Width,Height)) :-
     Y =< Height,
     Y >= 1,
     X =< Width,
-    X >= 1,
-    get_position_piece(X,Y,Board,Piece),
-    Piece is Player.
+    X >= 1.
 
 /*
     Verifica se está numa posição onde é possivel fazer um continuous jump
