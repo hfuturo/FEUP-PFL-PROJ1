@@ -216,7 +216,7 @@ game_over(_,_,_,Turn,Turn).
 
 ### Jogada do computador
 
-No menu que permite escolher o modo de jogo podemos verificar que existem dois tipos de *AI* que o utilizador pode escolher, a `Easy AI` e o `Difficult AI`.
+No menu que permite escolher o modo de jogo podemos verificar que existem dois tipos de _AI_ que o utilizador pode escolher, a `Easy AI` e o `Difficult AI`.
 
 A `Easy AI` é construída com base na aleatoriadade. Tanto a peça selecionada como a jogada que realiza são feitas de forma totalmente aleatória utilizando os predicados `select_piece(+Turn,+Height,+Width,+Board,-X,-Y,+Type)` e `select_move(+Turn,+Height,+Width,+Board,-X,-Y,+XP,+YP,+Distances,+VisitedPositions,+Type)`, respetivamente.
 
@@ -257,7 +257,6 @@ O `Difficult AI` utiliza um algorítmo greedy para realizar as suas jogadas. Est
 Agora que temos uma peça selecionada, o algorítmo vai calcular o nível de isolamento para cada jogada possível que aquela peça pode realizar e vai selecionar a jogada que isole mais a peça. Se houver mais do que uma jogada com o melhor nível de isolamento, o algorítmo seleciona uma de forma aleatória.
 
 Para decidir se o algorítmo faz um continuous jump, este verifica se o nível de isolamente após o continuous jump é melhor ou pior do que o nível de isolamento atual. Se for pior, o continuous jump não é realizado.
-
 
 # Conclusões
 

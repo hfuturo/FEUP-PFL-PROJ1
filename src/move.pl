@@ -167,22 +167,38 @@ choose_move(GameState,VisitedPositions,3,(XP,YP,XM,YM)) :-
     nth1(1,Elem,MaxValue),
 
     findall(
-        [Value,XPT,YPT,XMT,YMT],
+        [BoardValue,Value,XPT,YPT,XMT,YMT],
         (
             member([Value,XPT,YPT,XMT,YMT],Result),
-            Value is MaxValue
+            Value is MaxValue,
+            value(GameState,BoardValue)
         ),
         BestMoves
     ),
-    length(BestMoves,NumberMoves),
-    UpdatedNumberMoves is NumberMoves + 1,
-    random(1,UpdatedNumberMoves,RandomMove),
+    sort(BestMoves,ValueBestMoves),
+    length(ValueBestMoves,NumberMoves),
 
-    nth1(RandomMove,BestMoves,SelectedMove),
-    nth1(2,SelectedMove,XP),
-    nth1(3,SelectedMove,YP),
-    nth1(4,SelectedMove,XM),
-    nth1(5,SelectedMove,YM).
+    nth1(NumberMoves,ValueBestMoves,ValueElem),
+    nth1(1,ValueElem,BestPlayValue),
+
+    findall(
+        [BoardValue,Value,XPT,YPT,XMT,YMT],
+        (
+            member([BoardValue,Value,XPT,YPT,XMT,YMT],BestMoves),
+            BoardValue is BestPlayValue
+        ),
+        FinalMoves
+    ),
+
+    length(FinalMoves,Index),
+    UpdatedIndex is Index+1,
+    random(1,UpdatedIndex,Final),
+
+    nth1(Final,FinalMoves,SelectedMove),
+    nth1(3,SelectedMove,XP),
+    nth1(4,SelectedMove,YP),
+    nth1(5,SelectedMove,XM),
+    nth1(6,SelectedMove,YM).
 
 % modo Difficult AI, com continuous jump
 choose_move(GameState,VisitedPositions,3,(XP,YP,XM,YM)) :-
@@ -279,3 +295,20 @@ do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,3) :-
     check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,3).
 
 do_continuous_jump_cycle(GameState,GameState,_,_).
+
+/*
+    value(+GameState, -Value)
+*/
+
+value((Board,Turn,_),Value) :-
+    change_player(Turn,NewTurn),
+    check_winner(Board,1,NewTurn),
+    !,
+    Value is 0.
+
+value((Board,Turn,_),Value) :-
+    check_winner(Board,1,Turn),
+    !,
+    Value is 10.
+
+value(_,Value) :- Value is 5.
