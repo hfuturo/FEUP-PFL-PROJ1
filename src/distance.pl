@@ -2,11 +2,11 @@
     Calcula o tamanho das linhas em cada direção onde a peça está
     calculate_distances(+X,+Y,+Turn,+Height,+Width,+Board,-Distances)
 */
-calculate_distances(X,Y,Turn,Height,Width,Board,Distances) :-
-    row_distance(X,Y,Board,Width,Turn,RowDistance),
-    column_distance(X,Y,Board,Height,Turn,ColumnDistance),
-    diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,NESWDiagonalDistance), % ↙↗
-    diagonal_distance_NWSE(X,Y,Board,Width,Height,Turn,NWSEDiagonalDistance), % ↖↘
+calculate_distances(X,Y,BoardSize,GameState,Distances) :-
+    row_distance(X,Y,BoardSize,GameState,RowDistance),
+    column_distance(X,Y,BoardSize,GameState,ColumnDistance),
+    diagonal_distance_NESW(X,Y,BoardSize,GameState,NESWDiagonalDistance), % ↙↗
+    diagonal_distance_NWSE(X,Y,BoardSize,GameState,NWSEDiagonalDistance), % ↖↘
     append([ColumnDistance],[RowDistance],DistancesAux),
     append([NESWDiagonalDistance],[NWSEDiagonalDistance],DistancesAux2),
     append(DistancesAux,DistancesAux2,Distances).
@@ -15,7 +15,7 @@ calculate_distances(X,Y,Turn,Height,Width,Board,Distances) :-
     Calcula o tamanho da linha NWSE de onde a peça está
     diagonal_distance_NWSE(+X,+Y,+Board,+Width,+Height,+Turn,-DiagonalDistance)
 */
-diagonal_distance_NWSE(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
+diagonal_distance_NWSE(X,Y,(Height,Width),(Board,Turn,_),DiagonalDistance) :-
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,
@@ -83,7 +83,7 @@ diagonal_distance_SE(X,Y,XValue,Board,Width,Height,Turn,Times,Distance) :-
     Calcula o tamanho da linha NESW de onde a peça está
     diagonal_distance_NESW(+X,+Y,+Board,+Width,+Height,+Turn,-DiagonalDistance) :-
 */
-diagonal_distance_NESW(X,Y,Board,Width,Height,Turn,DiagonalDistance) :-
+diagonal_distance_NESW(X,Y,(Height,Width),(Board,Turn,_),DiagonalDistance) :-
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,
@@ -151,7 +151,7 @@ diagonal_distance_SW(X,Y,XValue,Board,Height,Turn,Times,Distance) :-
     Calcula o tamanho da linha vertical de onde a peça está
     column_distance(+X,+Y,+Board,+Height,+Turn,-Distance)
 */
-column_distance(X,Y,Board,Height,Turn,Distance) :-
+column_distance(X,Y,(Height,Width),(Board,Turn,_),Distance) :-
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,
@@ -207,7 +207,7 @@ column_distance_down(X,Y,XValue,Height,Board,Turn,Times,Distance) :-
     Calcula o tamanho da linha horizontal de onde a peça está
     row_distance(+X,+Y,+Board,+Width,+Turn,-Distance)
 */
-row_distance(X,Y,Board,Width,Turn,Distance) :-
+row_distance(X,Y,(Height,Width),(Board,Turn,_),Distance) :-
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,

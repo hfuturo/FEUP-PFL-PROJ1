@@ -4,7 +4,7 @@
     Cria o tabuleiro inicial
     make_initial_board(+Height,+Width,-Board)
 */
-make_initial_board(Height,Width, Board) :-
+make_initial_board(Height,Width,Board) :-
     make_board_filler_initial(BoardFiller,Height,Width),
     make_board_player_initial(1,PlayerOneBoard,Width),
     make_board_player_initial(2,PlayerTwoBoard,Width),
@@ -38,7 +38,10 @@ make_board_player_initial(Player,PlayerBoard,Width) :-
     Faz o output do tabuleiro
     print_board(+Board,+Width,+Turn,+TotalMoves)
 */
-print_board(Board,Width,Turn,TotalMoves) :-
+print_board((Board,Turn,TotalMoves)) :-
+    nth1(1,Board,Row),
+    length(Row,Width),
+
     print_board_top_coordinates(Width), nl,
     print_board_content(Board,Width,1),
     print_turn(Turn),
