@@ -1,4 +1,13 @@
 /*
+    Obtém a Height e a Width do Board.
+    board_size(-Height,-Width,+GameState)
+*/
+board_size(Height,Width,(Board,_,_)) :-
+    length(Board,Height),
+    nth1(1,Board,Row),
+    length(Row,Width).
+
+/*
     Cria o tabuleiro inicial
     make_initial_board(+Height,+Width,-Board)
 */
@@ -34,7 +43,7 @@ make_board_player_initial(Player,PlayerBoard,Width) :-
 
 /*
     Faz o output do tabuleiro
-    print_board(+Board,+Width,+Turn,+TotalMoves)
+    print_board(+GameState)
 */
 print_board((Board,Turn,TotalMoves)) :-
     nth1(1,Board,Row),

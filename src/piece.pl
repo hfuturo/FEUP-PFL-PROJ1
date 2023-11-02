@@ -22,7 +22,7 @@ read_column_piece(Position,Coordinate) :-
 
 /*
     Atualiza o tabuleiro de acordo com a movimentação
-    move(+Turn,+XP,+YP,+XM,+YM,+Board,-NewBoard)
+    move(+GameState,+Move,-NewGameState)
 */
 move((Board,Turn,TotalMoves),(XP,YP,XM,YM),(NewBoard,Turn,NewTotalMoves)) :-
     change_piece(0,Board,XP,YP,TempBoard),
@@ -50,22 +50,27 @@ get_position_piece(X,Y,Board,Piece) :-
 
 /*
     Vê se a peça é o do jogador
-    get_position_player(+X,+Y,+Board,+Width,+Height,+Player)
+    get_position_player(+X,+Y,+GameState)
 */
 get_position_player(X,Y,(Board,Player,_)) :-
     check_inside_board(X,Y,(Board,_,_)),
     get_position_piece(X,Y,Board,Piece),
     Piece is Player.
 
+/*
+    Verifica se a peça se encontra dentro da board.
+    check_inside_board(+X,+Y,+GameState)
+*/
 check_inside_board(X,Y,GameState) :-
     board_size(Height,Width,GameState),
     Y =< Height,
     Y >= 1,
     X =< Width,
     X >= 1.
+
 /*
     Verifica se está numa posição onde é possivel fazer um continuous jump
-    jump_possible(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
+    jump_possible(+Distances,+XP,+YP,+XM,+YM,+GameState,+VisitedPositions)
 */
 jump_possible(Distances,XP,YP,XM,YM,GameState,VisitedPositions) :-
     \+no_line(Distances),
@@ -74,7 +79,7 @@ jump_possible(Distances,XP,YP,XM,YM,GameState,VisitedPositions) :-
 
 /*
     Verifica se existe um jump válido
-    can_jump(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
+    can_jump(+Distances,+XP,+YP,+XM,+YM,+GameState,+VisitedPositions)
 */
 can_jump(Distances,XP,YP,XM,YM,(Board,Turn,_),VisitedPositions) :-
     board_size(Height,Width,(Board,Turn,_)),

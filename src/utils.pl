@@ -3,7 +3,7 @@
 
 /*
     Indica qual o tipo de jogador
-    player_type(+Mode,+Turn,+Type)
+    player_type(+Mode,+Turn,-Type)
 */
 
 /* modo pessoa */
@@ -107,7 +107,11 @@ read_size_board_side(Side) :-
     Side>=5,
     Side=<15,
     !.
-    
+
+/*
+    Inicializa a seed com um numero aleatorio
+    init_random_state/0
+*/
 init_random_state :-
     now(X),
     setrand(X).

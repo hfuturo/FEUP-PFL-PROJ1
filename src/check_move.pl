@@ -1,13 +1,16 @@
 /*
-    Verifica se a peça moveu uma distancia possivel
-    check_move(+XP,+YP,+XM,+YM,+Distances) :- 
+    Verifica se uma move é possível
+    check_move_possible(+XP,+YP,+XM,+YM,+GameState)
 */
-
 check_move_possible(XP,YP,XM,YM,GameState):-
     calculate_distances(XP,YP,GameState,Distances),
     check_move(XP,YP,XM,YM,Distances),
     !.
 
+/*
+    Verifica se a peça moveu uma distancia possivel
+    check_move(+XP,+YP,+XM,+YM,+Distances) :- 
+*/
 /* horizontal */
 check_move(XP,YP,XM,YM,Distances) :- 
     YP is YM,

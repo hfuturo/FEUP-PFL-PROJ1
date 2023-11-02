@@ -8,7 +8,7 @@
 
 /*
     Cria um tabuleiro com um tamanho especifico
-    initial_state(-Height,-Width,-Board)
+    initial_state(-GameState)
 */
 initial_state((Board,Turn,TotalMoves)) :-
     TotalMoves is 0,
@@ -18,7 +18,7 @@ initial_state((Board,Turn,TotalMoves)) :-
 
 /*
     Faz o output do estado atual do jogo
-    display_game(+Turn,+Width,+Board,+TotalMoves)
+    display_game(+GameState)
 */
 display_game(GameState) :-
     print_board(GameState),
@@ -26,8 +26,9 @@ display_game(GameState) :-
     
 /*
     Faz o output do estado atual do jogo com a indicação da ronda
-    display_game_with_round(+Player,+Width,+Board,+TotalMoves,+Round)
+    display_game_with_round(+GameState,+Round)
 */
+% caso a Round seja < 10 (formatacao)
 display_game_with_round((Board,1,TotalMoves),Round) :-
     Round < 10,
     write('**************\n'),
@@ -38,6 +39,7 @@ display_game_with_round((Board,1,TotalMoves),Round) :-
     display_game((Board,1,TotalMoves)),
     !.
 
+% caso a Round seja >= 10 e < 100 (formatacao)
 display_game_with_round((Board,1,TotalMoves),Round) :-
     Round >= 10,
     Round < 100,
@@ -49,6 +51,7 @@ display_game_with_round((Board,1,TotalMoves),Round) :-
     display_game((Board,1,TotalMoves)),
     !.
 
+% caso a Round seja >= 100 e < 1000 (formatacao)
 display_game_with_round((Board,1,TotalMoves),Round) :-
     Round >= 100,
     Round < 1000,
@@ -65,7 +68,7 @@ display_game_with_round((Board,2,TotalMoves),_) :-
 
 /*
     Ciclo do jogo
-    game_cycle(+Turn,+Height,+Width,+Board,+TotalMoves,+Mode,+Round)
+    game_cycle(+GameState,+Mode,+Round)
 */
 
 /* verifica se existe um vencedor */
@@ -103,7 +106,7 @@ game_cycle((Board,Turn,TotalMoves),Mode,Round):-
 
 /*
     Verificar se o jogo acabou, e se sim vê quem ganhou
-    game_over(+Board,+Width,+Height,+Turn,-Winner)
+    game_over(+GameState,-Winner)
 */
 game_over((Board,Turn,_),Winner) :-
     change_player(Turn,NewTurn),

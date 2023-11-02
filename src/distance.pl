@@ -1,6 +1,6 @@
 /*
     Calcula o tamanho das linhas em cada direção onde a peça está
-    calculate_distances(+X,+Y,+Turn,+Height,+Width,+Board,-Distances)
+    calculate_distances(+X,+Y,+GameState,-Distances)
 */
 calculate_distances(X,Y,GameState,Distances) :-
     row_distance(X,Y,GameState,RowDistance),
@@ -13,7 +13,7 @@ calculate_distances(X,Y,GameState,Distances) :-
 
 /*
     Calcula o tamanho da linha NWSE de onde a peça está
-    diagonal_distance_NWSE(+X,+Y,+Board,+Width,+Height,+Turn,-DiagonalDistance)
+    diagonal_distance_NWSE(+X,+Y,+GameState,-DiagonalDistance)
 */
 diagonal_distance_NWSE(X,Y,(Board,Turn,_),DiagonalDistance) :-
     board_size(Height,Width,(Board,_,_)),
@@ -54,7 +54,7 @@ diagonal_distance_NW(X,Y,XValue,Board,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha SE de onde a peça está
-    diagonal_distance_SE(+X,+Y,+XValue,+Board,+Turn,+Times,-Distance)
+    diagonal_distance_SE(+X,+Y,+XValue,+Board,+Width,+Height,+Turn,+Times,-Distance)
 */
 diagonal_distance_SE(Width,_,_,_,Width,_,_,0,1)   :- !.  % peça encontra-se encostada a board no lado direito
 diagonal_distance_SE(_,Height,_,_,_,Height,_,0,1) :- !.  % peça encontra-se encostada a board em baixo
@@ -82,7 +82,7 @@ diagonal_distance_SE(X,Y,XValue,Board,Width,Height,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha NESW de onde a peça está
-    diagonal_distance_NESW(+X,+Y,+Board,+Width,+Height,+Turn,-DiagonalDistance) :-
+    diagonal_distance_NESW(+X,+Y,+GameState,-DiagonalDistance) :-
 */
 diagonal_distance_NESW(X,Y,(Board,Turn,_),DiagonalDistance) :-
     board_size(Height,Width,(Board,_,_)),
@@ -123,7 +123,7 @@ diagonal_distance_NE(X,Y,XValue,Board,Width,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha SW de onde a peça está
-    diagonal_distance_SW(+X,+Y,+XValue,+Board,+Width,+Turn,+Times,-Distance)
+    diagonal_distance_SW(+X,+Y,+XValue,+Board,+Height,+Turn,+Times,-Distance)
 */
 diagonal_distance_SW(1,_,_,_,_,_,0,1)           :- !.   % peça encontra-se encostada a board na parte do lado esquerdo
 diagonal_distance_SW(_,Height,_,_,Height,_,0,1) :- !.   % peça encontra-se encostada a board em baixo
@@ -151,7 +151,7 @@ diagonal_distance_SW(X,Y,XValue,Board,Height,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha vertical de onde a peça está
-    column_distance(+X,+Y,+Board,+Height,+Turn,-Distance)
+    column_distance(+X,+Y,+GameState,-Distance)
 */
 column_distance(X,Y,(Board,Turn,_),Distance) :-
     board_size(Height,_,(Board,_,_)),
@@ -186,7 +186,7 @@ column_distance_up(X,Y,XValue,Board,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha para baixo de onde a peça está
-    column_distance_down(+X,+Y,+XValue,+Board,+Turn,+Times,-Distance)
+    column_distance_down(+X,+Y,+XValue,+Height,+Board,+Turn,+Times,-Distance)
 */
 column_distance_down(_,Height,_,Height,_,_,0,1) :- !.   % peça encontra-se encostada a board.
 column_distance_down(_,Height,1,Height,_,1,_,1) :- !.   % jogador 1 encontra 1 no fim da board.
@@ -208,7 +208,7 @@ column_distance_down(X,Y,XValue,Height,Board,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha horizontal de onde a peça está
-    row_distance(+X,+Y,+Board,+Width,+Turn,-Distance)
+    row_distance(+X,+Y,+GameState,-Distance)
 */
 row_distance(X,Y,(Board,Turn,_),Distance) :-
     board_size(_,Width,(Board,_,_)),
@@ -242,7 +242,7 @@ row_distance_right(X,Row,XValue,Width,Turn,Times,Distance) :-
 
 /*
     Calcula o tamanho da linha para a esquerda de onde a peça está
-    row_distance_left(+X,+Row,+XValue,+Width,+Turn,+Times,-Distance)
+    row_distance_left(+X,+Row,+XValue,+Turn,+Times,-Distance)
 */
 row_distance_left(1,_,_,_,0,1) :- !.     % peça encontra-se encostada a board
 row_distance_left(1,_,1,1,_,1) :- !.     % jogador 1 encontra 1 no fim da board

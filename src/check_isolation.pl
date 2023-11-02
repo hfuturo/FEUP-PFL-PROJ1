@@ -1,6 +1,6 @@
 /*
     Verifica se há algum continuous jump que se pode fazer, e se sim diz preenche XM e YM com as coordenadas da nova posição
-    check_isolation_jump(+Turn,+Height,+Width,+Board,+X,+Y,-XM,-YM,-Min,+VisitedPositions)
+    check_isolation_jump(+GameState,+X,+Y,-XM,-YM,-Min,+VisitedPositions)
 */
 check_isolation_jump(GameState,X,Y,XM,YM,Min,VisitedPositions) :-
     calculate_distances(X,Y,GameState,Distances),
@@ -54,7 +54,7 @@ check_isolation_jump(_,_,_,XM,YM,Min,_) :- XM is 0, YM is 0, Min is 8.
 
 /*
     Calcula o nivel de isolamento que se pode atingir com cada movimento possivel a partir de uma peça, preenchendo XM e YM com as coordenadas da mulher opção
-    check_isolation_piece(+Turn,+Height,+Width,+Board,+X,+Y,-XM,-YM) :-
+    check_isolation_piece(+GameState,+X,+Y,-XM,-YM) :-
 */
 check_isolation_piece(GameState,X,Y,XM,YM) :-
     calculate_distances(X,Y,GameState,Distances),
@@ -114,7 +114,7 @@ check_isolation_piece(GameState,X,Y,XM,YM) :-
         -> util para quando se usa este predicado para calcular o nivel de isolamento de um movimento, que caso seja para uma "casa" ocupada por uma peça do mesmo jogador, torna-se impossivel e por isso define-se como isolamento minimo;
     Se o Bool for 0, não se verifica isto
         -> util para descobrir qual a peça menos ou mais isolada.
-    check_isolation_move(+X,+Y,-Value,+Height,+Width,+Board,+Turn,+Bool) 
+    check_isolation_move(+X,+Y,-Value,+GameState,+Bool) 
 */
 check_isolation_move(X,Y,Value,GameState,_) :-
     \+check_inside_board(X,Y,GameState),
@@ -156,7 +156,7 @@ check_isolation_move(X,Y,Value,(Board,Turn,_),_) :-
 
 /*
     Indica o valor da peça que se encontra nas coordenadas X e Y, sendo 0 caso a peça esteja fora do tabuleiro
-    get_position_piece_check(+X,+Y,+Height,+Width,+Board,-Piece)
+    get_position_piece_check(+X,+Y,+Board,-Piece)
 */
 get_position_piece_check(X,Y,Board,Piece) :-
     check_inside_board(X,Y,(Board,_,_)),

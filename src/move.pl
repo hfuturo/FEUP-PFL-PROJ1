@@ -1,5 +1,6 @@
 /*
     Escolhe a peça para mover
+    select_piece(-X,-Y,+GameState)
 */
 /* modo pessoa */
 select_piece(X,Y,GameState) :-
@@ -16,6 +17,7 @@ select_piece(X,Y,GameState) :-
 
 /*
     Escolhe a nova posição para a peça
+    select_move(-XM,-YM,+GameState)
 */
 /* modo pessoa */
 select_move(XM,YM,GameState) :-
@@ -30,6 +32,12 @@ select_move(XM,YM,GameState) :-
     read_row_piece(YM,Height),
     !.
 
+/*
+    Retorna todas as jogadas possiveis
+    valid_moves(+GameState,+Player,-ListOfMoves)
+*/
+
+% person ou Easy AI
 valid_moves(GameState,Player,ListOfMoves) :-
     ((Player is 1);(Player is 2)),
     board_size(Height,Width,GameState),
@@ -52,6 +60,7 @@ valid_moves(GameState,Player,ListOfMoves) :-
         ListOfMoves
     ).
 
+% Difficult AI
 valid_moves(GameState,3,ListOfMoves) :-
     board_size(Height,Width,GameState),
     findall(
@@ -79,7 +88,13 @@ valid_moves(GameState,3,ListOfMoves) :-
     sort(PossibleMoves,PossibleMovesNoRepeated),
     append(PossibleMovesNoRepeated,[],ListOfMoves).
 
-choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+/*
+    Escolhe uma move de todas as jogadas possiveis
+    choose_move(+GameState,+VisitedPositions,+Type,-Move)
+*/
+
+% modo person, sem continuous jump
+choose_move(GameState,VisitedPositions,1,(XP,YP,XM,YM)) :-
     length(VisitedPositions,Size),
     Size is 0,
     valid_moves(GameState,1,ListOfMoves),
@@ -89,7 +104,8 @@ choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
     member([XP,YP,XM,YM],ListOfMoves),
     !.
 
-choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+% modo person, com continuous jump
+choose_move(GameState,VisitedPositions,1,(XP,YP,XM,YM)) :-
     length(VisitedPositions,Size),
     Size > 0,
 
@@ -105,7 +121,8 @@ choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
     \+no_jump(XP,YP,XM,YM),
     !.
 
-choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+% modo Easy AI, sem continuous jump
+choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)) :-
     length(VisitedPositions,Size),
     Size is 0,
 
@@ -121,7 +138,8 @@ choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
     nth1(4,Move,YM),
     !.
 
-choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+% modo Easy AI, com continuous jump
+choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)) :-
     length(VisitedPositions,Size),
     Size > 0,
 
@@ -153,6 +171,7 @@ choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
     nth1(2,Move,YM),
     !.
 
+% modo Difficult AI
 choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
     length(ListOfMoves,PossibleMovesLength),
@@ -167,7 +186,7 @@ choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
 
 /*
     Verifica se é possivel fazer um continuous jump, e sim chama os predicados necessários
-    check_continuous_jump_cycle(+XP,+YP,+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
+    check_continuous_jump_cycle(+Move,+GameState,-NewGameState,+VisitedPositions,+Type)
 */
 check_continuous_jump_cycle((_,_,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
     change_player(Turn,NewTurn),
@@ -198,7 +217,7 @@ check_continuous_jump_cycle(_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,
 
 /*
     Faz um continuous jump se for a vontade do jogador
-    do_continuous_jump_cycle(+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
+    do_continuous_jump_cycle(+XM,+YM,+GameState,-NewGameState,+VisitedPositions,+Type)
 */
 /* modo pessoa */
 do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,1) :-
@@ -208,7 +227,7 @@ do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,1) :-
     !,
     nl,
 
-    choose_move( GameState, VisitedPositions, 1, Move),
+    choose_move(GameState,VisitedPositions,1,Move),
 
     move(GameState,Move,TempGameState),
     check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,1).
