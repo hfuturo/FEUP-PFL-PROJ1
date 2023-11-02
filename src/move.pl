@@ -98,34 +98,12 @@ choose_move(GameState,(XP,YP,XM,YM),VisitedPositions,Type) :-
 
 /* difficult ai */
 choose_move(GameState,(XP,YP,XM,YM),_,3) :-
-    board_size(Height,Width),
-    findall(
-        [Value,X,Y], 
-        (
-            between(1, Width, X), 
-            between(1, Height, Y), 
-            get_position_player(X,Y,GameState),
-            check_isolation_move(X,Y,Value,GameState,0)
-        ), 
-        Pieces
-    ),
-    sort(Pieces, SortedPieces),
-    length(SortedPieces,MaxIndex),
-    nth1(MaxIndex,SortedPieces,Elem),
-    nth1(1,Elem,MaxValue),
-    findall(
-        [Value,X,Y],
-        (
-            member([Value,X,Y],Pieces),
-            Value is MaxValue
-        ),
-        PossibleMoves
-    ),
-    sort(PossibleMoves,PossibleMovesNoRepeated),
-    length(PossibleMovesNoRepeated,PossibleMovesLength),
+    valid_moves(GameState,3,ListOfMoves),
+    length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
     random(1,UpdatedPossibleMovesLength,RandomMove),
-    nth1(RandomMove,PossibleMovesNoRepeated,SelectedMove),
+
+    nth1(RandomMove,ListOfMoves,SelectedMove),
     nth1(2,SelectedMove,XP),
     nth1(3,SelectedMove,YP),
     check_isolation_piece(GameState,XP,YP,XM,YM).
@@ -205,3 +183,30 @@ do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,VisitedPosit
 
 do_continuous_jump_cycle(_,_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,_).
 
+valid_moves(GameState,Player,ListOfMoves) :-
+    board_size(Height,Width),
+    Player is 3,
+    findall(
+        [Value,X,Y], 
+        (
+            between(1, Width, X), 
+            between(1, Height, Y), 
+            get_position_player(X,Y,GameState),
+            check_isolation_move(X,Y,Value,GameState,0)
+        ), 
+        Pieces
+    ),
+    sort(Pieces, SortedPieces),
+    length(SortedPieces,MaxIndex),
+    nth1(MaxIndex,SortedPieces,Elem),
+    nth1(1,Elem,MaxValue),
+    findall(
+        [Value,X,Y],
+        (
+            member([Value,X,Y],Pieces),
+            Value is MaxValue
+        ),
+        PossibleMoves
+    ),
+    sort(PossibleMoves,PossibleMovesNoRepeated),
+    append(PossibleMovesNoRepeated,[],ListOfMoves).
