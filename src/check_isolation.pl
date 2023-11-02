@@ -36,10 +36,11 @@ check_isolation_jump(GameState,X,Y,XM,YM,Min,VisitedPositions) :-
     findall(
         [Value, XT, YT], 
         (
-            member([Value, XT, YT, LineDistance], Moves), 
+            member([Value,XT,YT], Moves), 
             \+ member([XT, YT], VisitedPositions),
-            check_inside_board(X,Y,GameState),
-            LineDistance>1 % single step
+            check_inside_board(XT,YT,GameState),
+            \+no_jump(X,Y,XT,YT),
+            \+get_position_player(XT,YT,GameState)
         ),
         PossibleMoves
     ),

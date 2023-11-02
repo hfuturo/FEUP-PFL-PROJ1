@@ -174,8 +174,6 @@ choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)) :-
 choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
 
-    write(ListOfMoves),nl,
-
     length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
     random(1,UpdatedPossibleMovesLength,RandomMove),
@@ -252,6 +250,8 @@ do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,2) :-
 do_continuous_jump_cycle(XM,YM,GameState,NewGameState,VisitedPositions,3) :-
     check_isolation_move(XM,YM,Isolation,GameState,0),
     check_isolation_jump(GameState,XM,YM,NXM,NYM,Min,VisitedPositions),
+    format('XM: ~w  YM: ~w~nNXM: ~w  NYM: ~w~n',[XM,YM,NXM,NYM]),
+    format('Isolation: ~w  Min: ~w~n',[Isolation,Min]),
     (
         NXM =\= 0,
         NYM =\=0,
