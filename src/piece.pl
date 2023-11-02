@@ -53,17 +53,16 @@ get_position_piece(X,Y,Board,Piece) :-
     get_position_player(+X,+Y,+Board,+Width,+Height,+Player)
 */
 get_position_player(X,Y,(Board,Player,_)) :-
-    check_inside_board(X,Y),
+    check_inside_board(X,Y,(Board,_,_)),
     get_position_piece(X,Y,Board,Piece),
     Piece is Player.
 
-check_inside_board(X,Y) :-
-    board_size(Height,Width),
+check_inside_board(X,Y,GameState) :-
+    board_size(Height,Width,GameState),
     Y =< Height,
     Y >= 1,
     X =< Width,
     X >= 1.
-
 /*
     Verifica se está numa posição onde é possivel fazer um continuous jump
     jump_possible(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
@@ -78,7 +77,7 @@ jump_possible(Distances,XP,YP,XM,YM,GameState,VisitedPositions) :-
     can_jump(+Distances,+XP,+YP,+XM,+YM,+Width,+Height,+Board,+Turn,+VisitedPositions)
 */
 can_jump(Distances,XP,YP,XM,YM,(Board,Turn,_),VisitedPositions) :-
-    board_size(Height,Width),
+    board_size(Height,Width,(Board,Turn,_)),
     nth1(1,Distances,Vertical),
     nth1(2,Distances,Horizontal),
     nth1(3,Distances,DiagonalNE),

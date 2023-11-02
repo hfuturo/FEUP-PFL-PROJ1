@@ -2,7 +2,7 @@
     Cria o tabuleiro inicial
     make_initial_board(+Height,+Width,-Board)
 */
-make_initial_board((Height,Width),Board) :-
+make_initial_board(Height,Width,Board) :-
     make_board_filler_initial(BoardFiller,Height,Width),
     make_board_player_initial(1,PlayerOneBoard,Width),
     make_board_player_initial(2,PlayerTwoBoard,Width),

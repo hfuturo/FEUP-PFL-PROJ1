@@ -38,7 +38,7 @@ check_isolation_jump(GameState,X,Y,XM,YM,Min,VisitedPositions) :-
         (
             member([Value, XT, YT, LineDistance], Moves), 
             \+ member([XT, YT], VisitedPositions),
-            check_inside_board(X,Y),
+            check_inside_board(X,Y,GameState),
             LineDistance>1 % single step
         ),
         PossibleMoves
@@ -116,8 +116,8 @@ check_isolation_piece(GameState,X,Y,XM,YM) :-
         -> util para descobrir qual a peça menos ou mais isolada.
     check_isolation_move(+X,+Y,-Value,+Height,+Width,+Board,+Turn,+Bool) 
 */
-check_isolation_move(X,Y,Value,_,_) :-
-    \+check_inside_board(X,Y),
+check_isolation_move(X,Y,Value,GameState,_) :-
+    \+check_inside_board(X,Y,GameState),
     Value is 8,
     !.
 
@@ -159,7 +159,7 @@ check_isolation_move(X,Y,Value,(Board,Turn,_),_) :-
     get_position_piece_check(+X,+Y,+Height,+Width,+Board,-Piece)
 */
 get_position_piece_check(X,Y,Board,Piece) :-
-    check_inside_board(X,Y),
+    check_inside_board(X,Y,(Board,_,_)),
     get_position_piece(X,Y,Board,Piece).
 
 get_position_piece_check(_,_,_,0).

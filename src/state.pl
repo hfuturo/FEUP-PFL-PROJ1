@@ -1,12 +1,20 @@
+:- use_module(library(system)).
+
+:- consult(utils).
+:- consult(board).
+:- consult(check_win).
+:- consult(piece).
+:- consult(move).
+
 /*
     Cria um tabuleiro com um tamanho especifico
     initial_state(-Height,-Width,-Board)
 */
-initial_state(BoardSize,(Board,Turn,TotalMoves)) :-
+initial_state((Board,Turn,TotalMoves)) :-
     TotalMoves is 0,
     Turn is 1,
-    read_size_board(BoardSize),
-    make_initial_board(BoardSize,Board), nl.
+    read_size_board(Height,Width),
+    make_initial_board(Height,Width,Board), nl.
 
 /*
     Faz o output do estado atual do jogo
@@ -69,7 +77,8 @@ game_cycle(GameState,_,_):-
 /* na primeira jogada não é possivel fazer continuous jump */
 game_cycle((Board,Turn,0),Mode,Round):-
     player_type(Mode,Turn,Type),
-    choose_move((Board,Turn,0),Move,_,Type),
+    append([],[],VisitedPositions),
+    choose_move( (Board,Turn,0), (VisitedPositions,ContinuousJump,XL,YL), Type, Move),
     move((Board,Turn,0),Move,(NewBoard,_,NewTotalMoves)),
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
@@ -80,7 +89,8 @@ game_cycle((Board,Turn,0),Mode,Round):-
 
 game_cycle((Board,Turn,TotalMoves),Mode,Round):-
     player_type(Mode,Turn,Type),
-    choose_move((Board,Turn,TotalMoves),(XP,YP,XM,YM),_,Type),
+    append([],[],InitialVisitedPoints),
+    choose_move( (Board,Turn,0), (InitialVisitedPoints,ContinuousJump,XL,YL), Type, (XP,YP,XM,YM)),
     move((Board,Turn,TotalMoves),(XP,YP,XM,YM),TempGameState),
     append([[XP,YP]],[],VisitedPositions),
     check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),
@@ -89,6 +99,7 @@ game_cycle((Board,Turn,TotalMoves),Mode,Round):-
     display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
     !,
     game_cycle((NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
+
 
 /*
     Verificar se o jogo acabou, e se sim vê quem ganhou

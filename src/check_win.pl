@@ -3,7 +3,7 @@
     check_winner(+Board,+Width,+Height,+Y,+Player)
 */
 check_winner(Board,Y,Player) :-
-    board_size(Height,Width),
+    board_size(Height,_,(Board,_,_)),
     Y =< Height,
     X is 1,
     check_winner_row(Board,Y,X,Player),
@@ -11,21 +11,21 @@ check_winner(Board,Y,Player) :-
     check_winner(Board,NY,Player),
     !.
 
-check_winner(_,Y,_) :- board_size(Height,_), Y > Height.
+check_winner(Board,Y,_) :- board_size(Height,_,(Board,_,_)), Y > Height.
 
 /*
     Verifica se o jogador tem uma linha completa com peças isoladas
     check_winner_row(+Board,+Width,+Height,+Y,+X,+Player)
 */
 check_winner_row(Board,Y,X,Player) :-
-    board_size(Height,Width),
+    board_size(_,Width,(Board,_,_)),
     X =< Width,
     \+check_winner_piece(Board,Y,X,Player),
     NX is X+1,
     check_winner_row(Board,Y,NX,Player),
     !.
 
-check_winner_row(_,_,X,_) :- board_size(_,Width), X > Width.
+check_winner_row(Board,_,X,_) :- board_size(_,Width,(Board,_,_)), X > Width.
 
 /*
     Verifica se a peça está isolada

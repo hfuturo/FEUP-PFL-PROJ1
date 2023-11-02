@@ -18,9 +18,11 @@ play :-
     init_random_state,
     Round is 1,
     menu_game_mode(Mode), nl,
-    initial_state((Height,Width),GameState),
-    assertz(board_size(Height,Width)),
+    initial_state(GameState),
     display_game_with_round(GameState,Round),
-    game_cycle(GameState,Mode,Round),
-    retract(board_size(Height,Width)).
-    
+    game_cycle(GameState,Mode,Round).
+
+board_size(Height,Width,(Board,_,_)) :-
+    length(Board,Height),
+    nth1(1,Board,Row),
+    length(Row,Width).
