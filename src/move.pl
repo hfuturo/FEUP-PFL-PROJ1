@@ -30,7 +30,8 @@ select_move(XM,YM,GameState) :-
     read_row_piece(YM,Height),
     !.
 
-valid_moves(GameState,_,ListOfMoves) :-
+valid_moves(GameState,Player,ListOfMoves) :-
+    ((Player is 1);(Player is 2)),
     board_size(Height,Width,GameState),
     findall(
         [XP,YP],
@@ -51,47 +52,8 @@ valid_moves(GameState,_,ListOfMoves) :-
         ListOfMoves
     ).
 
-choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
-    length(VisitedPositions,Size),
-    Size is 0,
-    valid_moves(GameState,_,ListOfMoves),
-    repeat,
-    select_piece(XP,YP,GameState),
-    select_move(XM,YM,GameState),
-    member([XP,YP,XM,YM],ListOfMoves),
-    !.
-
-choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
-    length(VisitedPositions,Size),
-    Size > 0,
-
-    nth1(Size,VisitedPositions,LastPiece),
-    nth1(1,LastPiece,XP),
-    nth1(2,LastPiece,YP),
-
-    valid_moves(GameState,_,ListOfMoves),
-    repeat,
-    select_move(XM,YM,GameState),
-    member([XP,YP,XM,YM],ListOfMoves),
-    \+member([XM,YM],VisitedPositions),
-    \+no_jump(XP,YP,XM,YM),
-    !.
-
-choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
-    valid_moves(GameState,_,ListOfMoves),
-    length(ListOfMoves,MaxIndex),
-    MaxIndexRandom is MaxIndex+1,
-    random(1,MaxIndexRandom,Index),
-    nth1(Index,ListOfMoves,Move),
-
-    nth1(1,Move,XP),
-    nth1(2,Move,YP),
-    nth1(3,Move,XM),
-    nth1(4,Move,YM),
-    !.
-
-choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
-    board_size(Height,Width,GameState),
+valid_moves(GameState,3,ListOfMoves) :-
+    board_size(Height,Width),
     findall(
         [Value,X,Y], 
         (
@@ -115,7 +77,52 @@ choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
         PossibleMoves
     ),
     sort(PossibleMoves,PossibleMovesNoRepeated),
-    append(PossibleMovesNoRepeated,[],ListOfMoves),
+    append(PossibleMovesNoRepeated,[],ListOfMoves).
+
+choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size is 0,
+    valid_moves(GameState,1,ListOfMoves),
+    repeat,
+    select_piece(XP,YP,GameState),
+    select_move(XM,YM,GameState),
+    member([XP,YP,XM,YM],ListOfMoves),
+    !.
+
+choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size > 0,
+
+    nth1(Size,VisitedPositions,LastPiece),
+    nth1(1,LastPiece,XP),
+    nth1(2,LastPiece,YP),
+
+    valid_moves(GameState,1,ListOfMoves),
+    repeat,
+    select_move(XM,YM,GameState),
+    member([XP,YP,XM,YM],ListOfMoves),
+    \+member([XM,YM],VisitedPositions),
+    \+no_jump(XP,YP,XM,YM),
+    !.
+
+choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size is 0,
+
+    valid_moves(GameState,2,ListOfMoves),
+    length(ListOfMoves,MaxIndex),
+    MaxIndexRandom is MaxIndex+1,
+    random(1,MaxIndexRandom,Index),
+    nth1(Index,ListOfMoves,Move),
+
+    nth1(1,Move,XP),
+    nth1(2,Move,YP),
+    nth1(3,Move,XM),
+    nth1(4,Move,YM),
+    !.
+
+choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+    valid_moves(GameState,3,ListOfMoves),
     length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
     random(1,UpdatedPossibleMovesLength,RandomMove),
@@ -137,7 +144,7 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
         \+check_winner(Board,1,NewTurn)
     ),
     append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
-    valid_moves((Board,Turn,TotalMoves),_,ListOfMoves),
+    valid_moves((Board,Turn,TotalMoves),1,ListOfMoves),
     board_size(Height,Width,(Board,Turn,TotalMoves)),
     findall(
         [NXM,NYM],
