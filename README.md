@@ -200,20 +200,20 @@ valid_moves(GameState,VisitedPositions,ListOfMoves) :-
     findall(
         [XP,YP],
         (
-            between(1, Width, XP), between(1, Height, YP), 
+            between(1, Width, XP), between(1, Height, YP),
             get_position_player(XP,YP,GameState)
         ),
         PlayerPiece
     ),
     findall(
-        [XP,YP,XM,YM], 
+        [XP,YP,XM,YM],
         (
-            between(1, Width, XM), between(1, Height, YM), 
+            between(1, Width, XM), between(1, Height, YM),
             member([XP,YP],PlayerPiece),
             \+get_position_player(XM,YM,GameState),
             check_move_possible(XP,YP,XM,YM,GameState),
             \+member([XM,YM],VisitedPositions)
-        ), 
+        ),
         ListOfMoves
     ).
 ```
@@ -240,11 +240,7 @@ game_over((_,Turn,_),Turn).
 
 ### Jogada do computador
 
-<<<<<<< HEAD
-No menu que permite escolher o modo de jogo podemos verificar que existem dois tipos de _AI_ que o utilizador pode escolher, a `Easy AI` e o `Difficult AI`.
-=======
 Este jogo possui dois tipos de jogadas por computador. O primeiro tipo é baseado em aleatoriedade, onde o computador seleciona a peça que vai mover, bem como a jogada a fazer, de forma totalmente aleatória. Caso haja a hipótese de realizar um continuous jump, o computador vai gerar um número aleatório entre `1` e `2` e, caso o número gerado seja 1, o computador realiza o continuous jump.
->>>>>>> 31d596029c695edb3e2f3e18e12b3d298a7c267e
 
 O segundo tipo utiliza um algorítmo greedy. Este algorítmo vai selecionar a peça menos isolada da equipa do jogador e vai escolher a jogada que isole melhor esta peça. Para selecionar a peça menos isolada, é calculado o isolamento de cada peça individualmente utilizando o predicado ``. Este predicado calcula quantas peças da própria equipa uma peça tem à sua volta. Caso haja mais do que uma peça com o menor nível de isolamente, o algorítmo seleciona uma de forma aleatória.
 
