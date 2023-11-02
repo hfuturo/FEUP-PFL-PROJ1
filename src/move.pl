@@ -121,6 +121,38 @@ choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
     nth1(4,Move,YM),
     !.
 
+choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size > 0,
+
+    nth1(Size,VisitedPositions,LastPiece),
+    nth1(1,LastPiece,XP),
+    nth1(2,LastPiece,YP),
+
+    valid_moves(GameState,2,ListOfMoves),
+    board_size(Height,Width,GameState),
+
+    findall(
+        [XM,YM],
+        (
+            between(1, Width, XM), 
+            between(1, Height, YM), 
+            member([XP,YP,XM,YM],ListOfMoves),
+            \+member([XM,YM],VisitedPositions),
+            \+no_jump(XP,YP,XM,YM)
+        ),
+        Result
+    ),
+
+    length(Result,MaxIndex),
+    MaxIndexRandom is MaxIndex+1,
+    random(1,MaxIndexRandom,Index),
+    nth1(Index,Result,Move),
+
+    nth1(1,Move,XM),
+    nth1(2,Move,YM),
+    !.
+
 choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
     length(ListOfMoves,PossibleMovesLength),
