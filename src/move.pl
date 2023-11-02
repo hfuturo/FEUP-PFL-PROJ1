@@ -30,7 +30,7 @@ select_move(XM,YM,GameState) :-
     read_row_piece(YM,Height),
     !.
 
-valid_moves(GameState,(VisitedPositions,ContinuousJump,XL,YL),ListOfMoves) :-
+valid_moves(GameState,_,ListOfMoves) :-
     board_size(Height,Width,GameState),
     findall(
         [XP,YP],
@@ -45,24 +45,40 @@ valid_moves(GameState,(VisitedPositions,ContinuousJump,XL,YL),ListOfMoves) :-
         (
             between(1, Width, XM), between(1, Height, YM), 
             member([XP,YP],PlayerPiece),
-            \+member([XM,YM],VisitedPositions),
             \+get_position_player(XM,YM,GameState),
             check_move_possible(XP,YP,XM,YM,GameState)
         ), 
         ListOfMoves
     ).
 
-choose_move( GameState, (VisitedPositions,0,XL,YL), 1, (XP,YP,XM,YM)) :-
-    valid_moves(GameState,(VisitedPositions,0,XL,YL),ListOfMoves),
-    write(ListOfMoves),nl,
+choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size is 0,
+    valid_moves(GameState,_,ListOfMoves),
     repeat,
     select_piece(XP,YP,GameState),
     select_move(XM,YM,GameState),
     member([XP,YP,XM,YM],ListOfMoves),
     !.
 
-choose_move( GameState, (VisitedPositions,ContinuousJump,XL,YL), 2, (XP,YP,XM,YM)) :-
-    valid_moves(GameState,(VisitedPositions,ContinuousJump,XL,YL),ListOfMoves),
+choose_move( GameState, VisitedPositions, 1, (XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size > 0,
+
+    nth1(Size,VisitedPositions,LastPiece),
+    nth1(1,LastPiece,XP),
+    nth1(2,LastPiece,YP),
+
+    valid_moves(GameState,_,ListOfMoves),
+    repeat,
+    select_move(XM,YM,GameState),
+    member([XP,YP,XM,YM],ListOfMoves),
+    \+member([XM,YM],VisitedPositions),
+    \+no_jump(XP,YP,XM,YM),
+    !.
+
+choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+    valid_moves(GameState,_,ListOfMoves),
     length(ListOfMoves,MaxIndex),
     MaxIndexRandom is MaxIndex+1,
     random(1,MaxIndexRandom,Index),
@@ -74,7 +90,7 @@ choose_move( GameState, (VisitedPositions,ContinuousJump,XL,YL), 2, (XP,YP,XM,YM
     nth1(4,Move,YM),
     !.
 
-choose_move( GameState, (VisitedPositions,ContinuousJump,XL,YL), 3, (XP,YP,XM,YM)) :-
+choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
     board_size(Height,Width,GameState),
     findall(
         [Value,X,Y], 
@@ -110,15 +126,6 @@ choose_move( GameState, (VisitedPositions,ContinuousJump,XL,YL), 3, (XP,YP,XM,YM
     check_isolation_piece(GameState,XP,YP,XM,YM).
 
 
-
-
-
-
-
-
-
-
-
 /*
     Verifica se é possivel fazer um continuous jump, e sim chama os predicados necessários
     check_continuous_jump_cycle(+XP,+YP,+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
@@ -129,9 +136,22 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
         \+check_winner(Board,1,Turn),
         \+check_winner(Board,1,NewTurn)
     ),
-    calculate_distances(XM,YM,(Board,Turn,TotalMoves),Distances),
-    jump_possible(Distances,XP,YP,XM,YM,(Board,Turn,TotalMoves),VisitedPositions),
     append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
+    valid_moves((Board,Turn,TotalMoves),_,ListOfMoves),
+    board_size(Height,Width,(Board,Turn,TotalMoves)),
+    findall(
+        [NXM,NYM],
+        (
+            between(1, Width, NXM), 
+            between(1, Height, NYM), 
+            member([XM,YM,NXM,NYM],ListOfMoves),
+            \+member([NXM,NYM],NewVisitedPositions),
+            \+no_jump(XM,YM,NXM,NYM)
+        ),
+        Result
+    ),
+    length(Result,Size),
+    Size>0,
     !,
     do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,NewVisitedPositions,Type).
 
@@ -142,17 +162,17 @@ check_continuous_jump_cycle(_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,
     do_continuous_jump_cycle(+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
 */
 /* modo pessoa */
-do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,VisitedPositions,1) :-
-    display_game((Board,Turn,TotalMoves)),
+do_continuous_jump_cycle(XM,YM,GameState,NewGameState,VisitedPositions,1) :-
+    display_game(GameState),
     menu_jump_cycle(Option,1),
     Option is 1,
     !,
     nl,
 
-    choose_move( (Board,Turn,TotalMoves), VisitedPositions, 1, (XM,YM,NXM,NYM)),
+    choose_move( GameState, VisitedPositions, 1, Move),
 
-    move((Board,Turn,TotalMoves),(XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves)),
-    check_continuous_jump_cycle((XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves),NewGameState,VisitedPositions,1).
+    move(GameState,Move,TempGameState),
+    check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,1).
 
 /* modo easy ai */
 do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,VisitedPositions,2) :-
