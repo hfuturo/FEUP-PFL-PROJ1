@@ -1,5 +1,3 @@
-:- use_module(library(lists)).
-
 /*
     Cria o tabuleiro inicial
     make_initial_board(+Height,+Width,-Board)

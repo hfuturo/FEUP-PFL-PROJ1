@@ -1,16 +1,3 @@
-:- use_module(library(system)).
-:- use_module(library(random)).
-:- use_module(library(lists)).
-:- use_module(library(between)).
-
-:- consult(check_win).
-:- consult(check_move).
-:- consult(check_isolation).
-:- consult(distance).
-:- consult(piece).
-:- consult(menu).
-:- consult(utils).
-
 /*
     Escolhe a peça para mover
     select_piece(+Turn,+Height,+Width,+Board,-X,-Y,+Type)

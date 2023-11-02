@@ -1,11 +1,3 @@
-:- use_module(library(system)).
-
-:- consult(utils).
-:- consult(board).
-:- consult(check_win).
-:- consult(piece).
-:- consult(move).
-
 /*
     Cria um tabuleiro com um tamanho especifico
     initial_state(-Height,-Width,-Board)

@@ -1,4 +1,3 @@
-:- consult(piece).
 /*
     Verifica se o jogador ganhou
     check_winner(+Board,+Width,+Height,+Y,+Player)

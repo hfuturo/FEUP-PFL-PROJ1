@@ -1,4 +1,3 @@
-
 /*
     Verifica se a peça moveu uma distancia possivel
     check_move(+XP,+YP,+XM,+YM,+Distances) :- 

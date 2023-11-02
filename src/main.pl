@@ -1,6 +1,18 @@
+:- use_module(library(system)).
+:- use_module(library(random)).
+:- use_module(library(lists)).
+:- use_module(library(between)).
+
 :- consult(state).
-:- consult(menu).
 :- consult(utils).
+:- consult(menu).
+:- consult(piece).
+:- consult(distance).
+:- consult(check_move).
+:- consult(check_isolation).
+:- consult(check_win).
+:- consult(board).
+:- consult(move).
 
 play :-
     init_random_state,
