@@ -80,8 +80,7 @@ game_cycle(GameState,_,_):-
 /* na primeira jogada não é possivel fazer continuous jump */
 game_cycle((Board,Turn,0),Mode,Round):-
     player_type(Mode,Turn,Type),
-    append([],[],VisitedPositions),
-    choose_move( (Board,Turn,0), VisitedPositions, Type, Move),
+    choose_move( (Board,Turn,0), [], Type, Move),
     move((Board,Turn,0),Move,(NewBoard,_,NewTotalMoves)),
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
@@ -92,8 +91,7 @@ game_cycle((Board,Turn,0),Mode,Round):-
 
 game_cycle((Board,Turn,TotalMoves),Mode,Round):-
     player_type(Mode,Turn,Type),
-    append([],[],InitialVisitedPoints),
-    choose_move( (Board,Turn,0), InitialVisitedPoints, Type, (XP,YP,XM,YM)),
+    choose_move((Board,Turn,_), [], Type, (XP,YP,XM,YM)),
     move((Board,Turn,TotalMoves),(XP,YP,XM,YM),TempGameState),
     append([[XP,YP]],[],VisitedPositions),
     check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),

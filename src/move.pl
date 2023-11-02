@@ -13,6 +13,7 @@ select_piece(X,Y,GameState) :-
     read_column_piece(X,Width),
     write('Row: '),
     read_row_piece(Y,Height),
+    get_position_player(X,Y,GameState),
     !.
 
 /*
@@ -30,6 +31,7 @@ select_move(XM,YM,GameState) :-
     read_column_piece(XM,Width),
     write('Row: '),
     read_row_piece(YM,Height),
+    \+get_position_player(XM,YM,GameState),
     !.
 
 /*
