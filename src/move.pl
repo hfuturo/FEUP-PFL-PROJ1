@@ -53,7 +53,7 @@ valid_moves(GameState,Player,ListOfMoves) :-
     ).
 
 valid_moves(GameState,3,ListOfMoves) :-
-    board_size(Height,Width),
+    board_size(Height,Width,GameState),
     findall(
         [Value,X,Y], 
         (
@@ -121,7 +121,7 @@ choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
     nth1(4,Move,YM),
     !.
 
-choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
+choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
     length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
