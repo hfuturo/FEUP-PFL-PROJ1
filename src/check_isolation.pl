@@ -93,10 +93,21 @@ check_isolation_piece(BoardSize,GameState,X,Y,XM,YM) :-
     append([Value1,Value2,Value3,Value4,Value5,Value6,Value7,Value8],[],Values),
 
     min_member(Min,Values),
-    nth1(Index,Values,Min),
-    nth1(Index,Moves,Elem),
-    nth1(1,Elem,XM),
-    nth1(2,Elem,YM),
+    
+    findall(
+        [BestMoveIndex],
+        nth1(BestMoveIndex,Values,Min),
+        BestMovesIndexes
+    ),
+
+    length(BestMovesIndexes,BestMovesLen),
+    UpdatedBestMovesLen is BestMovesLen + 1,
+    random(1,UpdatedBestMovesLen,SelectedBestMove),
+    nth1(SelectedBestMove,BestMovesIndexes,MoveTemp),
+    nth1(1,MoveTemp,MoveIndex),
+    nth1(MoveIndex,Moves,SelectedMove),
+    nth1(1,SelectedMove,XM),
+    nth1(2,SelectedMove,YM),
 
     !.
 

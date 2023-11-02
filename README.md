@@ -81,6 +81,84 @@ Abaixo apresentamos o propósito de cada um:
 
 ### Representação interna do estado do jogo
 
+- Tabuleiro
+
+O tabuleiro é representado como uma matriz, isto é, uma lista com sublistas. Cada sublista representa uma linha do tabuleiro e cada elemento dentro de cada sublista representa um quadrado do tabuleiro.
+
+Neste quadrado, podemos ter três valores possíveis, `0`, `1` ou `2`.
+
+- `0` representa um quadrado vazio.
+- `1` representa uma peça do jogador 1.
+- `2` representa uma peça do jogador 2.
+
+Estado inicial de um tabuleiro 8x8:
+
+![img](docs/initial_state.png)
+
+Estado intermédio de um tabuleiro 8x8:
+
+![img](docs/intermediate_state.png)
+
+Estado final de um tabuleiro 8x8:
+
+![img](docs/final_state.png)
+
+- Jogador atual
+
+O jogador atual é representado através da variável `Turn`.
+
+No final de cada ronda, o jogador atual é trocado utilizando o seguinte predicado `change_player(?Player1,?Player2)`.
+
+```prolog
+change_player(1,2).
+change_player(2,1).
+```
+
+- Tipo de jogador
+
+Outro aspeto importante é o tipo de jogador que está atualmente a jogar, uma vez que este pode ser um dos utilizadores ou um dos *bots*. Para simplificar isto, criamos uma variável `Type` que guarda o tipo de jogador que está a jogar atualmente. Para obter esta variável utilizamos o seguinte predicado `player_type(+Mode,+Turn,+Type)` que tem em conta o `Mode` e a `Turn`, uma vez que um jogo pode ter mais do que um tipo de jogadores (por exemplo, `Person vs Easy AI`).
+
+`Type` pode ter três valores distintos:
+
+- `1` Representa o modo de `utilizador`.
+- `2` Representa o modo de `Easy AI`.
+- `3` Representa o modo de `Difficult AI`.
+
+```prolog
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 1);
+        (Mode is 2, Turn is 1);
+        (Mode is 3, Turn is 2);
+        (Mode is 5, Turn is 1);
+        (Mode is 6, Turn is 2)
+    ),
+    !,
+    Type is 1.
+
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 2, Turn is 2);
+        (Mode is 3, Turn is 1);
+        (Mode is 4);
+        (Mode is 7, Turn is 1);
+        (Mode is 8, Turn is 2)
+    ),
+    !,
+    Type is 2.
+
+player_type(Mode,Turn,Type) :-
+    (
+        (Mode is 5, Turn is 2);
+        (Mode is 6, Turn is 1);
+        (Mode is 7, Turn is 2);
+        (Mode is 8, Turn is 1);
+        (Mode is 9)
+    ),
+    !,
+    Type is 3.
+```
+
 ### Visualização do estado do jogo
 
 - ### Menu do Modo de Jogo
@@ -159,7 +237,7 @@ O predicado **game_over(+Board,+Width,+Height,+Turn,-Winner)** verifica se algum
 
 É importante notar que esta verificação é feita antes de um jogador jogar, e havendo a regra de que caso um jogador faça um movimento que faz com que ambos sejam vencedores, este acaba por ser o perdedor, e por isso **game_over/5** é definido da seguinte forma:
 
-```sh
+```prolog
 game_over(Board,Width,Height,Turn,Winner) :-
     change_player(Turn,NewTurn),
     Y is 1,
@@ -176,6 +254,49 @@ game_over(_,_,_,Turn,Turn).
 ### Avaliação do estado do jogo
 
 ### Jogada do computador
+
+No menu que permite escolher o modo de jogo podemos verificar que existem dois tipos de *AI* que o utilizador pode escolher, a `Easy AI` e o `Difficult AI`.
+
+A `Easy AI` é construída com base na aleatoriadade. Tanto a peça selecionada como a jogada que realiza são feitas de forma totalmente aleatória utilizando os predicados `select_piece(+Turn,+Height,+Width,+Board,-X,-Y,+Type)` e `select_move(+Turn,+Height,+Width,+Board,-X,-Y,+XP,+YP,+Distances,+VisitedPositions,+Type)`, respetivamente.
+
+```prolog
+select_piece(Turn,Height,Width,Board,X,Y,2) :-
+    repeat,
+    UpdatedWidth is Width + 1,
+    UpdatedHeight is Height + 1,
+    random(1,UpdatedWidth,X),
+    random(1,UpdatedHeight,Y),
+    get_position_piece(X,Y,Board,Piece),
+    Turn is Piece,
+    !.
+```
+
+```prolog
+select_move(Turn,Height,Width,Board,X,Y,XP,YP,Distances,VisitedPositions,2) :-
+    repeat,
+    random(1,5,Move),
+    nth1(Move,Distances,Distance),
+    (
+        (Move is 1, X is XP, Y is YP - Distance, Y >= 1, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % up
+        (Move is 1, X is XP, Y is YP + Distance, Y =< Height, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % down
+        (Move is 2, X is XP + Distance, Y is YP, X =< Width, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % right
+        (Move is 2, X is XP - Distance, Y is YP, X >= 1, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % left
+        (Move is 3, X is XP + Distance, Y is YP - Distance, X =< Width, Y >= 1, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % NE
+        (Move is 3, X is XP - Distance, Y is YP + Distance, X >= 1, Y =< Height, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % SW
+        (Move is 4, X is XP - Distance, Y is YP - Distance, X >= 1, Y >= 1, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions));  % NW
+        (Move is 4, X is XP + Distance, Y is YP + Distance, X =< Width, Y =< Height, get_position_piece(X,Y,Board,Piece), Turn =\= Piece, \+member([X,Y],VisitedPositions))  % SE
+    ),
+    !.
+```
+
+Para decidir se um **continuous jump** é realizado, um número aleatório entre 1 e 2 é gerado e, se o número for 1, o **continuous jump** é realizado.
+
+O `Difficult AI` utiliza um algorítmo greedy para realizar as suas jogadas. Este algorítmo vai selecionar a peça menos isolada da equipa do jogador e vai escolher a jogada que isole melhor esta peça. Para selecionar a peça menos isolada, é calculado o isolamento de cada peça individualmente utilizando o predicado ``. Este predicado calcula quantas peças da própria equipa uma peça tem à sua volta. Caso haja mais do que uma peça com o menor nível de isolamente, o algorítmo seleciona uma de forma aleatória.
+
+Agora que temos uma peça selecionada, o algorítmo vai calcular o nível de isolamento para cada jogada possível que aquela peça pode realizar e vai selecionar a jogada que isole mais a peça. Se houver mais do que uma jogada com o melhor nível de isolamento, o algorítmo seleciona uma de forma aleatória.
+
+Para decidir se o algorítmo faz um continuous jump, este verifica se o nível de isolamente após o continuous jump é melhor ou pior do que o nível de isolamento atual. Se for pior, o continuous jump não é realizado.
+
 
 # Conclusões
 
