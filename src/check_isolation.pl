@@ -152,7 +152,8 @@ check_isolation_move(X,Y,Value,(Board,Turn,_),_) :-
 
     length(Isolation,Number),
     length(NewIsolation,NewNumber),
-    Value is Number-NewNumber.
+    Value is Number-NewNumber,
+    !.
 
 /*
     Indica o valor da peça que se encontra nas coordenadas X e Y, sendo 0 caso a peça esteja fora do tabuleiro

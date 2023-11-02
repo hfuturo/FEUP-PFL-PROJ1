@@ -85,8 +85,7 @@ valid_moves(GameState,3,ListOfMoves) :-
         ),
         PossibleMoves
     ),
-    sort(PossibleMoves,PossibleMovesNoRepeated),
-    append(PossibleMovesNoRepeated,[],ListOfMoves).
+    sort(PossibleMoves,ListOfMoves).
 
 /*
     Escolhe uma move de todas as jogadas possiveis
@@ -174,6 +173,9 @@ choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)) :-
 % modo Difficult AI
 choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
+
+    write(ListOfMoves),nl,
+
     length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
     random(1,UpdatedPossibleMovesLength,RandomMove),
@@ -188,7 +190,8 @@ choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
     Verifica se é possivel fazer um continuous jump, e sim chama os predicados necessários
     check_continuous_jump_cycle(+Move,+GameState,-NewGameState,+VisitedPositions,+Type)
 */
-check_continuous_jump_cycle((_,_,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
+check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
+    \+no_jump(XP,YP,XM,YM),
     change_player(Turn,NewTurn),
     (
         \+check_winner(Board,1,Turn),
@@ -213,7 +216,7 @@ check_continuous_jump_cycle((_,_,XM,YM),(Board,Turn,TotalMoves),NewGameState,Vis
     !,
     do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,NewVisitedPositions,Type).
 
-check_continuous_jump_cycle(_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,_).
+check_continuous_jump_cycle(_,GameState,GameState,_,_).
 
 /*
     Faz um continuous jump se for a vontade do jogador
@@ -233,30 +236,30 @@ do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,1) :-
     check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,1).
 
 /* modo easy ai */
-do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,VisitedPositions,2) :-
+do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,2) :-
     menu_jump_cycle(Option,2),
     Option is 1,
     !,
-    display_game((Board,Turn,TotalMoves)),
+    display_game(GameState),
     nl,
 
-    choose_move( (Board,Turn,TotalMoves), VisitedPositions, 2, (XM,YM,NXM,NYM)),
+    choose_move(GameState,VisitedPositions,2,Move),
 
-    move((Board,Turn,TotalMoves),(XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves)),
-    check_continuous_jump_cycle((XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves),NewGameState,VisitedPositions,2).
+    move(GameState,Move,TempGameState),
+    check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,2).
 
 /* modo difficult ai */
-do_continuous_jump_cycle(XM,YM,(Board,Turn,TotalMoves),NewGameState,VisitedPositions,3) :-
-    check_isolation_move(XM,YM,Isolation,(Board,Turn,TotalMoves),0),
-    check_isolation_jump((Board,Turn,TotalMoves),XM,YM,NXM,NYM,Min,VisitedPositions),
+do_continuous_jump_cycle(XM,YM,GameState,NewGameState,VisitedPositions,3) :-
+    check_isolation_move(XM,YM,Isolation,GameState,0),
+    check_isolation_jump(GameState,XM,YM,NXM,NYM,Min,VisitedPositions),
     (
         NXM =\= 0,
         NYM =\=0,
         Isolation>Min
     ),
     !,
-    display_game((Board,Turn,TotalMoves)),
-    move((Board,Turn,TotalMoves),(XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves)),
-    check_continuous_jump_cycle((XM,YM,NXM,NYM),(TempBoard,Turn,TempTotalMoves),NewGameState,VisitedPositions,3).
+    display_game(GameState),
+    move(GameState,(XM,YM,NXM,NYM),TempGameState),
+    check_continuous_jump_cycle((XM,YM,NXM,NYM),TempGameState,NewGameState,VisitedPositions,3).
 
-do_continuous_jump_cycle(_,_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,_).
+do_continuous_jump_cycle(_,_,GameState,GameState,_,_).
