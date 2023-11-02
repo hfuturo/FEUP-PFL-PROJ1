@@ -154,7 +154,7 @@ diagonal_distance_SW(X,Y,XValue,Board,Height,Turn,Times,Distance) :-
     column_distance(+X,+Y,+Board,+Height,+Turn,-Distance)
 */
 column_distance(X,Y,(Board,Turn,_),Distance) :-
-    board_size(Height,Width,(Board,_,_)),
+    board_size(Height,_,(Board,_,_)),
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,
@@ -211,7 +211,7 @@ column_distance_down(X,Y,XValue,Height,Board,Turn,Times,Distance) :-
     row_distance(+X,+Y,+Board,+Width,+Turn,-Distance)
 */
 row_distance(X,Y,(Board,Turn,_),Distance) :-
-    board_size(Height,Width,(Board,_,_)),
+    board_size(_,Width,(Board,_,_)),
     nth1(Y,Board,Row),
     nth1(X,Row,XValue),
     Times is 0,

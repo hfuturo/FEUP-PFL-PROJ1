@@ -153,7 +153,7 @@ choose_move( GameState, VisitedPositions, 2, (XP,YP,XM,YM)) :-
     nth1(2,Move,YM),
     !.
 
-choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
+choose_move(GameState,_,3,(XP,YP,XM,YM)) :-
     valid_moves(GameState,3,ListOfMoves),
     length(ListOfMoves,PossibleMovesLength),
     UpdatedPossibleMovesLength is PossibleMovesLength + 1,
@@ -169,7 +169,7 @@ choose_move( GameState, VisitedPositions, 3, (XP,YP,XM,YM)) :-
     Verifica se é possivel fazer um continuous jump, e sim chama os predicados necessários
     check_continuous_jump_cycle(+XP,+YP,+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
 */
-check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
+check_continuous_jump_cycle((_,_,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
     change_player(Turn,NewTurn),
     (
         \+check_winner(Board,1,Turn),
@@ -201,7 +201,7 @@ check_continuous_jump_cycle(_,(Board,Turn,TotalMoves),(Board,Turn,TotalMoves),_,
     do_continuous_jump_cycle(+XM,+YM,+Turn,+Height,+Width,+TotalMoves,-NewTotalMoves,+Board,-NewBoard,+VisitedPositions,+Type)
 */
 /* modo pessoa */
-do_continuous_jump_cycle(XM,YM,GameState,NewGameState,VisitedPositions,1) :-
+do_continuous_jump_cycle(_,_,GameState,NewGameState,VisitedPositions,1) :-
     display_game(GameState),
     menu_jump_cycle(Option,1),
     Option is 1,
