@@ -120,19 +120,6 @@ change_player(2,1).
 
 O número total de movimentações realizados é representado pela variável `TotalMoves` e é meramente uma informação adicional representada quando se dá display do board.
 
-- Posições visitadas pela peça atual
-
-Para obedecer às regras do jogo, uma peça só pode visitar uma casa apenas uma vez durante a mesma jogada. Para tal, foi necessário criar a variável `VisitedPositions` que guarda as posições que a peça da jogada atual já visitou.
-
-- Booleano que representa a realização de um continuous jump
-
-Para saber se um jogador quer realizar um continuous jump foi necessário criar uma variável chamada `ContinuousJump`. Esta variável é importante pois quando se realiza um continuous jump é necessário ter em atenção as posições já visitadas por esta peça, daí ser necessário guardar um registo das posições já visitadas na variável `VisitedPositions`.
-
-- Coordenadas da peça atual
-
-As coordenadas da peça atual, tal como o nome indica, representam a posição da peça que irá ser movida na jogada. A coordenada X é representada pela variável `X` e a coordenada Y é representada pela variável `Y`.
-
-
 ### Visualização do estado do jogo
 
 - ### Menu do Modo de Jogo
