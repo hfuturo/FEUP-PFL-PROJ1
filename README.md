@@ -128,7 +128,7 @@ O predicado usado para criar o menu que define o modo de jogo chama-se `menu_gam
 
 Abaixo é possivel ver a representação deste menu na consola.
 
-```sh
+```prolog
 ---------------------------------------------
 |              MENU GAME MODE               |
 | Select the mode in which you want to play |
@@ -161,7 +161,7 @@ initial_state((Board,Turn,TotalMoves)) :-
 
 Depois de passar esta primeira fase, e usando o predicado `display_game(+GameState)`, é possivel obter a seguinte representação do tabuleiro 5x5, caso forem essas as medidas definidas.
 
-```sh
+```prolog
   a   b   c   d   e
 ---------------------
 |   | 1 | 1 | 1 |   | 1
@@ -176,7 +176,7 @@ Depois de passar esta primeira fase, e usando o predicado `display_game(+GameSta
 ---------------------
 ```
 
-É importante referir ainda que a variavel `Board`, definida em `initial_state/1`, é uma matriz composto por 0,1 e 2. Os números 1 e 2 representam as peças dos jogadores, e podem ser visualizadas durante o jogo, e o 0 representa uma "casa" vazia, e por isso é representado no tabuleiro como `' '`.
+É importante referir ainda que a variavel `Board`, que é a matriz que representa o tabuleiro, é composta por `1` e `2`, dependendo do jogador. As casas vazias, que na matrix são representadas com `0`, são apresentadas como um espaço vazio, `' '`.
 
 - ### Menu de Continuous Jump
 
@@ -186,7 +186,7 @@ Para isto, é usado um menu que aparece depois de o sistema verificar que esta a
 
 O predicado usado chama-se `menu_jump_cycle(-Option,+Type)`, sendo o `Type` o modo do jogador, que pode ser "pessoa" (simbolizado com `1`), "easy ai" (simbolizado com `2`) ou "difficult ai" (simbolizado com `3`). Este parâmetro é importante uma vez que este menu só é representado no modo `1`.
 
-```sh
+```prolog
 ------------------------------------
 |       MENU CONTINUOUS JUMP       |
 | Do you want to continue jumping? |
@@ -220,7 +220,7 @@ get_position_player(X,Y,(Board,Player,_)) :-
     Piece is Player.
 ```
 
-*Nota:* Este predicado retorna true se nas coordenadas `X` e `Y` se encontra uma peça da equipa do `Player`. Como queremos o oposto, quando utilizamos este predicado precisamos de o negar da seguinte maneira `\+get_position_player(+X,+Y,+GameState)`.
+_Nota:_ Este predicado retorna true se nas coordenadas `X` e `Y` se encontra uma peça da equipa do `Player`. Como queremos o oposto, quando utilizamos este predicado precisamos de o negar da seguinte maneira `\+get_position_player(+X,+Y,+GameState)`.
 
 Após se verificar que as novas coordenadas não possuem nenhum problema, é verificado se a peça original consegue chegar a estas coordenadas utilizando uma distância possível. Para tal, é usado o predicado `check_move_possible(+XP,+YP,+XM,+YM,+GameState)` que utiliza o predicado `check_move(+XP,+YP,+XM,+YM,+Distances)` para verificar as distâncias individualmente.
 
@@ -233,14 +233,14 @@ check_move_possible(XP,YP,XM,YM,GameState):-
 
 ```prolog
 /* horizontal */
-check_move(XP,YP,XM,YM,Distances) :- 
+check_move(XP,YP,XM,YM,Distances) :-
     YP is YM,
     nth1(2,Distances,Value),
     (XM is XP-Value; XM is XP+Value),
     !.
 ```
 
-*Nota:* Aqui apenas está representado o `check_move/5` para a horizontal, no código também está presente para a vertical e as diagonais.
+_Nota:_ Aqui apenas está representado o `check_move/5` para a horizontal, no código também está presente para a vertical e as diagonais.
 
 Após uma jogada ser validada, ela é executada através do predicado `move(+GameState,+Move,-NewGameState)`. Este predicado vai substituir a peça que se encontra na posição inicial por um `0` e vai colocar o valor da peça (`1` caso seja o jogador 1 ou `2` caso seja o jogador 2) na nova posição.
 
@@ -267,8 +267,8 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
     findall(
         [NXM,NYM],
         (
-            between(1, Width, NXM), 
-            between(1, Height, NYM), 
+            between(1, Width, NXM),
+            between(1, Height, NYM),
             member([XM,YM,NXM,NYM],ListOfMoves),
             \+no_jump(XM,YM,NXM,NYM)
         ),
@@ -358,6 +358,21 @@ game_over((Board,Turn,_),Winner) :-
 game_over((_,Turn,_),Turn).
 ```
 
+Caso seja verificado que a partida chegou ao fim e que um dos jogadores foi o vencedor, é perguntado ao utilizador se quer ou não fazer outro jogo, através do seguinte menu:
+
+```
+------------------------------------
+|        MENU RESTART GAME         |
+| Do you want to play again?       |
+| 1: Yes                           |
+| 2: No                            |
+------------------------------------
+```
+
+Caso ele escolha a opção `Yes`, então é representado outra vez o menu dos modos de jogo, para ele poder voltar a jogar.
+
+Se escolher `No` o programa termina.
+
 ### Avaliação do estado do jogo
 
 O predicado `value(+GameState, +Player, -Value)` avalia o tabuleiro de jogo.
@@ -427,8 +442,8 @@ choose_move(GameState,VisitedPositions,3,(XP,YP,XM,YM)) :-
     findall(
         [Value,XPT,YPT,XMT,YMT],
         (
-            between(1, Width, XPT), between(1, Height, YPT), 
-            between(1, Width, XMT), between(1, Height, YMT), 
+            between(1, Width, XPT), between(1, Height, YPT),
+            between(1, Width, XMT), between(1, Height, YMT),
             member([XPT,YPT,XMT,YMT],ListOfMoves),
             get_piece_isolation(XPT,YPT,Value,GameState,0),
             best_piece_move(GameState,XPT,YPT,XMT,YMT)
