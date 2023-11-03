@@ -3,10 +3,10 @@
 ### Turma 01 - Grupo Apart_4
 
 Henrique Gonçalves Graveto Futuro da Silva - up202105647@up.pt <br>
-Contribuição: **%**
+Contribuição: **50%**
 
 Rita Isabel Guedes Correia Leite - up202105309@up.pt <br>
-Contribuição: **%**
+Contribuição: **50%**
 
 # Instalação e Execução
 
