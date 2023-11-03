@@ -5,7 +5,7 @@
 menu_game_mode(Option) :-
     repeat,
     write('\n---------------------------------------------'),
-    write('\n|            MENU GAME MODE JUMP            |'),
+    write('\n|              MENU GAME MODE               |'),
     write('\n| Select the mode in which you want to play |'),
     write('\n| 1: Person vs Person                       |'),
     write('\n| 2: Person vs Easy AI                      |'),
