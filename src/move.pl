@@ -294,7 +294,11 @@ do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,3) :-
 
 do_continuous_jump_cycle(GameState,GameState,_,_).
 
-display_moves(_,_,1) :- !.
+/*
+    Apresenta as jogadas feitas pelos jogadores de tipo AI
+    display_moves(-GameState,-VisitedPositions,-Type)
+*/
+display_moves(_,_,1).
 display_moves((_,Turn,_),VisitedPositions,_) :-
   
     length(VisitedPositions,IndexMove),

@@ -128,7 +128,7 @@ O predicado usado para criar o menu que define o modo de jogo chama-se `menu_gam
 
 Abaixo é possivel ver a representação deste menu na consola.
 
-```prolog
+```
 ---------------------------------------------
 |              MENU GAME MODE               |
 | Select the mode in which you want to play |
@@ -161,7 +161,7 @@ initial_state((Board,Turn,TotalMoves)) :-
 
 Depois de passar esta primeira fase, e usando o predicado `display_game(+GameState)`, é possivel obter a seguinte representação do tabuleiro 5x5, caso forem essas as medidas definidas.
 
-```prolog
+```
   a   b   c   d   e
 ---------------------
 |   | 1 | 1 | 1 |   | 1
@@ -186,7 +186,7 @@ Para isto, é usado um menu que aparece depois de o sistema verificar que esta a
 
 O predicado usado chama-se `menu_jump_cycle(-Option,+Type)`, sendo o `Type` o modo do jogador, que pode ser "pessoa" (simbolizado com `1`), "easy ai" (simbolizado com `2`) ou "difficult ai" (simbolizado com `3`). Este parâmetro é importante uma vez que este menu só é representado no modo `1`.
 
-```prolog
+```
 ------------------------------------
 |       MENU CONTINUOUS JUMP       |
 | Do you want to continue jumping? |
@@ -288,8 +288,12 @@ Para finalizar, como a primeria jogada do jogo não pode conter uma continuous j
 /* na primeira jogada não é possivel fazer continuous jump */
 game_cycle((Board,Turn,0),Mode,Round):-
     player_type(Mode,Turn,Type),
-    choose_move( (Board,Turn,0), [], Type, Move),
-    move((Board,Turn,0),Move,(NewBoard,_,NewTotalMoves)),
+
+    choose_move( (Board,Turn,0), [], Type, (XP,YP,XM,YM)),
+    move((Board,Turn,0),(XP,YP,XM,YM),(NewBoard,_,NewTotalMoves)),
+    append([[XP,YP],[XM,YM]],[],VisitedPositions),
+    display_moves((Board,Turn,0),VisitedPositions,Type),
+
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
     display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
@@ -299,9 +303,12 @@ game_cycle((Board,Turn,0),Mode,Round):-
 
 game_cycle((Board,Turn,TotalMoves),Mode,Round):-
     player_type(Mode,Turn,Type),
+
     choose_move((Board,Turn,_), [], Type, (XP,YP,XM,YM)),
     move((Board,Turn,TotalMoves),(XP,YP,XM,YM),TempGameState),
-    append([[XP,YP]],[],VisitedPositions),
+    append([[XP,YP],[XM,YM]],[],VisitedPositions),
+    display_moves((Board,Turn,TotalMoves),VisitedPositions,Type),
+
     check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),
     change_player(Turn,NewTurn),
     change_round(NewTurn,Round,NewRound),
