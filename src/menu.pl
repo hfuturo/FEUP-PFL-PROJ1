@@ -61,3 +61,4 @@ menu_restart(Option) :-
     Number =< 2,
     !,
     Option is Number.
+
