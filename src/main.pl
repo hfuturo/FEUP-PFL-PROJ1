@@ -19,9 +19,13 @@
     play/0
 */
 play :-
+    repeat,
     init_random_state,
     Round is 1,
     menu_game_mode(Mode), nl,
     initial_state(GameState),
     display_game_with_round(GameState,Round),
-    game_cycle(GameState,Mode,Round).
+    game_cycle(GameState,Mode,Round),
+    menu_restart(Option) ,
+    Option is 2,
+    !.

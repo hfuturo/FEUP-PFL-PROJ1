@@ -46,4 +46,18 @@ menu_jump_cycle(Option,1) :-
 menu_jump_cycle(Option,Type) :-
     (Type is 2; Type is 3), !,
     random(1,3,Option).
-    
+
+menu_restart(Option) :-
+    repeat,
+    write('\n------------------------------------'),
+    write('\n|        MENU RESTART GAME         |'),
+    write('\n| Do you want to play again?       |'),
+    write('\n| 1: Yes                           |'),
+    write('\n| 2: No                            |'),
+    write('\n------------------------------------'), nl,
+    write('Select the number of the option: '),
+    read_number(Number),
+    Number > 0,
+    Number =< 2,
+    !,
+    Option is Number.
