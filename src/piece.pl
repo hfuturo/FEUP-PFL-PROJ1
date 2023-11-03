@@ -1,4 +1,22 @@
 /*
+    Escolhe a peça para mover
+    select_piece(-X,-Y,+GameState)
+*/
+/* modo pessoa */
+select_piece(X,Y,GameState) :-
+    board_size(Height,Width,GameState),
+    repeat,
+    write('-----------------------------------------------------'),
+    write('\n| Select the coordinates where the piece is.        |'),
+    write('\n-----------------------------------------------------\n'),
+    write('Column: '),
+    read_column_piece(X,Width),
+    write('Row: '),
+    read_row_piece(Y,Height),
+    get_position_player(X,Y,GameState),
+    !.
+
+/*
     Lê a coordenada Y
     read_row_piece(-Position,+Coordinate)
 */  
@@ -19,15 +37,6 @@ read_column_piece(Position,Coordinate) :-
     Position>=1,
     Position=<Coordinate,
     !.
-
-/*
-    Atualiza o tabuleiro de acordo com a movimentação
-    move(+GameState,+Move,-NewGameState)
-*/
-move((Board,Turn,TotalMoves),(XP,YP,XM,YM),(NewBoard,Turn,NewTotalMoves)) :-
-    change_piece(0,Board,XP,YP,TempBoard),
-    change_piece(Turn,TempBoard,XM,YM,NewBoard),
-    NewTotalMoves is TotalMoves+1.
 
 /*
     Altera a peça numa determinada posição do tabuleiro
@@ -68,19 +77,3 @@ check_inside_board(X,Y,GameState) :-
     X =< Width,
     X >= 1.
 
-/*
-    Verifica que a ultima movimentação foi do tipo adjacente
-    no_jump(+XP,+YP,+XM,+YM)
-*/
-no_jump(XP,YP,XM,YM) :-
-    (
-        (XP is XM+1, YP is YM);
-        (XP is XM-1, YP is YM);
-        (XP is XM, YP is YM+1);
-        (XP is XM, YP is YM-1);
-
-        (XP is XM+1, YP is YM+1);
-        (XP is XM+1, YP is YM-1);
-        (XP is XM-1, YP is YM+1);
-        (XP is XM-1, YP is YM-1)
-    ).

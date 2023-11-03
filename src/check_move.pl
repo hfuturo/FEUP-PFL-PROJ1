@@ -62,3 +62,20 @@ check_oposite_diff(XP,YP,XM,YM) :-
     DiffX is XP-XM,
     DiffY is YP-YM,
     DiffX is -DiffY.
+
+/*
+    Verifica que a ultima movimentação foi do tipo adjacente
+    no_jump(+XP,+YP,+XM,+YM)
+*/
+no_jump(XP,YP,XM,YM) :-
+    (
+        (XP is XM+1, YP is YM);
+        (XP is XM-1, YP is YM);
+        (XP is XM, YP is YM+1);
+        (XP is XM, YP is YM-1);
+
+        (XP is XM+1, YP is YM+1);
+        (XP is XM+1, YP is YM-1);
+        (XP is XM-1, YP is YM+1);
+        (XP is XM-1, YP is YM-1)
+    ).

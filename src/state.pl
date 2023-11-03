@@ -130,3 +130,20 @@ game_over((_,Turn,_),Turn).
 congratulate(Winner) :-
     format('Player ~w won!',Winner).
 
+/*
+    Avalia o estado do jogo
+    value(+GameState, +Player, -Value)
+*/
+value((Board,Turn,_),Value) :-
+    change_player(Turn,NewTurn),
+    check_winner(Board,1,NewTurn),
+    !,
+    Value is 0.
+
+value((Board,Turn,_),Value) :-
+    check_winner(Board,1,Turn),
+    !,
+    Value is 10.
+
+value(_,Value) :- Value is 5.
+

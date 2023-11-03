@@ -1,20 +1,11 @@
 /*
-    Escolhe a peça para mover
-    select_piece(-X,-Y,+GameState)
+    Atualiza o tabuleiro de acordo com a movimentação
+    move(+GameState,+Move,-NewGameState)
 */
-/* modo pessoa */
-select_piece(X,Y,GameState) :-
-    board_size(Height,Width,GameState),
-    repeat,
-    write('-----------------------------------------------------'),
-    write('\n| Select the coordinates where the piece is.        |'),
-    write('\n-----------------------------------------------------\n'),
-    write('Column: '),
-    read_column_piece(X,Width),
-    write('Row: '),
-    read_row_piece(Y,Height),
-    get_position_player(X,Y,GameState),
-    !.
+move((Board,Turn,TotalMoves),(XP,YP,XM,YM),(NewBoard,Turn,NewTotalMoves)) :-
+    change_piece(0,Board,XP,YP,TempBoard),
+    change_piece(Turn,TempBoard,XM,YM,NewBoard),
+    NewTotalMoves is TotalMoves+1.
 
 /*
     Escolhe a nova posição para a peça
@@ -303,24 +294,6 @@ do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,3) :-
 
 do_continuous_jump_cycle(GameState,GameState,_,_).
 
-/*
-    Avalia o estado do jogo
-    value(+GameState, +Player, -Value)
-*/
-
-value((Board,Turn,_),Value) :-
-    change_player(Turn,NewTurn),
-    check_winner(Board,1,NewTurn),
-    !,
-    Value is 0.
-
-value((Board,Turn,_),Value) :-
-    check_winner(Board,1,Turn),
-    !,
-    Value is 10.
-
-value(_,Value) :- Value is 5.
-
 display_moves(_,_,1) :- !.
 display_moves((_,Turn,_),VisitedPositions,_) :-
   
@@ -341,9 +314,3 @@ display_moves((_,Turn,_),VisitedPositions,_) :-
     format('The Player ~w is going to move the piece ~w~w to ~w~w\n',[Turn,XP,YP,XM,YM]),nl,
     write('Please press enter to continue.'),
     pressEnter.
-
-pressEnter :-
-    repeat,
-    get_code(Input),
-    Input is 10,
-    !.

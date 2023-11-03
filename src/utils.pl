@@ -125,3 +125,13 @@ read_size_board_side(Side) :-
 init_random_state :-
     now(X),
     setrand(X).
+
+/*
+    Ciclo infinito enquanto user nao da enter a '\n'
+    pressEnter/0
+*/
+pressEnter :-
+    repeat,
+    get_code(Input),
+    Input is 10,
+    !.
