@@ -80,10 +80,20 @@ read_number_aux(Number,true,Number).
 read_char(Letter) :-
     repeat,
     get_code(Input),
-    get_code(_), % break line
+    flush_input,
     Letter is Input-96,
     Letter>= 1,
     Letter=< 15,
+    !.
+
+/*
+    Ignora todos os caracteres até encontra um '\n'
+    flush_input/0
+*/
+flush_input :-
+    repeat,
+    get_code(Trash),
+    Trash is 10,
     !.
 
 /*
