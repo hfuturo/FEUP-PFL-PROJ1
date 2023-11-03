@@ -47,6 +47,10 @@ menu_jump_cycle(Option,Type) :-
     (Type is 2; Type is 3), !,
     random(1,3,Option).
 
+/*
+    Escolhe se utilizador quer jogar outra vez
+    menu_restart(-Option)
+*/
 menu_restart(Option) :-
     repeat,
     write('\n------------------------------------'),
@@ -61,4 +65,3 @@ menu_restart(Option) :-
     Number =< 2,
     !,
     Option is Number.
-
