@@ -297,7 +297,8 @@ do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,3) :-
 do_continuous_jump_cycle(GameState,GameState,_,_).
 
 /*
-    value(+GameState, -Value)
+    Avalia o estado do jogo
+    value(+GameState, +Player, -Value)
 */
 
 value((Board,Turn,_),Value) :-

@@ -238,7 +238,7 @@ game_over((_,Turn,_),Turn).
 
 ### Avaliação do estado do jogo
 
-O predicado `value(+GameState, -Value)` avalia o tabuleiro de jogo.
+O predicado `value(+GameState, +Player, -Value)` avalia o tabuleiro de jogo.
 
 Como já foi referido antes, o jogo acaba quando um dos jogadores ganha, no entanto caso o jogador faça um movimento vencedor para ambos os lados, é o seu adversário quem ganha. Para além disso, a posição das peças de um jogador não tem o "poder" de bloquear um possivel movimento do adversário.
 
@@ -249,21 +249,6 @@ Optamos assim por avaliar o tabuleiro da seguinte forma:
 - se for verificado que o oponente ganhou, este vale 0 pontos;
 - se for verificado que o jogador ganhou, este vale 10 pontos;
 - se ninguém ganhar, vale 5.
-
-```prolog
-value((Board,Turn,_),Value) :-
-    change_player(Turn,NewTurn),
-    check_winner(Board,1,NewTurn),
-    !,
-    Value is 0.
-
-value((Board,Turn,_),Value) :-
-    check_winner(Board,1,Turn),
-    !,
-    Value is 10.
-
-value(_,Value) :- Value is 5.
-```
 
 ### Jogada do computador
 
