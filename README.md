@@ -81,7 +81,7 @@ Abaixo apresentamos o propósito de cada um:
 
 ### Representação interna do estado do jogo
 
-O estado interno do jogo é guardado numa variável chamada GameState. Esta variável é composta pelo tabuleiro, jogador atual, número total de movimentações realizadas, posições visitadas pela peça da jogada atual, um booleano que representa se estamos a realizar um continuous jump e pelas coordenadas da peça da jogada atual.
+O estado interno do jogo é guardado numa variável chamada `GameState`. Esta variável é composta pelo tabuleiro, jogador atual e número total de movimentações realizadas.
 
 - **Tabuleiro**
 
@@ -124,13 +124,13 @@ O número total de movimentações realizados é representado pela variável `To
 
 - ### Menu do Modo de Jogo
 
-O predicado usado para criar o menu que define o modo de jogo chama-se **menu_game_mode(-Option)**.
+O predicado usado para criar o menu que define o modo de jogo chama-se `menu_game_mode(-Option)`.
 
 Abaixo é possivel ver a representação deste menu na consola.
 
 ```sh
 ---------------------------------------------
-|            MENU GAME MODE JUMP            |
+|              MENU GAME MODE               |
 | Select the mode in which you want to play |
 | 1: Person vs Person                       |
 | 2: Person vs Easy AI                      |
@@ -149,9 +149,17 @@ Select the number of the option:
 
 O tabuleiro do jogo é imprimido sempre antes de haver uma movimentação de peças, podendo este ser qualquer tamanho de altura ou largura, desde que esteja compreendido entre 5 e 15.
 
-Devido a esta possivel variação de tamanhos, é preciso defini-los no início do jogo, usando o seguinte predicado **initial_state(-GameState)**. Este utiliza outros predicados como: **read_size_board(-Height,-Width)**, que lê a altura e largura definidas pelo jogador, e **make_initial_board(+Height,+Width,-Board)**, que cria o tabuleiro com as especificações obtidas.
+Devido a esta possivel variação de tamanhos, é preciso defini-los no início do jogo, usando o seguinte predicado `initial_state(-GameState)`. Este utiliza outros predicados como: `read_size_board(-Height,-Width)`, que lê a altura e largura definidas pelo jogador, e `make_initial_board(+Height,+Width,-Board)`, que cria o tabuleiro com as especificações obtidas.
 
-Depois de passar esta primeira fase, e usando o predicado **display_game(+GameState)**, é possivel obter a seguinte representação do tabuleiro 5x5, caso forem essas as medidas definidas.
+```prolog
+initial_state((Board,Turn,TotalMoves)) :-
+    TotalMoves is 0,
+    Turn is 1,
+    read_size_board(Height,Width),
+    make_initial_board(Height,Width,Board), nl.
+```
+
+Depois de passar esta primeira fase, e usando o predicado `display_game(+GameState)`, é possivel obter a seguinte representação do tabuleiro 5x5, caso forem essas as medidas definidas.
 
 ```sh
   a   b   c   d   e
@@ -168,15 +176,15 @@ Depois de passar esta primeira fase, e usando o predicado **display_game(+GameSt
 ---------------------
 ```
 
-É importante referir ainda que a variavel `Board`, definida em **initial_state/3**, é uma matriz composto por 0,1 e 2. Os números 1 e 2 representam as peças dos jogadores, e podem ser visualizadas durante o jogo, e o 0 representa uma "casa" vazia, e por isso é representado no tabuleiro como `' '`.
+É importante referir ainda que a variavel `Board`, definida em `initial_state/1`, é uma matriz composto por 0,1 e 2. Os números 1 e 2 representam as peças dos jogadores, e podem ser visualizadas durante o jogo, e o 0 representa uma "casa" vazia, e por isso é representado no tabuleiro como `' '`.
 
 - ### Menu de Continuous Jump
 
-Caso o jogador tinha feito um jump, e se na nova posição onde se encontra a peça é possivel fazer outro, então o sistema tem de lhe perguntar se este deseja ou não fazê-lo.
+Caso o jogador tenha feito um jump, e se na nova posição onde se encontra a peça é possivel fazer outro, então o sistema tem de lhe perguntar se este deseja ou não fazê-lo.
 
 Para isto, é usado um menu que aparece depois de o sistema verificar que esta ação é possivel, estando abaixo a sua representação.
 
-O predicado usado chama-se **menu_jump_cycle(-Option,+Type)**, sendo o `Type` o modo do jogador, que pode ser "pessoa" (simbolizado com 1), "easy ai" (simbolizado com 2) ou "difficult ai" (simbolizado com 3). Este parâmetro é importante uma vez que este menu só é representado no modo 1.
+O predicado usado chama-se `menu_jump_cycle(-Option,+Type)`, sendo o `Type` o modo do jogador, que pode ser "pessoa" (simbolizado com `1`), "easy ai" (simbolizado com `2`) ou "difficult ai" (simbolizado com `3`). Este parâmetro é importante uma vez que este menu só é representado no modo `1`.
 
 ```sh
 ------------------------------------
@@ -214,7 +222,7 @@ get_position_player(X,Y,(Board,Player,_)) :-
 
 *Nota:* Este predicado retorna true se nas coordenadas `X` e `Y` se encontra uma peça da equipa do `Player`. Como queremos o oposto, quando utilizamos este predicado precisamos de o negar da seguinte maneira `\+get_position_player(+X,+Y,+GameState)`.
 
-Após se verificar que as novas coordenadas não possuem nenhum problema, é verificado se a peça original consegue chegar a estas coordenadas utilizando uma distância possível utilizando o predicado `check_move_possible(+XP,+YP,+XM,+YM,+GameState)` que utiliza o predicado `check_move(+XP,+YP,+XM,+YM,+Distances)` para verificar as distâncias individualmente.
+Após se verificar que as novas coordenadas não possuem nenhum problema, é verificado se a peça original consegue chegar a estas coordenadas utilizando uma distância possível. Para tal, é usado o predicado `check_move_possible(+XP,+YP,+XM,+YM,+GameState)` que utiliza o predicado `check_move(+XP,+YP,+XM,+YM,+Distances)` para verificar as distâncias individualmente.
 
 ```prolog
 check_move_possible(XP,YP,XM,YM,GameState):-
@@ -234,7 +242,7 @@ check_move(XP,YP,XM,YM,Distances) :-
 
 *Nota:* Aqui apenas está representado o `check_move/5` para a horizontal, no código também está presente para a vertical e as diagonais.
 
-Após uma jogada ser validada, ela é executada através do predicado `move(+GameState,+Move,-NewGameState)`. Este predicado vai substituir a peça que se encontra na posição inicial por um `0` e vai colocar a o valor da peça (`1` caso seja o jogador 1 ou `2` caso seja o jogador 2) na nova posição.
+Após uma jogada ser validada, ela é executada através do predicado `move(+GameState,+Move,-NewGameState)`. Este predicado vai substituir a peça que se encontra na posição inicial por um `0` e vai colocar o valor da peça (`1` caso seja o jogador 1 ou `2` caso seja o jogador 2) na nova posição.
 
 ```prolog
 move((Board,Turn,TotalMoves),(XP,YP,XM,YM),(NewBoard,Turn,NewTotalMoves)) :-
@@ -274,7 +282,7 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
 
 Este predicado verifica se a última move foi um jump negando o predicado `no_jump(+XP,+YP,+XM,+YM)` e verifica se é possível realizar um jump através da utilização do `findall/3`. Se tudo for verificado, o continuous jump é realizado no predicado `do_continuous_jump_cycle(+GameState,-NewGameState,+VisitedPositions,+Type)`.
 
-Para finalizar, como a primeria jogada do jogo não pode conter uma continuous jump, no `game_cicle/3` não verificamos se é possível.
+Para finalizar, como a primeria jogada do jogo não pode conter uma continuous jump, no `game_cicle/3` não verificamos se tal movimento é possível.
 
 ```prolog
 /* na primeira jogada não é possivel fazer continuous jump */
@@ -304,7 +312,7 @@ game_cycle((Board,Turn,TotalMoves),Mode,Round):-
 
 ### Lista de jogadas válidas
 
-Para se obter uma lista com as jogadas válidas podemos utilizar o predicado `valid_moves(+GameState,+Player,-ListOfMoves)` que utiliza o predicado `findall/3`. Este predicado obtém todas as peças da equipa do jogador e faz todas as jogadas possíveis
+Para se obter uma lista com as jogadas válidas podemos utilizar o predicado `valid_moves(+GameState,+Player,-ListOfMoves)` que utiliza o predicado `findall/3`. Este predicado obtém todas as peças da equipa do jogador e faz todas as jogadas possíveis.
 
 ```prolog
 valid_moves(GameState,VisitedPositions,ListOfMoves) :-
@@ -334,9 +342,9 @@ O primeiro `findall/3` obtém a posição de todas as peças do jogador que est�
 
 ### Final do jogo
 
-O predicado **game_over(+GameState,-Winner)** verifica se algum dos jogadores já ganhou, usando para isso o predicado **check_winner(+Board,+Y,+Player)** que percorre o tabuleiro todo e verifica se as peças do jogador defindido em player estão isoladas.
+O predicado `game_over(+GameState,-Winner)` verifica se algum dos jogadores já ganhou, usando para isso o predicado `check_winner(+Board,+Y,+Player)` que percorre o tabuleiro todo e verifica se as peças do jogador definido em player estão isoladas.
 
-É importante notar que esta verificação é feita antes de um jogador jogar, e havendo a regra de que caso um jogador faça um movimento que faz com que ambos sejam vencedores, este acaba por ser o perdedor, e por isso **game_over/2** é definido da seguinte forma:
+É importante notar que esta verificação é feita antes de um jogador jogar, e havendo a regra de que caso um jogador faça um movimento que faz com que ambos sejam vencedores, este acaba por ser o perdedor, e por isso `game_over/2` é definido da seguinte forma:
 
 ```prolog
 game_over((Board,Turn,_),Winner) :-
@@ -364,15 +372,110 @@ Optamos assim por avaliar o tabuleiro da seguinte forma:
 - se for verificado que o jogador ganhou, este vale 10 pontos;
 - se ninguém ganhar, vale 5.
 
+```prolog
+value((Board,Turn,_),Value) :-
+    change_player(Turn,NewTurn),
+    check_winner(Board,1,NewTurn),
+    !,
+    Value is 0.
+
+value((Board,Turn,_),Value) :-
+    check_winner(Board,1,Turn),
+    !,
+    Value is 10.
+
+value(_,Value) :- Value is 5.
+```
+
 ### Jogada do computador
 
-Este jogo possui dois tipos de jogadas por computador. O primeiro tipo é baseado em aleatoriedade, onde o computador seleciona a peça que vai mover, bem como a jogada a fazer, de forma totalmente aleatória. Caso haja a hipótese de realizar um continuous jump, o computador vai gerar um número aleatório entre `1` e `2` e, caso o número gerado seja 1, o computador realiza o continuous jump.
+Este jogo possui dois tipos de jogadas por computador. O primeiro tipo, `Easy AI`, é baseado em aleatoriedade, onde o computador seleciona a peça que vai mover, bem como a jogada a fazer, de forma totalmente aleatória. Caso haja a hipótese de realizar um continuous jump, o computador vai gerar um número aleatório entre `1` e `2` e, caso o número gerado seja 1, o computador realiza o continuous jump.
 
-O segundo tipo utiliza um algorítmo greedy. Este algorítmo vai selecionar a peça menos isolada da equipa do jogador e vai escolher a jogada que isole melhor esta peça. Para selecionar a peça menos isolada, é calculado o isolamento de cada peça individualmente utilizando o predicado ``. Este predicado calcula quantas peças da própria equipa uma peça tem à sua volta. Caso haja mais do que uma peça com o menor nível de isolamente, o algorítmo seleciona uma de forma aleatória.
+```prolog
+% modo Easy AI, sem continuous jump
+choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size is 0,
+
+    valid_moves(GameState,VisitedPositions,ListOfMoves),
+    length(ListOfMoves,MaxIndex),
+    MaxIndexRandom is MaxIndex+1,
+    random(1,MaxIndexRandom,Index),
+    nth1(Index,ListOfMoves,Move),
+
+    nth1(1,Move,XP),
+    nth1(2,Move,YP),
+    nth1(3,Move,XM),
+    nth1(4,Move,YM),
+    !.
+```
+
+O segundo tipo, `Difficult AI`, utiliza um algorítmo greedy. Este algorítmo vai selecionar a peça menos isolada da equipa do jogador e vai escolher a jogada que isole melhor esta peça. Para selecionar a peça menos isolada, é calculado o isolamento de cada peça individualmente utilizando o predicado `get_piece_isolation(+X,+Y,-Value,+GameState,+Bool)`. Este predicado calcula quantas peças da própria equipa uma peça tem à sua volta. Caso haja mais do que uma peça com o menor nível de isolamente, o algorítmo seleciona uma de forma aleatória.
 
 Agora que o computador tem uma peça selecionada, o algorítmo vai calcular o nível de isolamento para cada jogada possível que aquela peça pode realizar e vai selecionar a jogada que isole mais a peça. Se houver mais do que uma jogada com o melhor nível de isolamento, o algorítmo seleciona uma de forma aleatória.
 
 Para decidir se o algorítmo faz um continuous jump, este verifica se o nível de isolamente após o continuous jump é melhor ou pior do que o nível de isolamento atual. Se for pior, o continuous jump não é realizado.
+
+```prolog
+% modo Difficult AI, sem continuous jump
+choose_move(GameState,VisitedPositions,3,(XP,YP,XM,YM)) :-
+    length(VisitedPositions,Size),
+    Size is 0,
+
+    valid_moves(GameState,VisitedPositions,ListOfMoves),
+    board_size(Height,Width,GameState),
+    findall(
+        [Value,XPT,YPT,XMT,YMT],
+        (
+            between(1, Width, XPT), between(1, Height, YPT), 
+            between(1, Width, XMT), between(1, Height, YMT), 
+            member([XPT,YPT,XMT,YMT],ListOfMoves),
+            get_piece_isolation(XPT,YPT,Value,GameState,0),
+            best_piece_move(GameState,XPT,YPT,XMT,YMT)
+        ),
+        Result
+    ),
+
+    sort(Result, SortedResult),
+    length(SortedResult,MaxIndex),
+
+    nth1(MaxIndex,SortedResult,Elem),
+    nth1(1,Elem,MaxValue),
+
+    findall(
+        [BoardValue,Value,XPT,YPT,XMT,YMT],
+        (
+            member([Value,XPT,YPT,XMT,YMT],Result),
+            Value is MaxValue,
+            value(GameState,BoardValue)
+        ),
+        BestMoves
+    ),
+    sort(BestMoves,ValueBestMoves),
+    length(ValueBestMoves,NumberMoves),
+
+    nth1(NumberMoves,ValueBestMoves,ValueElem),
+    nth1(1,ValueElem,BestPlayValue),
+
+    findall(
+        [BoardValue,Value,XPT,YPT,XMT,YMT],
+        (
+            member([BoardValue,Value,XPT,YPT,XMT,YMT],BestMoves),
+            BoardValue is BestPlayValue
+        ),
+        FinalMoves
+    ),
+
+    length(FinalMoves,Index),
+    UpdatedIndex is Index+1,
+    random(1,UpdatedIndex,Final),
+
+    nth1(Final,FinalMoves,SelectedMove),
+    nth1(3,SelectedMove,XP),
+    nth1(4,SelectedMove,YP),
+    nth1(5,SelectedMove,XM),
+    nth1(6,SelectedMove,YM).
+```
 
 # Conclusões
 
