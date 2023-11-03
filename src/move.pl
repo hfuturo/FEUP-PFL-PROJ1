@@ -240,7 +240,6 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
         \+check_winner(Board,1,Turn),
         \+check_winner(Board,1,NewTurn)
     ),
-    append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
     valid_moves((Board,Turn,TotalMoves),VisitedPositions,ListOfMoves),
     board_size(Height,Width,(Board,Turn,TotalMoves)),
     findall(
@@ -256,7 +255,7 @@ check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,V
     length(Result,Size),
     Size>0,
     !,
-    do_continuous_jump_cycle((Board,Turn,TotalMoves),NewGameState,NewVisitedPositions,Type).
+    do_continuous_jump_cycle((Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type).
 
 check_continuous_jump_cycle(_,GameState,GameState,_,_).
 
@@ -271,28 +270,36 @@ do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,1) :-
     Option is 1,
     !,
     nl,
-    choose_move(GameState,VisitedPositions,1,Move),
-    move(GameState,Move,TempGameState),
-    check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,1).
+    choose_move(GameState,VisitedPositions,1,(XP,YP,XM,YM)),
+    append(VisitedPositions,[XM,YM],NewVisitedPositions),
+    move(GameState,(XP,YP,XM,YM),TempGameState),
+    check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,NewGameState,NewVisitedPositions,1).
 
 /* modo easy ai */
 do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,2) :-
     menu_jump_cycle(Option,2),
     Option is 1,
     !,
+    choose_move(GameState,VisitedPositions,2,(XP,YP,XM,YM)),
+
+    append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
     display_game(GameState),
-    nl,
-    choose_move(GameState,VisitedPositions,2,Move),
-    move(GameState,Move,TempGameState),
-    check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,2).
+    display_moves(GameState,NewVisitedPositions,2),
+
+    move(GameState,(XP,YP,XM,YM),TempGameState),
+    check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,NewGameState,NewVisitedPositions,2).
 
 /* modo difficult ai */
 do_continuous_jump_cycle(GameState,NewGameState,VisitedPositions,3) :-
-    choose_move(GameState,VisitedPositions,3,Move),
+    choose_move(GameState,VisitedPositions,3,(XP,YP,XM,YM)),
     !,
+
+    append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
     display_game(GameState),
-    move(GameState,Move,TempGameState),
-    check_continuous_jump_cycle(Move,TempGameState,NewGameState,VisitedPositions,3).
+    display_moves(GameState,NewVisitedPositions,3),
+
+    move(GameState,(XP,YP,XM,YM),TempGameState),
+    check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,NewGameState,NewVisitedPositions,3).
 
 do_continuous_jump_cycle(GameState,GameState,_,_).
 
@@ -313,3 +320,30 @@ value((Board,Turn,_),Value) :-
     Value is 10.
 
 value(_,Value) :- Value is 5.
+
+display_moves(_,_,1) :- !.
+display_moves((_,Turn,_),VisitedPositions,_) :-
+  
+    length(VisitedPositions,IndexMove),
+    nth1(IndexMove,VisitedPositions,Move),
+    IndexPiece is IndexMove-1,
+    nth1(IndexPiece,VisitedPositions,Piece),
+
+    nth1(1,Move,XMcode),
+    nth1(2,Move,YM),
+    nth1(1,Piece,XPcode),
+    nth1(2,Piece,YP),
+
+    XMlettercode is XMcode+96,
+    XPlettercode is XPcode+96,
+    char_code(XM, XMlettercode),
+    char_code(XP, XPlettercode),
+    format('The Player ~w is going to move the piece ~w~w to ~w~w\n',[Turn,XP,YP,XM,YM]),nl,
+    write('Please press enter to continue.'),
+    pressEnter.
+
+pressEnter :-
+    repeat,
+    get_code(Input),
+    Input is 10,
+    !.
