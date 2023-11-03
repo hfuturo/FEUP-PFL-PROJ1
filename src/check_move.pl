@@ -46,15 +46,6 @@ check_move(XP,YP,XM,YM,Distances) :-
     !.
 
 /*
-    Calcula o valor absoluto de um número
-    abs_value(+Number,-AbsValue)
-*/
-abs_value(Number, AbsValue) :-
-    Number =< 0,
-    AbsValue is -Number.
-abs_value(Number, AbsValue) :- AbsValue is Number.
-
-/*
     Verifica se as diferenças entre XP-XM e YP-YM são as mesmas
     check_same_diff(+XP,+YP,+XM,+YM)
 */
