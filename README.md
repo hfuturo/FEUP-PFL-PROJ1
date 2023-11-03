@@ -190,6 +190,118 @@ Select the number of the option:
 
 ### Validação de jogadas e execução
 
+Para uma jogada ser validada é necessário obter as distâncias que a peça que vai ser movida pode percorrer. Isto pode ser obtido através do predicado `calculate_distances(+X,+Y,+GameState,-Distances)` que, dado uma peça, vai calcular a distância que ela pode percorrer na vertical, horizontal e nas diagonais.
+
+```prolog
+calculate_distances(X,Y,GameState,Distances) :-
+    row_distance(X,Y,GameState,RowDistance),
+    column_distance(X,Y,GameState,ColumnDistance),
+    diagonal_distance_NESW(X,Y,GameState,NESWDiagonalDistance), % ↙↗
+    diagonal_distance_NWSE(X,Y,GameState,NWSEDiagonalDistance), % ↖↘
+    append([ColumnDistance],[RowDistance],DistancesAux),
+    append([NESWDiagonalDistance],[NWSEDiagonalDistance],DistancesAux2),
+    append(DistancesAux,DistancesAux2,Distances).
+```
+
+Após obter as distâncias que uma peça pode percorrer é verificado se as novas coordenadas da peça se encontram dentro da Board e se a nova posição não é ocupada por uma peça da mesma equipa. Para isto, é utilizado o predicao `get_position_player(+X,+Y,+GameState)`.
+
+```prolog
+get_position_player(X,Y,(Board,Player,_)) :-
+    check_inside_board(X,Y,(Board,_,_)),
+    get_position_piece(X,Y,Board,Piece),
+    Piece is Player.
+```
+
+*Nota:* Este predicado retorna true se nas coordenadas `X` e `Y` se encontra uma peça da equipa do `Player`. Como queremos o oposto, quando utilizamos este predicado precisamos de o negar da seguinte maneira `\+get_position_player(+X,+Y,+GameState)`.
+
+Após se verificar que as novas coordenadas não possuem nenhum problema, é verificado se a peça original consegue chegar a estas coordenadas utilizando uma distância possível utilizando o predicado `check_move_possible(+XP,+YP,+XM,+YM,+GameState)` que utiliza o predicado `check_move(+XP,+YP,+XM,+YM,+Distances)` para verificar as distâncias individualmente.
+
+```prolog
+check_move_possible(XP,YP,XM,YM,GameState):-
+    calculate_distances(XP,YP,GameState,Distances),
+    check_move(XP,YP,XM,YM,Distances),
+    !.
+```
+
+```prolog
+/* horizontal */
+check_move(XP,YP,XM,YM,Distances) :- 
+    YP is YM,
+    nth1(2,Distances,Value),
+    (XM is XP-Value; XM is XP+Value),
+    !.
+```
+
+*Nota:* Aqui apenas está representado o `check_move/5` para a horizontal, no código também está presente para a vertical e as diagonais.
+
+Após uma jogada ser validada, ela é executada através do predicado `move(+GameState,+Move,-NewGameState)`. Este predicado vai substituir a peça que se encontra na posição inicial por um `0` e vai colocar a o valor da peça (`1` caso seja o jogador 1 ou `2` caso seja o jogador 2) na nova posição.
+
+```prolog
+move((Board,Turn,TotalMoves),(XP,YP,XM,YM),(NewBoard,Turn,NewTotalMoves)) :-
+    change_piece(0,Board,XP,YP,TempBoard),
+    change_piece(Turn,TempBoard,XM,YM,NewBoard),
+    NewTotalMoves is TotalMoves+1.
+```
+
+Agora que a peça já se encontra na sua nova posição, é necessário verificar se ela consegue realizar um continuous jump utilizando o predicado `check_continuous_jump_cycle(+Move,+GameState,-NewGameState,+VisitedPositions,+Type)`.
+
+```prolog
+check_continuous_jump_cycle((XP,YP,XM,YM),(Board,Turn,TotalMoves),NewGameState,VisitedPositions,Type) :-
+    \+no_jump(XP,YP,XM,YM),
+    change_player(Turn,NewTurn),
+    (
+        \+check_winner(Board,1,Turn),
+        \+check_winner(Board,1,NewTurn)
+    ),
+    append(VisitedPositions,[[XM,YM]],NewVisitedPositions),
+    valid_moves((Board,Turn,TotalMoves),VisitedPositions,ListOfMoves),
+    board_size(Height,Width,(Board,Turn,TotalMoves)),
+    findall(
+        [NXM,NYM],
+        (
+            between(1, Width, NXM), 
+            between(1, Height, NYM), 
+            member([XM,YM,NXM,NYM],ListOfMoves),
+            \+no_jump(XM,YM,NXM,NYM)
+        ),
+        Result
+    ),
+    length(Result,Size),
+    Size>0,
+    !,
+    do_continuous_jump_cycle((Board,Turn,TotalMoves),NewGameState,NewVisitedPositions,Type).
+```
+
+Este predicado verifica se a última move foi um jump negando o predicado `no_jump(+XP,+YP,+XM,+YM)` e verifica se é possível realizar um jump através da utilização do `findall/3`. Se tudo for verificado, o continuous jump é realizado no predicado `do_continuous_jump_cycle(+GameState,-NewGameState,+VisitedPositions,+Type)`.
+
+Para finalizar, como a primeria jogada do jogo não pode conter uma continuous jump, no `game_cicle/3` não verificamos se é possível.
+
+```prolog
+/* na primeira jogada não é possivel fazer continuous jump */
+game_cycle((Board,Turn,0),Mode,Round):-
+    player_type(Mode,Turn,Type),
+    choose_move( (Board,Turn,0), [], Type, Move),
+    move((Board,Turn,0),Move,(NewBoard,_,NewTotalMoves)),
+    change_player(Turn,NewTurn),
+    change_round(NewTurn,Round,NewRound),
+    display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
+    !,
+    game_cycle((NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
+
+
+game_cycle((Board,Turn,TotalMoves),Mode,Round):-
+    player_type(Mode,Turn,Type),
+    choose_move((Board,Turn,_), [], Type, (XP,YP,XM,YM)),
+    move((Board,Turn,TotalMoves),(XP,YP,XM,YM),TempGameState),
+    append([[XP,YP]],[],VisitedPositions),
+    check_continuous_jump_cycle((XP,YP,XM,YM),TempGameState,(NewBoard,_,NewTotalMoves),VisitedPositions,Type),
+    change_player(Turn,NewTurn),
+    change_round(NewTurn,Round,NewRound),
+    display_game_with_round((NewBoard,NewTurn,NewTotalMoves),NewRound),
+    !,
+    game_cycle((NewBoard,NewTurn,NewTotalMoves),Mode,NewRound).
+```
+
 ### Lista de jogadas válidas
 
 Para se obter uma lista com as jogadas válidas podemos utilizar o predicado `valid_moves(+GameState,+Player,-ListOfMoves)` que utiliza o predicado `findall/3`. Este predicado obtém todas as peças da equipa do jogador e faz todas as jogadas possíveis
@@ -217,6 +329,8 @@ valid_moves(GameState,VisitedPositions,ListOfMoves) :-
         ListOfMoves
     ).
 ```
+
+O primeiro `findall/3` obtém a posição de todas as peças do jogador que está a jogar e o segundo `findall/3` obtém todas as combinações possíveis através do `check_move_possible(XP,YP,XM,YM,GameState)`. É necessário ainda salientar o `\+get_position_player(XM,YM,GameState)` que impede que uma peça se desloque para uma casa ocupada por uma peça da sua equipa e ainda o `\+member([XM,YM],VisitedPositions)` que impede a realização de uma jogada para uma casa que já foi visitada no turno do jogador (necessário para os continuous jumps).
 
 ### Final do jogo
 
