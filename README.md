@@ -515,3 +515,7 @@ Durante a execução do trabalho, foram consultados os seguintes sites para obte
 
 - https://kanare-abstract.com/en/pages/apart
 - https://cdn.shopify.com/s/files/1/0578/3502/8664/files/Apart_EN.pdf?v=1682248406
+
+---
+
+Grade: 18.15
